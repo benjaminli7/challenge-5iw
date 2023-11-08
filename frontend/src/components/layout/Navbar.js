@@ -55,13 +55,13 @@ function Navbar() {
               }`}
             >
               <a
-                href="/"
+                href="/signup"
                 className="rounded-lg font-inter lg:px-6 lg:py-4 lg:hover:bg-gray-50 lg:hover:text-gray-800"
               >
                 Sign Up
               </a>
               <a
-                href="/"
+                href="/login"
                 className="px-8 py-4 text-center text-white bg-black rounded-lg font-inter hover:bg-gray-800"
               >
                 Login
