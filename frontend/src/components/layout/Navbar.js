@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -10,7 +11,7 @@ function Navbar() {
       <div className="w-screen h-auto">
         <nav className="font-inter mx-auto h-auto w-full max-w-[1600px] lg:relative lg:top-0">
           <div className="flex flex-col px-6 py-6 lg:flex-row lg:items-center lg:justify-between lg:px-10 lg:py-4 xl:px-20">
-            <a href="/">
+            <Link to="/">
               <svg
                 class="relative left-5 lg:inset-0"
                 width="75"
@@ -24,48 +25,48 @@ function Navbar() {
                   fill="black"
                 ></path>
               </svg>
-            </a>
+            </Link>
             <div
               className={`mt-14 flex flex-col space-y-8 lg:mt-0 lg:flex lg:flex-row lg:space-x-1 lg:space-y-0 ${
                 isOpen ? "show" : "hidden"
               }`}
             >
-              <a
-                href="/"
+              <Link
+                to="/"
                 className="rounded-lg font-inter lg:px-6 lg:py-4 lg:hover:bg-gray-50 lg:hover:text-gray-800"
               >
                 Accueil
-              </a>
-              <a
-                href="/"
+              </Link>
+              <Link
+                to="/"
                 className="rounded-lg font-inter lg:px-6 lg:py-4 lg:hover:bg-gray-50 lg:hover:text-gray-800"
               >
                 Accueil
-              </a>
-              <a
-                href="/"
+              </Link>
+              <Link
+                to="/"
                 className="pb-8 rounded-lg font-inter lg: lg:px-6 lg:py-4 lg:hover:bg-gray-50 lg:hover:text-gray-800"
               >
                 Accueil
-              </a>
+              </Link>
             </div>
             <div
               className={`flex flex-col space-y-8 lg:flex lg:flex-row lg:space-x-3 lg:space-y-0 ${
                 isOpen ? "show" : "hidden"
               }`}
             >
-              <a
-                href="/signup"
+              <Link
+                to="/signup"
                 className="rounded-lg font-inter lg:px-6 lg:py-4 lg:hover:bg-gray-50 lg:hover:text-gray-800"
               >
                 Sign Up
-              </a>
-              <a
-                href="/login"
+              </Link>
+              <Link
+                to="/login"
                 className="px-8 py-4 text-center text-white bg-black rounded-lg font-inter hover:bg-gray-800"
               >
                 Login
-              </a>
+              </Link>
             </div>
             <button className="absolute right-5 lg:hidden" onClick={handleMenu}>
               <svg
