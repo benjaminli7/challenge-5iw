@@ -10,6 +10,14 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use ApiPlatform\Metadata\ApiResource;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Serializer\Annotation\Groups;
+
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\InheritanceType("SINGLE_TABLE")]
@@ -17,9 +25,15 @@ use ApiPlatform\Metadata\ApiResource;
 #[ORM\Table(name: '`user`')]
 #[ApiResource(
     operations: [
-        
-    ]
+        new GetCollection(normalizationContext: ['groups' => ['read-user']], security: 'is_granted("ROLE_ADMIN")', securityMessage: 'Only admins can see all users.'),
+        new Get(normalizationContext: ['groups' => ['read-user']],security: 'is_granted("ROLE_ADMIN") object == user', securityMessage: 'You can only see your own user.'),
+        //        new Get(uriTemplate: '/users/{id}/infos', normalizationContext: ['groups' => ['read-user', 'read-user-as-admin']], security: 'is_granted("ROLE_ADMIN")'),
+        new Post(denormalizationContext: ['groups' => ['create-user']]),
+        new Patch(denormalizationContext: ['groups' => ['update-user']], securityPostDenormalize: 'is_granted("ROLE_ADMIN") or object == user', securityPostDenormalizeMessage: 'You can only edit your own user.' ),
+    ],
+    normalizationContext: ['groups' => ['read-user', 'read-user-mutation']],
 )]
+#[UniqueEntity(['email'])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
 
@@ -30,6 +44,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Assert\Email()]
+    #[Groups(['read-user-as-admin', 'create-user'])]
     #[ORM\Column(length: 180, unique: true)]
     private ?string $email = null;
 
@@ -42,15 +58,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $password = null;
 
+    #[Groups(['create-user', 'read-user', 'update-user'])]
     #[ORM\Column(length: 255)]
     private ?string $firstName = null;
 
+    #[Groups(['create-user', 'read-user', 'update-user'])]
     #[ORM\Column(length: 255)]
     private ?string $lastName = null;
 
+    #[Groups(['create-user', 'update-user'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $plainPassword = null;
 
+    #[Groups(['create-user'])]
     #[ORM\Column]
     private ?bool $isVerified = null;
 
@@ -138,7 +158,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function eraseCredentials(): void
     {
         // If you store any temporary, sensitive data on the user, clear it here
-        // $this->plainPassword = null;
+        $this->plainPassword = null;
     }
 
     public function getFirstName(): ?string

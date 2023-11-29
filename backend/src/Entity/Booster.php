@@ -16,7 +16,7 @@ class Booster extends User
     private Collection $schedule;
 
     #[ORM\ManyToOne(inversedBy: 'boosters')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     private ?Team $team = null;
 
     #[ORM\OneToMany(mappedBy: 'booster', targetEntity: Booking::class)]
