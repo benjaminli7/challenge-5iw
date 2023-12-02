@@ -1,14 +1,17 @@
 import { Outlet } from "react-router-dom";
 import Navbar from "./components/layout/Navbar";
 import Footer from "./components/layout/Footer";
+import { Box, CssBaseline, Toolbar } from "@mui/material";
 
 function Root() {
   return (
     <>
+      <CssBaseline />
       <Navbar />
-      <div className="container mx-auto">
+      <Box className="container" component="main" sx={{ p: 3 }}>
+        <Toolbar />
         <Outlet />
-      </div>
+      </Box>
       <Footer />
     </>
   );

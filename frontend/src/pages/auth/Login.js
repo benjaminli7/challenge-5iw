@@ -1,79 +1,138 @@
-import React from 'react'
-import { Link } from 'react-router-dom';
-function Login() {
-  return (
-    <section>
-      <div className="py-10 mx-5">
-        <div className="mx-auto max-w-xl bg-[#f2f2f7] px-5 py-12 text-center md:px-10">
-          <h2 className="text-3xl font-bold md:text-5xl">Login</h2>
-          <p className="mx-auto mb-5 mt-4 max-w-xl text-[#647084] md:mb-8">
-            Lorem ipsum dolor sit amet consectetur adipiscing elit ut
-            aliquam,purus sit amet luctus magna fringilla urna
-          </p>
+import { httpPost } from "@/services/api";
+import ENDPOINTS from "@/services/endpoints";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import { Alert } from "@mui/material";
+import Avatar from "@mui/material/Avatar";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Container from "@mui/material/Container";
+import Grid from "@mui/material/Grid";
+import Link from "@mui/material/Link";
+import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { Link as RouterLink } from "react-router-dom";
+import { useSignIn } from "react-auth-kit";
 
-          <form
-            className="max-w-sm pb-4 mx-auto mb-4"
-            name="wf-form-password"
-            method="get"
+import { Navigate } from "react-router-dom";
+import { useAuthUser } from "react-auth-kit";
+
+export default function Login() {
+  const [errorLogin, setErrorLogin] = useState(null);
+  const signIn = useSignIn();
+  const auth = useAuthUser();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm();
+
+
+
+  const onSubmit = async (data) => {
+    try {
+      const response = await httpPost(`${ENDPOINTS.users.login}`, data);
+      signIn({
+        token: response.data.token,
+        expiresIn: 3600,
+        tokenType: "Bearer",
+        authState: {
+          email: data.email
+        }
+      })
+    } catch (error) {
+      console.log(error);
+      setErrorLogin(error.response.data.message);
+    }
+  };
+
+  return (
+    <Container component="main" maxWidth="xs">
+      {auth() && <Navigate to="/" />}
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+          <LockOutlinedIcon />
+        </Avatar>
+        <Typography component="h1" variant="h5">
+          Sign in
+        </Typography>
+        <Box
+          component="form"
+          onSubmit={handleSubmit(onSubmit)}
+          noValidate
+          sx={{ mt: 1 }}
+        >
+          <TextField
+            {...register("email", {
+              required: "Email is required",
+              pattern: {
+                value: /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/,
+                message: "Please enter a valid email",
+              },
+            })}
+            margin="normal"
+            required
+            fullWidth
+            id="email"
+            label="Email Address"
+            name="email"
+            autoComplete="email"
+            autoFocus
+            error={errors.email ? true : false}
+            helperText={errors.email && errors.email.message}
+          />
+          <TextField
+            {...register("password", {
+              required: "Password is required",
+            })}
+            margin="normal"
+            required
+            fullWidth
+            name="password"
+            label="Password"
+            type="password"
+            id="password"
+            autoComplete="current-password"
+            error={errors.password ? true : false}
+            helperText={errors.password && errors.password.message}
+          />
+          <Alert
+            severity="error"
+            sx={{ display: errorLogin ? "flex" : "none", mt: 2 }}
           >
-            <div className="relative">
-              <img
-                alt=""
-                src="https://assets.website-files.com/6357722e2a5f19121d37f84d/6357722e2a5f190b7e37f878_EnvelopeSimple.svg"
-                className="absolute bottom-0 left-[5%] right-auto top-[26%] inline-block"
-              />
-              <input
-                type="email"
-                className="mb-4 block h-9 w-full border border-black bg-white px-3 py-6 pl-14 text-sm text-[#333333]"
-                maxlength="256"
-                name="name"
-                placeholder="Email Address"
-                required=""
-              />
-            </div>
-            <div className="relative pb-2 mb-4">
-              <img
-                alt=""
-                src="https://assets.website-files.com/6357722e2a5f19121d37f84d/6357722e2a5f19601037f879_Lock-2.svg"
-                className="absolute bottom-0 left-[5%] right-auto top-[26%] inline-block"
-              />
-              <input
-                type="password"
-                className="mb-4 block h-9 w-full border border-black bg-white px-3 py-6 pl-14 text-sm text-[#333333]"
-                placeholder="Password"
-                required=""
-              />
-            </div>
-            <Link
-              to="/"
-              className="flex max-w-full grid-cols-2 flex-row items-center justify-center bg-[#276ef1] px-8 py-4 text-center font-semibold text-white transition [box-shadow:rgb(171,_196,_245)_-8px_8px] hover:[box-shadow:rgb(171,_196,_245)_0px_0px]"
-            >
-                <p className="mr-6 font-bold">Join Flowspark</p>
-                <div className="flex-none w-4 h-4">
-                  <svg
-                    fill="currentColor"
-                    viewBox="0 0 20 21"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <title>Arrow Right</title>
-                    <polygon points="16.172 9 10.101 2.929 11.515 1.515 20 10 19.293 10.707 11.515 18.485 10.101 17.071 16.172 11 0 11 0 9"></polygon>
-                  </svg>
-                </div>
-            </Link>
-          </form>
-          <p className="text-sm text-[#636262]">
-            Don't have an account?{" "}
-            <Link
-              to="/signup"
-              className="font-[Montserrat,_sans-serif] text-sm font-bold text-black"
-            >
-              Sign up now
-            </Link>
-          </p>
-        </div>
-      </div>
-    </section>
+            {errorLogin}
+          </Alert>
+          <Button
+            disabled={isSubmitting}
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 2 }}
+          >
+            Sign In
+          </Button>
+          <Grid container>
+            <Grid item xs>
+              <Link href="#" variant="body2">
+                Forgot password?
+              </Link>
+            </Grid>
+            <Grid item>
+              <Link component={RouterLink} to="/signup" variant="body2">
+                {"Don't have an account? Sign Up"}
+              </Link>
+            </Grid>
+          </Grid>
+        </Box>
+      </Box>
+    </Container>
   );
 }
-
-export default Login

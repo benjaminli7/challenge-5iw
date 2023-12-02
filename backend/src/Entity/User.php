@@ -70,8 +70,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $plainPassword = null;
 
-    #[Groups(['create-user'])]
-    #[ORM\Column]
+    #[ORM\Column(type: 'boolean', options: ['default' => false], nullable: true)]
     private ?bool $isVerified = null;
 
     #[ORM\Column(length: 255, nullable: true)]
