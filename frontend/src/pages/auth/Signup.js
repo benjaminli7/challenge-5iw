@@ -1,102 +1,165 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
-function Signup() {
+import * as React from "react";
+import Avatar from "@mui/material/Avatar";
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
+import Link from "@mui/material/Link";
+import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import Typography from "@mui/material/Typography";
+import Container from "@mui/material/Container";
+import { Link as RouterLink } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { httpPost } from "@/services/api";
+import ENDPOINTS from "@/services/endpoints";
+
+export default function Signup() {
+
+  const { register, handleSubmit, formState: { errors, isSubmitting }, reset, getValues } = useForm();
+
+  const onSubmit = async (data) => {
+    try {
+      const response = await httpPost(`${ENDPOINTS.users.root}`, data)
+      console.log(response)
+      reset();
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+
   return (
-    <section>
-      <div className="py-10 mx-5">
-        <div className="mx-auto max-w-xl bg-[#f2f2f7] px-5 py-12 text-center md:px-10">
-          <h2 className="text-3xl font-bold md:text-5xl">Sign up</h2>
-          <p className="mx-auto mb-5 mt-4 max-w-xl text-[#647084] md:mb-8">
-            Lorem ipsum dolor sit amet consectetur adipiscing elit ut
-            aliquam,purus sit amet luctus magna fringilla urna
-          </p>
-          <Link
-            to="/"
-            className="mx-auto flex max-w-sm justify-center bg-[#276ef1] px-8 py-4 text-center font-semibold text-white transition [box-shadow:rgb(171,_196,_245)_-8px_8px] hover:[box-shadow:rgb(171,_196,_245)_0px_0px]"
-          >
-            <img
-              src="https://assets.website-files.com/6357722e2a5f19121d37f84d/6357722e2a5f19d23637f876_GoogleLogo.svg"
-              alt=""
-              className="mr-4"
-            />
-            <p className="font-bold">Sign up with Google</p>
-          </Link>
-          <div className="flex justify-around max-w-sm mx-auto mb-14 mt-14">
-            <img
-              src="https://assets.website-files.com/6357722e2a5f19121d37f84d/6358f3d7490d1b3d86cf9442_Line%203.svg"
-              alt=""
-              className="inline-block"
-            />
-            <p className="text-sm text-[#647084]">or sign up with email</p>
-            <img
-              src="https://assets.website-files.com/6357722e2a5f19121d37f84d/6358f3d7490d1b3d86cf9442_Line%203.svg"
-              alt=""
-              className="inline-block"
-            />
-          </div>
-          <form
-            className="max-w-sm pb-4 mx-auto mb-4"
-            name="wf-form-password"
-            method="get"
-          >
-            <div className="relative">
-              <img
-                alt=""
-                src="https://assets.website-files.com/6357722e2a5f19121d37f84d/6357722e2a5f190b7e37f878_EnvelopeSimple.svg"
-                className="absolute bottom-0 left-[5%] right-auto top-[26%] inline-block"
+    <Container component="main" maxWidth="xs">
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+          <LockOutlinedIcon />
+        </Avatar>
+        <Typography component="h1" variant="h5">
+          Sign up
+        </Typography>
+        <Box
+          component="form"
+          noValidate
+          onSubmit={handleSubmit(onSubmit)}
+          sx={{ mt: 3 }}
+        >
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                {...register("firstName", {
+                  required: "First name is required",
+                })}
+                autoComplete="given-name"
+                name="firstName"
+                required
+                fullWidth
+                id="firstName"
+                label="First Name"
+                autoFocus
+                error={errors.firstName ? true : false}
+                helperText={errors.firstName && errors.firstName.message}
               />
-              <input
-                type="email"
-                className="mb-4 block h-9 w-full border border-black bg-white px-3 py-6 pl-14 text-sm text-[#333333]"
-                maxlength="256"
-                name="name"
-                placeholder="Email Address"
-                required=""
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                {...register("lastName", {
+                  required: "Last name is required",
+                })}
+                required
+                fullWidth
+                id="lastName"
+                label="Last Name"
+                name="lastName"
+                autoComplete="family-name"
               />
-            </div>
-            <div className="relative pb-2 mb-4">
-              <img
-                alt=""
-                src="https://assets.website-files.com/6357722e2a5f19121d37f84d/6357722e2a5f19601037f879_Lock-2.svg"
-                className="absolute bottom-0 left-[5%] right-auto top-[26%] inline-block"
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                {...register("email", {
+                  required: "Email is required",
+                  pattern: {
+                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                    message: "Invalid email address",
+                  },
+                })}
+                required
+                fullWidth
+                id="email"
+                label="Email Address"
+                name="email"
+                autoComplete="email"
+                error={errors.email ? true : false}
+                helperText={errors.email && errors.email.message}
               />
-              <input
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                {...register("plainPassword", {
+                  required: "Password is required",
+                  minLength: {
+                    value: 8,
+                    message: "Password must be at least 8 characters",
+                  },
+                })}
+                required
+                fullWidth
+                name="plainPassword"
+                label="Password"
                 type="password"
-                className="mb-4 block h-9 w-full border border-black bg-white px-3 py-6 pl-14 text-sm text-[#333333]"
-                placeholder="Password (min 8 characters)"
-                required=""
+                id="plainPassword"
+                autoComplete="new-password"
+                error={errors.password ? true : false}
+                helperText={errors.password && errors.password.message}
               />
-            </div>
-            <Link
-              to="/"
-              className="flex max-w-full grid-cols-2 flex-row items-center justify-center bg-[#276ef1] px-8 py-4 text-center font-semibold text-white transition [box-shadow:rgb(171,_196,_245)_-8px_8px] hover:[box-shadow:rgb(171,_196,_245)_0px_0px]"
-            >
-              <p className="mr-6 font-bold">Join Flowspark</p>
-              <div className="flex-none w-4 h-4">
-                <svg
-                  fill="currentColor"
-                  viewBox="0 0 20 21"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <title>Arrow Right</title>
-                  <polygon points="16.172 9 10.101 2.929 11.515 1.515 20 10 19.293 10.707 11.515 18.485 10.101 17.071 16.172 11 0 11 0 9"></polygon>
-                </svg>
-              </div>
-            </Link>
-          </form>
-          <p className="text-sm text-[#636262]">
-            Already have an account?{" "}
-            <Link
-              to="/login"
-              className="font-[Montserrat,_sans-serif] text-sm font-bold text-black"
-            >
-                Login now
-            </Link>
-          </p>
-        </div>
-      </div>
-    </section>
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                {...register("confirmPassword", {
+                  required: "Confirm password is required",
+                  minLength: {
+                    value: 8,
+                    message: "Password must be at least 8 characters",
+                  },
+                  validate: (value) => value === getValues("plainPassword") || "The passwords do not match",
+                })}
+                required
+                fullWidth
+                name="confirmPassword"
+                label="Confirm password"
+                type="password"
+                id="confirmPassword"
+                autoComplete="new-password"
+                error={errors.confirmPassword ? true : false}
+                helperText={
+                  errors.confirmPassword && errors.confirmPassword.message
+                }
+              />
+            </Grid>
+          </Grid>
+          <Button
+            disabled={isSubmitting}
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 2 }}
+          >
+            Sign Up
+          </Button>
+          <Grid container justifyContent="flex-end">
+            <Grid item>
+              <Link component={RouterLink} to="/login" variant="body2">
+                Already have an account? Sign in
+              </Link>
+            </Grid>
+          </Grid>
+        </Box>
+      </Box>
+    </Container>
   );
 }
-
-export default Signup
