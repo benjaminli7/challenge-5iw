@@ -1,5 +1,6 @@
 import React from 'react'
 import { DataGrid } from "@mui/x-data-grid";
+import { CircularProgress } from '@mui/material';
 
 const columns = [
   {
@@ -39,9 +40,10 @@ const columns = [
   // },
 ];
 
-function AdminUsersTable({ error, loading, users }) {
+function AdminUsersTable({ error, users }) {
   if(error) return <div>Erreur de chargement des utilisateurs</div>;
-  return <DataGrid loading={loading} columns={columns} rows={users} checkboxSelection />;
+  if(!users) return <CircularProgress />
+  return <DataGrid columns={columns} rows={users} checkboxSelection />;
 }
 
 export default AdminUsersTable

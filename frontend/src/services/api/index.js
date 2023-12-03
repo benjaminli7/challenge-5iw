@@ -35,7 +35,7 @@ function makeHeaders() {
   }
 }
 
-function makeConfig() {
+export function makeConfig() {
   return {
     headers: makeHeaders(),
   };
