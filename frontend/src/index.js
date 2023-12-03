@@ -2,6 +2,7 @@ import { ThemeProvider } from "@emotion/react";
 import React from "react";
 import { AuthProvider } from "react-auth-kit";
 import ReactDOM from "react-dom/client";
+import { QueryClient, QueryClientProvider } from "react-query";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Page404 from "./components/layout/404";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -15,6 +16,7 @@ import ProfileView from "./pages/Profile/ProfileView";
 import Root from "./Root";
 import RootAdmin from "./RootAdmin";
 import theme from "./theme/theme";
+const queryClient = new QueryClient();
 
 const router = createBrowserRouter([
   {
@@ -59,7 +61,7 @@ const router = createBrowserRouter([
       },
       {
         path: "users",
-        element: <AdminUsersView />
+        element: <AdminUsersView />,
       },
     ],
   },
@@ -68,15 +70,17 @@ const router = createBrowserRouter([
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <AuthProvider
-      authType={"cookie"}
-      authName={"_auth"}
-      cookieDomain={window.location.hostname}
-      cookieSecure={false}
-    >
-      <ThemeProvider theme={theme}>
-        <RouterProvider router={router} />
-      </ThemeProvider>
-    </AuthProvider>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider
+        authType={"cookie"}
+        authName={"_auth"}
+        cookieDomain={window.location.hostname}
+        cookieSecure={false}
+      >
+        <ThemeProvider theme={theme}>
+          <RouterProvider router={router} />
+        </ThemeProvider>
+      </AuthProvider>
+    </QueryClientProvider>
   </React.StrictMode>
 );
