@@ -1,6 +1,5 @@
-import React from 'react'
+import { CircularProgress, Grid } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import { CircularProgress } from '@mui/material';
 
 const columns = [
   {
@@ -28,22 +27,17 @@ const columns = [
     headerName: "Roles",
     flex: 1,
   },
-  // {
-  //   field: "createdAt",
-  //   headerName: "Created At",
-  //   width: 200,
-  // },
-  // {
-  //   field: "updatedAt",
-  //   headerName: "Updated At",
-  //   width: 200,
-  // },
 ];
 
 function AdminUsersTable({ error, users }) {
-  if(error) return <div>Erreur de chargement des utilisateurs</div>;
-  if(!users) return <CircularProgress />
+  if (error) return <div>{error}</div>;
+  if (!users)
+    return (
+      <Grid container justifyContent={"center"}>
+        <CircularProgress />
+      </Grid>
+    );
   return <DataGrid columns={columns} rows={users} checkboxSelection />;
 }
 
-export default AdminUsersTable
+export default AdminUsersTable;

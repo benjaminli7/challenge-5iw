@@ -1,0 +1,6 @@
+branches:
+  only:
+    - main
+
+notifications:
+  email: li.benjamin75@gmail.com
