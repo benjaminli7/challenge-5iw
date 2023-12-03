@@ -1,11 +1,30 @@
 import axios from "axios";
-import { LocalStorage } from "../localStorage";
+import Cookies from "js-cookie";
+import { jwtDecode } from "jwt-decode";
 
-export const TOKEN = "token.auth";
+export const getJwtToken = () => {
+  return Cookies.get("_auth");
+};
+
+export const decodeJwtToken = (token) => {
+  try {
+    const decodedToken = jwtDecode(token);
+    return decodedToken;
+  } catch (error) {
+    console.error("Error decoding JWT token:", error);
+    return null;
+  }
+};
+
+export const isAdmin = () => {
+  const token = getJwtToken();
+  const decodedToken = decodeJwtToken(token);
+  return decodedToken?.roles?.includes("ROLE_ADMIN");
+}
 
 export function retrieveToken() {
-  const token = LocalStorage.getItem(TOKEN);
-  return token ? token.access : null;
+  const token = getJwtToken();
+  return token ? token : null;
 }
 
 function makeHeaders() {

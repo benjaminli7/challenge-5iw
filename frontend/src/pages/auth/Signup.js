@@ -18,7 +18,6 @@ export default function Signup() {
   const { register, handleSubmit, formState: { errors, isSubmitting }, reset, getValues } = useForm();
 
   const onSubmit = async (data) => {
-    console.log(data);
     try {
       const response = await httpPost(`${ENDPOINTS.users.root}`, data)
       console.log(response)

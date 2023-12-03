@@ -1,27 +1,29 @@
 import { httpPost } from "@/services/api";
 import ENDPOINTS from "@/services/endpoints";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import { Alert } from "@mui/material";
-import Avatar from "@mui/material/Avatar";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Container from "@mui/material/Container";
-import Grid from "@mui/material/Grid";
-import Link from "@mui/material/Link";
-import TextField from "@mui/material/TextField";
-import Typography from "@mui/material/Typography";
+import {
+  Alert,
+  Avatar,
+  Box,
+  Button,
+  Container,
+  Grid,
+  Link,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { useState } from "react";
+import { useIsAuthenticated, useSignIn } from "react-auth-kit";
 import { useForm } from "react-hook-form";
-import { Link as RouterLink } from "react-router-dom";
-import { useSignIn } from "react-auth-kit";
-
-import { Navigate } from "react-router-dom";
-import { useAuthUser } from "react-auth-kit";
+import { Navigate, Link as RouterLink, useLocation } from "react-router-dom";
+import { isAdmin } from "@/services/api";
 
 export default function Login() {
   const [errorLogin, setErrorLogin] = useState(null);
   const signIn = useSignIn();
-  const auth = useAuthUser();
+  const isAuthenticated = useIsAuthenticated();
+  const location = useLocation();
+  const from = location.state?.from || isAdmin() ? "/admin" : "/";
 
   const {
     register,
@@ -29,7 +31,9 @@ export default function Login() {
     formState: { errors, isSubmitting },
   } = useForm();
 
-
+  if (isAuthenticated()) {
+    return <Navigate to={from} replace />;
+  }
 
   const onSubmit = async (data) => {
     try {
@@ -39,9 +43,9 @@ export default function Login() {
         expiresIn: 3600,
         tokenType: "Bearer",
         authState: {
-          email: data.email
-        }
-      })
+          user: response.data.user,
+        },
+      });
     } catch (error) {
       console.log(error);
       setErrorLogin(error.response.data.message);
@@ -50,7 +54,6 @@ export default function Login() {
 
   return (
     <Container component="main" maxWidth="xs">
-      {auth() && <Navigate to="/" />}
       <Box
         sx={{
           display: "flex",

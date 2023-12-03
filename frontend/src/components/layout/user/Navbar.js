@@ -11,18 +11,32 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import * as React from "react";
+import { useState } from "react";
+import { useIsAuthenticated, useSignOut } from "react-auth-kit";
 import { Link } from "react-router-dom";
-import { useAuthUser } from "react-auth-kit";
-import { useSignOut } from "react-auth-kit";
 
 const drawerWidth = 240;
-const navItems = ["Home", "About", "Contact"];
 
 export default function Navbar({ window }) {
-  const [mobileOpen, setMobileOpen] = React.useState(false);
-  const auth = useAuthUser();
+  const [mobileOpen, setMobileOpen] = useState(false);
   const signOut = useSignOut();
+  const isAuthenticated = useIsAuthenticated();
+  const globalNavItems = [
+    {
+      label: "Home",
+      path: "/",
+    },
+  ];
+  const authNavItems = [
+    {
+      label: "Profile",
+      path: "/profile",
+    },
+  ];
+  const navItems = isAuthenticated()
+    ? globalNavItems.concat(authNavItems)
+    : globalNavItems;
+
   const handleDrawerToggle = () => {
     setMobileOpen((prevState) => !prevState);
   };
@@ -30,16 +44,18 @@ export default function Navbar({ window }) {
   const drawer = (
     <Box onClick={handleDrawerToggle} sx={{ textAlign: "center" }}>
       <Typography variant="h6" sx={{ my: 2 }}>
-        MUI
+        Logo
       </Typography>
       <Divider />
       <List>
-        {navItems.map((item) => (
-          <ListItem key={item} disablePadding>
-            <ListItemButton sx={{ textAlign: "center" }}>
-              <ListItemText primary={item} />
-            </ListItemButton>
-          </ListItem>
+        {navItems.map((item, index) => (
+          <Link key={index} to={item.path}>
+            <ListItem key={index} disablePadding>
+              <ListItemButton sx={{ textAlign: "center" }}>
+                <ListItemText primary={item.label} />
+              </ListItemButton>
+            </ListItem>
+          </Link>
         ))}
       </List>
     </Box>
@@ -73,13 +89,20 @@ export default function Navbar({ window }) {
             Logo
           </Typography>
           <Box sx={{ display: { xs: "none", sm: "block" } }}>
-            {navItems.map((item) => (
-              <Button key={item} sx={{ color: "#fff" }}>
-                {item}
-              </Button>
+            {navItems.map((item, index) => (
+              <Link key={index} to={item.path}>
+                <Button key={index} sx={{ color: "#fff" }}>
+                  {item.label}
+                </Button>
+              </Link>
             ))}
-            {auth() ? (
-              <Button onClick={() => signOut()} variant="contained" color="error" sx={{ ml: 1 }}>
+            {isAuthenticated() ? (
+              <Button
+                onClick={() => signOut()}
+                variant="contained"
+                color="error"
+                sx={{ ml: 1 }}
+              >
                 Logout
               </Button>
             ) : (

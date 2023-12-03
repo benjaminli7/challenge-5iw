@@ -26,7 +26,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ApiResource(
     operations: [
         new GetCollection(normalizationContext: ['groups' => ['read-user']], security: 'is_granted("ROLE_ADMIN")', securityMessage: 'Only admins can see all users.'),
-        new Get(normalizationContext: ['groups' => ['read-user']],security: 'is_granted("ROLE_ADMIN") object == user', securityMessage: 'You can only see your own user.'),
+        new Get(normalizationContext: ['groups' => ['read-user']], security: 'is_granted("ROLE_ADMIN") object == user', securityMessage: 'You can only see your own user.'),
         //        new Get(uriTemplate: '/users/{id}/infos', normalizationContext: ['groups' => ['read-user', 'read-user-as-admin']], security: 'is_granted("ROLE_ADMIN")'),
         new Post(denormalizationContext: ['groups' => ['create-user']]),
         new Patch(denormalizationContext: ['groups' => ['update-user']], securityPostDenormalize: 'is_granted("ROLE_ADMIN") or object == user', securityPostDenormalizeMessage: 'You can only edit your own user.' ),
@@ -42,14 +42,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['read-user', 'update-user'])]
     private ?int $id = null;
 
     #[Assert\Email()]
-    #[Groups(['read-user-as-admin', 'create-user'])]
+    #[Groups(['create-user','read-user'])]
     #[ORM\Column(length: 180, unique: true)]
     private ?string $email = null;
 
     #[ORM\Column]
+    #[Groups(['read-user'])]
     private array $roles = [];
 
     /**
@@ -79,6 +81,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $resetToken = null;
 
+    #[Groups(['read-user'])]
     #[ORM\Column(length: 16, nullable: true)]
     private ?string $phone = null;
 

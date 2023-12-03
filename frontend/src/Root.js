@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
-import Navbar from "./components/layout/Navbar";
-import Footer from "./components/layout/Footer";
+import Navbar from "./components/layout/user/Navbar";
+import Footer from "./components/layout/user/Footer";
 import { Box, CssBaseline, Toolbar } from "@mui/material";
 
 function Root() {

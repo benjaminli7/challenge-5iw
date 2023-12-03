@@ -1,42 +1,71 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
+import { ThemeProvider } from "@emotion/react";
+import React from "react";
+import { AuthProvider } from "react-auth-kit";
+import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Root from './Root';
-import Page404 from './components/layout/404';
-import Home from './pages/Home/Home';
-import Signup from './pages/auth/Signup';
-import Login from './pages/auth/Login';
-import { ThemeProvider } from '@emotion/react';
-import theme from './theme/theme';
-import { AuthProvider } from 'react-auth-kit';
+import Page404 from "./components/layout/404";
+import ProtectedRoute from "./components/ProtectedRoute";
+import "./index.css";
+import AdminDashboardView from "./pages/Admin/AdminDashboardView";
+import AdminUsersView from "./pages/Admin/AdminUsersView";
+import Login from "./pages/auth/Login";
+import Signup from "./pages/auth/Signup";
+import Home from "./pages/Home/Home";
+import ProfileView from "./pages/Profile/ProfileView";
+import Root from "./Root";
+import RootAdmin from "./RootAdmin";
+import theme from "./theme/theme";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Root />,
+    errorElement: <Page404 />,
     children: [
       {
-        path: "/",
+        path: "",
         element: <Home />,
       },
       {
-        path: "/signup",
+        path: "signup",
         element: <Signup />,
       },
       {
-        path: "/login",
+        path: "login",
         element: <Login />,
+      },
+      {
+        path: "profile",
+        element: (
+          <ProtectedRoute>
+            <ProfileView />
+          </ProtectedRoute>
+        ),
       },
     ],
   },
   {
-    path: "*",
-    element: <Page404 />,
+    path: "/admin",
+    element: (
+      <ProtectedRoute>
+        <RootAdmin />
+      </ProtectedRoute>
+    ),
+    errorElement: <Page404 />,
+    children: [
+      {
+        path: "",
+        element: <AdminDashboardView />,
+      },
+      {
+        path: "users",
+        element: <AdminUsersView />
+      },
+    ],
   },
 ]);
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <AuthProvider
