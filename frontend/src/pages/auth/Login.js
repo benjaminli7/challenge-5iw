@@ -1,4 +1,4 @@
-import { httpPost } from "@/services/api";
+import { httpPost, isAdmin } from "@/services/api";
 import ENDPOINTS from "@/services/endpoints";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import {
@@ -16,14 +16,14 @@ import { useState } from "react";
 import { useIsAuthenticated, useSignIn } from "react-auth-kit";
 import { useForm } from "react-hook-form";
 import { Navigate, Link as RouterLink, useLocation } from "react-router-dom";
-import { isAdmin } from "@/services/api";
 
 export default function Login() {
   const [errorLogin, setErrorLogin] = useState(null);
+  const [isFirstConnection, setIsFirstConnection] = useState(false);
   const signIn = useSignIn();
   const isAuthenticated = useIsAuthenticated();
   const location = useLocation();
-  const from = location.state?.from || isAdmin() ? "/admin" : "/";
+  let from = location.state?.from || isAdmin() ? "/admin" : "/";
 
   const {
     register,
@@ -31,8 +31,11 @@ export default function Login() {
     formState: { errors, isSubmitting },
   } = useForm();
 
+  if (isFirstConnection) {
+    return <Navigate to="/first-connection" replace />;
+  }
   if (isAuthenticated()) {
-    return <Navigate to={from} replace state={"test"}/>;
+    return <Navigate to={from} replace state={"test"} />;
   }
 
   const onSubmit = async (data) => {
@@ -46,6 +49,7 @@ export default function Login() {
           user: response.data.user,
         },
       });
+      setIsFirstConnection(response.data?.user.isFirstConnection);
     } catch (error) {
       console.log(error);
       setErrorLogin(error.response.data.message);

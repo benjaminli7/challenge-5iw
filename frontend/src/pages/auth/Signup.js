@@ -19,8 +19,10 @@ export default function Signup() {
 
   const onSubmit = async (data) => {
     try {
-      const response = await httpPost(`${ENDPOINTS.users.root}`, data)
-      console.log(response)
+      await httpPost(`${ENDPOINTS.users.root}`, {
+        ...data,
+        isFirstConnection: true,
+      })
       reset();
     } catch (error) {
       console.log(error);
