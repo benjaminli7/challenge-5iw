@@ -4,6 +4,7 @@ import Footer from "./components/layout/user/Footer";
 import { Box, CssBaseline, Toolbar } from "@mui/material";
 
 function Root() {
+
   return (
     <>
       <CssBaseline />

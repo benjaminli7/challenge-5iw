@@ -32,7 +32,7 @@ export default function Login() {
   } = useForm();
 
   if (isAuthenticated()) {
-    return <Navigate to={from} replace />;
+    return <Navigate to={from} replace state={"test"}/>;
   }
 
   const onSubmit = async (data) => {
