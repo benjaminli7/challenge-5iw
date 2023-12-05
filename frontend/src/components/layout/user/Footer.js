@@ -11,7 +11,7 @@ function Footer() {
         backgroundImage: `url(${backgroundImage})`,
       }}
     >
-      <div className="w-full px-5 py-16 mx-auto max-w-7xl md:px-10 md:py-24 lg:py-32">
+      <div className="w-full px-5 py-8 mx-auto max-w-7xl md:px-10 md:py-12 lg:py-16">
         <div className="flex flex-col items-center">
           <Link to="/" className="inline-block max-w-full mb-8">
             <img
