@@ -40,6 +40,9 @@ function ProfileView() {
                         <Typography variant="body1"><b>First Name:</b> {firstName}</Typography>
                         <Typography variant="body1"><b>Last Name:</b> {lastName}</Typography>
                         <Typography variant="body1"><b>Phone:</b> {phone ?? "Not defined"}</Typography>
+                    </CardContent>
+                    <Box sx={{ display: 'flex', justifyContent: 'center', pb: 2 }}>
+                        <Button component={RouterLink} to="/profile/edit" variant="contained" size="small">Edit Profile</Button>
                     </Box>
                 </Card>
             </Box>
