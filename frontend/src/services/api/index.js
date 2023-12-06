@@ -60,13 +60,13 @@ export function httpPost(url, body) {
 
 export function httpPut(url, body) {
   return axios.put(
-    makeUrl(url),
-    {
-      ...body,
-    },
-    {
-      ...makeConfig(),
-    }
+      makeUrl(url),
+      {
+        ...body,
+      },
+      {
+        ...makeConfig(),
+      }
   );
 }
 
