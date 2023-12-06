@@ -1,8 +1,8 @@
-swiftmailer:
-    transport: smtp
-    host: smtp-relay.sendinblue.com
-    port: 587
-    encryption: tls
-    auth_mode: login
-    username: '%env(SENDINBLUE_USERNAME)%'
-    password: '%env(SENDINBLUE_PASSWORD)%'
+# swiftmailer:
+#     transport: smtp
+#     host: smtp-relay.sendinblue.com
+#     port: 587
+#     encryption: tls
+#     auth_mode: login
+#     username: '%env(SENDINBLUE_USERNAME)%'
+#     password: '%env(SENDINBLUE_PASSWORD)%'
