@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuthUser, useAuthHeader } from 'react-auth-kit';
 import { httpPatch } from '@/services/api';
 import Cookies from 'js-cookie';
+
 import ENDPOINTS from '@/services/endpoints';
 import { Card, CardContent, Typography, TextField, Button, Container, Box } from '@mui/material';
 
@@ -51,9 +52,6 @@ function EditProfile() {
             setError("User ID is undefined.");
         }
     };
-
-
-
 
 
 
