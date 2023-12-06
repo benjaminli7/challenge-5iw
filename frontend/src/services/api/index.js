@@ -92,13 +92,14 @@ export function httpPut(url, body) {
 
 export function httpPatch(url, body) {
   return axios.patch(
-    makeUrl(url),
-    {
-      ...body,
-    },
-    {
-      ...makeConfig("patch"),
-    }
+      makeUrl(url),
+      JSON.stringify(body),
+      {
+        headers: {
+          ...makeHeaders(),
+          'Content-Type': 'application/merge-patch+json'
+        }
+      }
   );
 }
 

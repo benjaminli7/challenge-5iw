@@ -13,6 +13,7 @@ import Login from "./pages/auth/Login";
 import Signup from "./pages/auth/Signup";
 import Home from "./pages/Home/Home";
 import ProfileView from "./pages/Profile/ProfileView";
+import EditProfile from "@/pages/Profile/EditProfile";
 import Root from "./Root";
 import RootAdmin from "./RootAdmin";
 import theme from "./theme/theme";
@@ -49,6 +50,10 @@ const router = createBrowserRouter([
             <ProfileView />
           </ProtectedRoute>
         ),
+      },
+      {
+        path: "/profile/edit",
+        element: <EditProfile />,
       },
     ],
   },
