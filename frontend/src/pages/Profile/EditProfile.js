@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthUser, useAuthHeader } from 'react-auth-kit';
 import { httpPatch } from '@/services/api';
+import Cookies from 'js-cookie';
 import ENDPOINTS from '@/services/endpoints';
 import { Card, CardContent, Typography, TextField, Button, Container, Box } from '@mui/material';
 
@@ -26,29 +27,34 @@ function EditProfile() {
                 const response = await httpPatch(
                     ENDPOINTS.users.userId(userId),
                     formState,
-                    { headers: { Authorization: authHeader() } }
+                    { headers: { Authorization: authHeader(), 'Content-Type': 'application/merge-patch+json' } }
                 );
 
-                // Update auth state with new user data
-                auth().signIn({
-                    token: auth().authState.token, // keep the existing token
-                    expiresIn: auth().authState.expiresIn,
-                    tokenType: auth().authState.tokenType,
-                    authState: { user: { ...auth().user, ...formState } },
-                });
+                const updatedUserData = response.data;
 
-                // Navigate to the ProfileView page
-                navigate('/profile-view');
+                let authCookie = Cookies.get('_auth_state');
+                console.log(authCookie);
+                if (authCookie) {
+                    authCookie = JSON.parse(authCookie);
+
+                    authCookie.user = { ...authCookie.user, ...updatedUserData };
+
+                    Cookies.set('_auth_state', JSON.stringify(authCookie));
+                }
+
+                navigate('/profile');
 
             } catch (error) {
-                // Update error state to display the error message
                 setError(error?.response?.data?.message || "An unknown error occurred.");
             }
         } else {
-            // Handle undefined user ID error
             setError("User ID is undefined.");
         }
     };
+
+
+
+
 
 
 
