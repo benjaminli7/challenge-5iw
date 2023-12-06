@@ -2,6 +2,14 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 
+const getBaseUrl = () => {
+  return process.env.NODE_ENV === "development"
+    ? "http://localhost:8888"
+    : "https://api.game-elevate.ovh";
+};
+
+const REACT_APP_BASE_URL = getBaseUrl();
+
 export const getJwtToken = () => {
   return Cookies.get("_auth");
 };
@@ -43,7 +51,7 @@ export function makeConfig() {
 }
 
 export function makeUrl(url) {
-  return `${process.env.REACT_APP_API_URL}/${url}`;
+  return `${REACT_APP_BASE_URL}/${url}`;
 }
 
 export function httpGet(url) {
