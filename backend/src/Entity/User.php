@@ -30,6 +30,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
         //        new Get(uriTemplate: '/users/{id}/infos', normalizationContext: ['groups' => ['read-user', 'read-user-as-admin']], security: 'is_granted("ROLE_ADMIN")'),
         new Post(denormalizationContext: ['groups' => ['create-user']]),
         new Patch(denormalizationContext: ['groups' => ['update-user']], securityPostDenormalize: 'is_granted("ROLE_ADMIN") or object == user', securityPostDenormalizeMessage: 'You can only edit your own user.' ),
+        new Patch(uriTemplate: '/users/{id}/firstConnection', denormalizationContext: ['groups' => ['update-user-connection']], security: 'is_granted("ROLE_ADMIN") or object == user', securityMessage: 'You can only edit your own user.')
     ],
     normalizationContext: ['groups' => ['read-user', 'read-user-mutation']],
 )]
@@ -87,6 +88,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\OneToMany(mappedBy: 'manager', targetEntity: Team::class)]
     private Collection $teams;
+
+    #[Groups(['create-user', 'read-user', 'update-user', 'update-user-connection'])]
+    #[ORM\Column(options: ['default' => true])]
+    private ?bool $isFirstConnection = null;
 
     public function __construct()
     {
@@ -273,6 +278,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $team->setManager(null);
             }
         }
+
+        return $this;
+    }
+
+    public function isIsFirstConnection(): ?bool
+    {
+        return $this->isFirstConnection;
+    }
+
+    public function setIsFirstConnection(bool $isFirstConnection): static
+    {
+        $this->isFirstConnection = $isFirstConnection;
 
         return $this;
     }

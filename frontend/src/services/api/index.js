@@ -18,9 +18,10 @@ export const decodeJwtToken = (token) => {
 
 export const isAdmin = () => {
   const token = getJwtToken();
+  if (!token) return false;
   const decodedToken = decodeJwtToken(token);
   return decodedToken?.roles?.includes("ROLE_ADMIN");
-}
+};
 
 export function retrieveToken() {
   const token = getJwtToken();
@@ -28,7 +29,7 @@ export function retrieveToken() {
 }
 
 function makeHeaders() {
-  if(retrieveToken() !== null) {
+  if (retrieveToken() !== null) {
     return {
       Authorization: `Bearer ${retrieveToken()}`,
     };

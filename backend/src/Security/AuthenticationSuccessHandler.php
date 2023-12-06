@@ -22,6 +22,7 @@ class AuthenticationSuccessHandler
             'firstName' => $user->getFirstName(),
             'lastName' => $user->getLastName(),
             'phone' => $user->getPhone(),
+            'isFirstConnection' => $user->isIsFirstConnection(),
         ];
 
         $event->setData($data);

@@ -4,7 +4,7 @@ import { makeUrl } from "@/services/api";
 import { makeConfig } from "@/services/api";
 
 export default function useFetch(name, url) {
-  return useQuery("users", async () => {
+  return useQuery(name, async () => {
     const { data } = await axios.get(
       makeUrl(url),
       makeConfig()

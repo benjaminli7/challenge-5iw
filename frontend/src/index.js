@@ -16,6 +16,7 @@ import ProfileView from "./pages/Profile/ProfileView";
 import Root from "./Root";
 import RootAdmin from "./RootAdmin";
 import theme from "./theme/theme";
+import FirstConnection from "./pages/first-connection/FirstConnection";
 const queryClient = new QueryClient();
 
 const router = createBrowserRouter([
@@ -35,6 +36,10 @@ const router = createBrowserRouter([
       {
         path: "login",
         element: <Login />,
+      },
+      {
+        path: "first-connection",
+        element: <FirstConnection />
       },
       {
         path: "profile",
