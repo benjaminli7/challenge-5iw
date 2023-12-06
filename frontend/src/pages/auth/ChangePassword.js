@@ -7,38 +7,27 @@ import {
   Box,
   Button,
   Container,
-  Grid,
-  Link,
   TextField,
-  Typography,
 } from "@mui/material";
 import { useState } from "react";
-import { useIsAuthenticated, useSignIn } from "react-auth-kit";
 import { useForm } from "react-hook-form";
-import { Navigate, Link as RouterLink, useLocation } from "react-router-dom";
-import { isAdmin } from "@/services/api";
 
-export default function Login() {
-  const [errorLogin, setErrorLogin] = useState(null);
-  const signIn = useSignIn();
-  const isAuthenticated = useIsAuthenticated();
-  const location = useLocation();
-  const from = location.state?.from || isAdmin() ? "/admin" : "/";
+
+export default function ChangePassword () {
+  const [errorChangePassword, setErrorChangePassword] = useState(null);
+
 
   const {
-    register,
+    changePassword,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm();
 
-  if (isAuthenticated()) {
-    return <Navigate to={from} replace />;
-  }
 
   const onSubmit = async (data) => {
     try {
-      const response = await httpPost(`${ENDPOINTS.users.login}`, data);
-      signIn({
+      const response = await httpPost(`${ENDPOINTS.users.changePassword}`, data);
+      changePassword({
         token: response.data.token,
         expiresIn: 3600,
         tokenType: "Bearer",
@@ -48,7 +37,7 @@ export default function Login() {
       });
     } catch (error) {
       console.log(error);
-      setErrorLogin(error.response.data.message);
+      setErrorChangePassword(error.response.data.message);
     }
   };
 
@@ -64,36 +53,14 @@ export default function Login() {
         <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
           <LockOutlinedIcon />
         </Avatar>
-        <Typography component="h1" variant="h5">
-          Sign in
-        </Typography>
         <Box
           component="form"
           onSubmit={handleSubmit(onSubmit)}
           noValidate
           sx={{ mt: 1 }}
         >
-          <TextField
-            {...register("email", {
-              required: "Email is required",
-              pattern: {
-                value: /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/,
-                message: "Please enter a valid email",
-              },
-            })}
-            margin="normal"
-            required
-            fullWidth
-            id="email"
-            label="Email Address"
-            name="email"
-            autoComplete="email"
-            autoFocus
-            error={errors.email ? true : false}
-            helperText={errors.email && errors.email.message}
-          />
-          <TextField
-            {...register("password", {
+           <TextField
+            {...changePassword("password", {
               required: "Password is required",
             })}
             margin="normal"
@@ -107,11 +74,26 @@ export default function Login() {
             error={errors.password ? true : false}
             helperText={errors.password && errors.password.message}
           />
+          <TextField
+            {...changePassword("password", {
+              required: "Password is required",
+            })}
+            margin="normal"
+            required
+            fullWidth
+            name="passwordRetry"
+            label="Password again"
+            type="password"
+            id="passwordRetry"
+            autoComplete="current-password"
+            error={errors.password ? true : false}
+            helperText={errors.password && errors.password.message}
+          />
           <Alert
             severity="error"
-            sx={{ display: errorLogin ? "flex" : "none", mt: 2 }}
+            sx={{ display: errorChangePassword ? "flex" : "none", mt: 2 }}
           >
-            {errorLogin}
+            {errorChangePassword}
           </Alert>
           <Button
             disabled={isSubmitting}
@@ -122,18 +104,6 @@ export default function Login() {
           >
             Sign In
           </Button>
-          <Grid container>
-            <Grid item xs>
-              <Link component={RouterLink} to="/changePassword" variant="body2">
-                Forgot password?
-              </Link>
-            </Grid>
-            <Grid item>
-              <Link component={RouterLink} to="/signup" variant="body2">
-                {"Don't have an account? Sign Up"}
-              </Link>
-            </Grid>
-          </Grid>
         </Box>
       </Box>
     </Container>

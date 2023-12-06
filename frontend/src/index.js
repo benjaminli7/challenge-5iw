@@ -11,6 +11,7 @@ import AdminDashboardView from "./pages/Admin/AdminDashboardView";
 import AdminUsersView from "./pages/Admin/AdminUsersView";
 import Login from "./pages/auth/Login";
 import Signup from "./pages/auth/Signup";
+import ChangePassword from "./pages/auth/ChangePassword";
 import Home from "./pages/Home/Home";
 import ProfileView from "./pages/Profile/ProfileView";
 import Root from "./Root";
@@ -35,6 +36,10 @@ const router = createBrowserRouter([
       {
         path: "login",
         element: <Login />,
+      },
+      {
+        path: "changePassword",
+        element: <ChangePassword />,
       },
       {
         path: "profile",
