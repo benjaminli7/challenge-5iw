@@ -1,45 +1,31 @@
+import * as React from "react";
+import Avatar from "@mui/material/Avatar";
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
+import Link from "@mui/material/Link";
+import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import Typography from "@mui/material/Typography";
+import Container from "@mui/material/Container";
+import { Link as RouterLink } from "react-router-dom";
+import { useForm } from "react-hook-form";
 import { httpPost } from "@/services/api";
 import ENDPOINTS from "@/services/endpoints";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import {
-  Alert,
-  Avatar,
-  Box,
-  Button,
-  Container,
-  TextField,
-} from "@mui/material";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
 
+export default function ChangePassword() {
 
-export default function ChangePassword () {
-  const [errorChangePassword, setErrorChangePassword] = useState(null);
-
-
-  const {
-    changePassword,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm();
-
+  const { register, handleSubmit, formState: { errors, isSubmitting }, reset, getValues } = useForm();
 
   const onSubmit = async (data) => {
     try {
-      const response = await httpPost(`${ENDPOINTS.users.changePassword}`, data);
-      changePassword({
-        token: response.data.token,
-        expiresIn: 3600,
-        tokenType: "Bearer",
-        authState: {
-          user: response.data.user,
-        },
-      });
+      const response = await httpPost(`${ENDPOINTS.users.changePassword}`, data) // Adjust the endpoint
+      console.log(response)
+      reset();
     } catch (error) {
       console.log(error);
-      setErrorChangePassword(error.response.data.message);
     }
-  };
+  }
 
   return (
     <Container component="main" maxWidth="xs">
@@ -53,48 +39,60 @@ export default function ChangePassword () {
         <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
           <LockOutlinedIcon />
         </Avatar>
+        <Typography component="h1" variant="h5">
+          Change Password
+        </Typography>
         <Box
           component="form"
-          onSubmit={handleSubmit(onSubmit)}
           noValidate
-          sx={{ mt: 1 }}
+          onSubmit={handleSubmit(onSubmit)}
+          sx={{ mt: 3 }}
         >
-           <TextField
-            {...changePassword("password", {
-              required: "Password is required",
-            })}
-            margin="normal"
-            required
-            fullWidth
-            name="password"
-            label="Password"
-            type="password"
-            id="password"
-            autoComplete="current-password"
-            error={errors.password ? true : false}
-            helperText={errors.password && errors.password.message}
-          />
-          <TextField
-            {...changePassword("password", {
-              required: "Password is required",
-            })}
-            margin="normal"
-            required
-            fullWidth
-            name="passwordRetry"
-            label="Password again"
-            type="password"
-            id="passwordRetry"
-            autoComplete="current-password"
-            error={errors.password ? true : false}
-            helperText={errors.password && errors.password.message}
-          />
-          <Alert
-            severity="error"
-            sx={{ display: errorChangePassword ? "flex" : "none", mt: 2 }}
-          >
-            {errorChangePassword}
-          </Alert>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <TextField
+                {...register("newPassword", {
+                  required: "New password is required",
+                  minLength: {
+                    value: 8,
+                    message: "Password must be at least 8 characters",
+                  },
+                })}
+                required
+                fullWidth
+                name="newPassword"
+                label="New Password"
+                type="password"
+                id="newPassword"
+                autoComplete="new-password"
+                error={errors.newPassword ? true : false}
+                helperText={errors.newPassword && errors.newPassword.message}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                {...register("confirmNewPassword", {
+                  required: "Confirm new password is required",
+                  minLength: {
+                    value: 8,
+                    message: "Password must be at least 8 characters",
+                  },
+                  validate: (value) => value === getValues("newPassword") || "The passwords do not match",
+                })}
+                required
+                fullWidth
+                name="confirmNewPassword"
+                label="Confirm New Password"
+                type="password"
+                id="confirmNewPassword"
+                autoComplete="new-password"
+                error={errors.confirmNewPassword ? true : false}
+                helperText={
+                  errors.confirmNewPassword && errors.confirmNewPassword.message
+                }
+              />
+            </Grid>
+          </Grid>
           <Button
             disabled={isSubmitting}
             type="submit"
@@ -102,8 +100,15 @@ export default function ChangePassword () {
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
           >
-            Sign In
+            Change Password
           </Button>
+          <Grid container justifyContent="flex-end">
+            <Grid item>
+              <Link component={RouterLink} to="/login" variant="body2">
+                Back to Login
+              </Link>
+            </Grid>
+          </Grid>
         </Box>
       </Box>
     </Container>
