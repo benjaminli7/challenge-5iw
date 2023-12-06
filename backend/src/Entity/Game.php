@@ -6,21 +6,40 @@ use App\Repository\GameRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Link;
 use ApiPlatform\Metadata\ApiResource;
 
 #[ORM\Entity(repositoryClass: GameRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    operations:[
+        new GetCollection(normalizationContext: ['groups' => ['read-game']]),
+        new Get(normalizationContext: ['groups' => ['read-game']]),
+        new Post(denormalizationContext: ['groups' => ['create-game']], security: 'is_granted("ROLE_ADMIN")' , securityMessage: 'Only admins can create games.'),
+        new Patch(denormalizationContext: ['groups' => ['update-game']], security: 'is_granted("ROLE_ADMIN")' , securityMessage: 'Only admins can update games.'),
+        new Delete(security: 'is_granted("ROLE_ADMIN")' , securityMessage: 'Only admins can delete games.'),
+    ],
+    normalizationContext: ['groups' => ['read-game']],
+)]
 class Game
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['read-game', 'update-game'])]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $name = null;
+    #[ORM\Column(length: 255 , unique: true, nullable: false)]
+    #[Groups(['read-game', 'create-game', 'update-game'])]
+    private string $name ;
 
     #[ORM\OneToMany(mappedBy: 'game', targetEntity: Rank::class)]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    #[Groups(['read-game', 'create-game', 'update-game'])]
     private Collection $ranks;
 
     public function __construct()
@@ -33,7 +52,7 @@ class Game
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function getName(): string
     {
         return $this->name;
     }
