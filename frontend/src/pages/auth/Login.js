@@ -49,6 +49,7 @@ export default function Login() {
           user: response.data.user,
         },
       });
+      console.log(response.data.user);
       setIsFirstConnection(response.data?.user.isFirstConnection);
     } catch (error) {
       console.log(error);

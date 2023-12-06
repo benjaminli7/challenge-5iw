@@ -70,6 +70,21 @@ export function httpPut(url, body) {
   );
 }
 
+export function httpPatch(url, body) {
+  return axios.patch(
+      makeUrl(url),
+      JSON.stringify(body),
+      {
+        headers: {
+          ...makeHeaders(),
+          'Content-Type': 'application/merge-patch+json'
+        }
+      }
+  );
+}
+
+
+
 export function httpDelete(url) {
   return axios.delete(makeUrl(url), {
     ...makeConfig(),
