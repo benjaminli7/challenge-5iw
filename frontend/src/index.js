@@ -17,6 +17,8 @@ import Root from "./Root";
 import RootAdmin from "./RootAdmin";
 import theme from "./theme/theme";
 import FirstConnection from "./pages/first-connection/FirstConnection";
+import ChangePassword from "./pages/auth/ChangePassword";
+import EmailForgetPassword from "./pages/auth/EmailForgetPassword";
 const queryClient = new QueryClient();
 
 const router = createBrowserRouter([
@@ -36,6 +38,14 @@ const router = createBrowserRouter([
       {
         path: "login",
         element: <Login />,
+      },
+      {
+        path: "changePassword",
+        element: <ChangePassword />,
+      },
+      {
+        path: "emailForgetPassword",
+        element: <EmailForgetPassword />,
       },
       {
         path: "first-connection",
