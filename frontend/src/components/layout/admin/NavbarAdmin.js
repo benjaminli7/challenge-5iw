@@ -2,6 +2,7 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 import GroupIcon from "@mui/icons-material/Group";
 import LogoutIcon from "@mui/icons-material/Logout";
 import MenuIcon from "@mui/icons-material/Menu";
+import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
@@ -27,6 +28,11 @@ const navbarItems = [
     label: "Users",
     icon: <GroupIcon />,
     path: "/admin/users",
+  },
+  {
+    label: "Games",
+    icon: <SportsEsportsIcon />,
+    path: "/admin/games",
   },
 ];
 

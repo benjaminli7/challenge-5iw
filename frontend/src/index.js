@@ -17,6 +17,7 @@ import Root from "./Root";
 import RootAdmin from "./RootAdmin";
 import theme from "./theme/theme";
 import FirstConnection from "./pages/first-connection/FirstConnection";
+import AdminGamesView from "./pages/Admin/AdminGames/AdminGamesView";
 const queryClient = new QueryClient();
 
 const router = createBrowserRouter([
@@ -68,6 +69,10 @@ const router = createBrowserRouter([
         path: "users",
         element: <AdminUsersView />,
       },
+      {
+        path: "games",
+        element: <AdminGamesView />,
+      }
     ],
   },
 ]);

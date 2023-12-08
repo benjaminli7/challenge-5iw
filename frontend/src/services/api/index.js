@@ -28,17 +28,18 @@ export function retrieveToken() {
   return token ? token : null;
 }
 
-function makeHeaders() {
+function makeHeaders(type) {
   if (retrieveToken() !== null) {
     return {
       Authorization: `Bearer ${retrieveToken()}`,
+      ContentType: type == "patch" && "application/merge-patch+json",
     };
   }
 }
 
-export function makeConfig() {
+export function makeConfig(type) {
   return {
-    headers: makeHeaders(),
+    headers: makeHeaders(type),
   };
 }
 
@@ -66,6 +67,18 @@ export function httpPut(url, body) {
     },
     {
       ...makeConfig(),
+    }
+  );
+}
+
+export function httpPatch(url, body) {
+  return axios.patch(
+    makeUrl(url),
+    {
+      ...body,
+    },
+    {
+      ...makeConfig("patch"),
     }
   );
 }

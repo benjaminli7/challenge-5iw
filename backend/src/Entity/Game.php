@@ -6,13 +6,14 @@ use App\Repository\GameRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
+use Symfony\Component\Serializer\Annotation\Groups;
+
 use ApiPlatform\Metadata\Delete;
-use ApiPlatform\Metadata\Link;
-use ApiPlatform\Metadata\ApiResource;
 
 #[ORM\Entity(repositoryClass: GameRepository::class)]
 #[ApiResource(
@@ -23,23 +24,22 @@ use ApiPlatform\Metadata\ApiResource;
         new Patch(denormalizationContext: ['groups' => ['update-game']], security: 'is_granted("ROLE_ADMIN")' , securityMessage: 'Only admins can update games.'),
         new Delete(security: 'is_granted("ROLE_ADMIN")' , securityMessage: 'Only admins can delete games.'),
     ],
-    normalizationContext: ['groups' => ['read-game']],
+    normalizationContext: ['groups' => ['read-game', 'read-game-mutation']],
 )]
 class Game
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['read-game', 'update-game'])]
+    #[Groups(['read-game', 'update-rank'])]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255 , unique: true, nullable: false)]
-    #[Groups(['read-game', 'create-game', 'update-game'])]
-    private string $name ;
+    #[ORM\Column(length: 255 , unique: true)]
+    #[Groups(['read-game', 'create-game'])]
+    private ?string $name = null;
 
-    #[ORM\OneToMany(mappedBy: 'game', targetEntity: Rank::class)]
-    #[ORM\JoinColumn(onDelete: 'CASCADE')]
-    #[Groups(['read-game', 'create-game', 'update-game'])]
+    #[ORM\OneToMany(mappedBy: 'game', targetEntity: Rank::class, cascade: ['persist', 'remove'])]
+    #[Groups(['read-game', 'create-game'])]
     private Collection $ranks;
 
     public function __construct()
@@ -52,7 +52,7 @@ class Game
         return $this->id;
     }
 
-    public function getName(): string
+    public function getName(): ?string
     {
         return $this->name;
     }
