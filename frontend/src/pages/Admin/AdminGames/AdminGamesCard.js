@@ -13,14 +13,22 @@ import { useEffect, useState } from "react";
 import { useQueryClient, useMutation } from "react-query";
 import { Dialog } from "@mui/material";
 import AdminRankForm from "./forms/AdminRankForm";
+import AdminGamesModal from "./AdminGamesModal";
+import AdminGameUpdateForm from "./forms/AdminGameUpdateForm";
+import ENDPOINTS from "@/services/endpoints";
+import LoadingButton from "@mui/lab/LoadingButton";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+
+import { httpPost, httpPatch, httpDelete, isAdmin } from "@/services/api";
 
 export default function AdminGameCard({ game, updateGamesList }) {
   const [actionType, setActionType] = useState("");
   const [open, setOpen] = React.useState(false);
+  const [actionLoading, setActionLoading] = React.useState(false);
+  const [actionRankLoading, setActionRankLoading] = React.useState(false);
 
   const queryClient = useQueryClient();
   const [loading, setLoading] = useState(true);
-  const [openEdit, setOpenEdit] = React.useState(false);
   const [initialRankValues, setInitialRankValues] = useState({
     name: "",
     id: "",
@@ -32,21 +40,41 @@ export default function AdminGameCard({ game, updateGamesList }) {
     console.log("Edit");
   };
 
-  const handleClickDelete = (rankName, rankId) => {
+  const handleClickDelete = async (rankName, rankId) => {
+    setActionRankLoading(true);
+    await httpDelete(ENDPOINTS.ranks.rankId(rankId));
+    setActionRankLoading(false);
+    updateGamesList((prev) =>
+      prev.map((game) => {
+        if (game.ranks) {
+          const updatedRanks = game.ranks.filter((rank) => rank.id !== rankId);
+          return { ...game, ranks: updatedRanks };
+        }
+        return game;
+      })
+    );
+  };
+
+  const handleClickDeleteGame = async (gameId) => {
+    console.log("gameId", gameId);
+    setActionLoading(true);
+    await httpDelete(ENDPOINTS.games.gameId(gameId));
+    setActionLoading(false);
+    updateGamesList((prev) => prev.filter((game) => game.id !== gameId));
+
+    console.log("Delete game");
+  };
+
+  const handleUpdateGame = () => {
     setOpen(true);
-    setActionType("delete");
-    setInitialRankValues({ name: rankName, id: rankId }); // Set initial values for the input
-    console.log("Delete");
+    setActionType("updateGame");
+    console.log("Update game");
   };
 
   const handleClose = () => {
     setOpen(false);
     setActionType("");
   };
-
-  // title ,
-  // url,
-
   return (
     <>
       <Card sx={{ maxWidth: 345, my: 5 }}>
@@ -89,26 +117,49 @@ export default function AdminGameCard({ game, updateGamesList }) {
                       >
                         <EditIcon />
                       </Button>
-                      <Button
-                        size="small"
+
+                      <LoadingButton
                         onClick={() => handleClickDelete(rank.name, rank.id)}
+                        loading={actionRankLoading}
+                        size="small"
                       >
                         <DeleteIcon />
-                      </Button>
+                      </LoadingButton>
                     </CardActions>
                   </Box>
                 ))}
+                <Box sx={{}}>
+                  <Button
+                    onClick={() => {
+                      setOpen(true);
+                      setActionType("add");
+                    }}
+                  >
+                    <Typography variant="body2" color="blue">
+                      Add rank
+                    </Typography>
+                  </Button>
+                </Box>
               </div>
             )}
           </Box>
         </CardContent>
         <CardActions>
-          <Button variant="outlined" startIcon={<EditIcon />}>
+          <Button
+            variant="outlined"
+            startIcon={<EditIcon />}
+            onClick={handleUpdateGame}
+          >
             Edit
           </Button>
-          <Button variant="outlined" startIcon={<DeleteIcon />}>
+          <LoadingButton
+            onClick={() => handleClickDeleteGame(game.id)}
+            loading={actionLoading}
+            variant="outlined"
+          >
             Delete
-          </Button>
+          </LoadingButton>
+
           {/* Add more buttons or actions as needed */}
         </CardActions>
       </Card>
@@ -130,28 +181,24 @@ export default function AdminGameCard({ game, updateGamesList }) {
             updateGamesList={updateGamesList}
           />
         )}
-        {actionType === "delete" && (
-          <AdminRankForm
-            title="Suprrimer"
-            inputs={[
-              {
-                value: initialRankValues.name,
-                id: initialRankValues.id,
-              },
-            ]}
-            action="delete"
-            handleClose={handleClose}
-            updateGamesList={updateGamesList}
-          />
-        )}
         {actionType === "add" && (
           <AdminRankForm
             title="Ajouter"
-            inputs={[{ name: "name", type: "text" }]}
+            inputs={[
+              {
+                name: "name",
+                type: "text",
+                label: "Nom du rang",
+                gameId: game.id,
+              },
+            ]}
             action="add"
             handleClose={handleClose}
             updateGamesList={updateGamesList}
           />
+        )}
+        {actionType === "updateGame" && (
+          <AdminGameUpdateForm game={game} handleClose={handleClose} />
         )}
       </Dialog>
     </>

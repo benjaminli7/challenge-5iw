@@ -11,7 +11,7 @@ import usePatch from "@/hooks/usePatch";
 import useDelete from "@/hooks/useDelete";
 import TextField from "@mui/material/TextField";
 import { useForm, useFieldArray } from "react-hook-form";
-import { httpPost, httpPatch, httpDelete, isAdmin } from "@/services/api";
+import { httpPost, httpPatch, isAdmin } from "@/services/api";
 
 function AdminRankForm({
   title,
@@ -27,10 +27,10 @@ function AdminRankForm({
 
   const onSubmit = async (data) => {
     try {
-      data.id = parseInt(data.id);
-      // console.log("test");
       if (action === "edit") {
-        // const response = await httpPatch(ENDPOINTS.ranks.rankId(data.id), data);
+        // console.log(data);
+
+        const response = await httpPatch(ENDPOINTS.ranks.rankId(data.id), data);
         updateGamesList((prev) =>
           prev.map((game) => {
             if (game.ranks) {
@@ -54,18 +54,15 @@ function AdminRankForm({
             return game;
           })
         );
-      } else if (action === "delete") {
-        console.log(typeof data.id);
-
-        const response = await httpDelete(ENDPOINTS.ranks.rankId(data.id));
+      } else if (action === "add") {
+        data.game = "/api/games/" + data.game;
+        const response = await httpPost(ENDPOINTS.ranks.root, data);
         updateGamesList((prev) =>
           prev.map((game) => {
-            if (game.ranks) {
-              const updatedRanks = game.ranks.filter(
-                (rank) => rank.id != data.id
-              );
-              return { ...game, ranks: updatedRanks };
+            if (game.id == inputs[0].gameId) {
+              game.ranks.push(response.data);
             }
+            return game;
           })
         );
       }
@@ -85,10 +82,6 @@ function AdminRankForm({
       <DialogContent>
         <DialogContentText color={action == "delete" && "red"}>
           {action === "edit" && "Edit rank " + inputs[0].value}
-          {action === "delete" &&
-            "Are you sure you want to delete the " +
-              inputs[0].value +
-              " rank ?"}
         </DialogContentText>
 
         {inputs.map((input) => {
@@ -107,7 +100,11 @@ function AdminRankForm({
             )
           );
         })}
-        <input type="hidden" {...register("id")} value={inputs[0].id} />
+        <input
+          type="hidden"
+          {...register(action === "edit" ? "id" : "game")}
+          value={parseInt(action === "edit" ? inputs[0].id : inputs[0].gameId)}
+        />
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose}>Cancel</Button>

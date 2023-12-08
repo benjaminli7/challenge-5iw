@@ -12,6 +12,9 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
+
 
 use ApiPlatform\Metadata\Delete;
 
@@ -19,12 +22,12 @@ use ApiPlatform\Metadata\Delete;
 #[ApiResource(
     operations:[
         new GetCollection(normalizationContext: ['groups' => ['read-game']]),
-        new Get(normalizationContext: ['groups' => ['read-game']]),
+        new Get(normalizationContext: ['groups' => ['read-one-game']]),
         new Post(denormalizationContext: ['groups' => ['create-game']], security: 'is_granted("ROLE_ADMIN")' , securityMessage: 'Only admins can create games.'),
         new Patch(denormalizationContext: ['groups' => ['update-game']], security: 'is_granted("ROLE_ADMIN")' , securityMessage: 'Only admins can update games.'),
         new Delete(security: 'is_granted("ROLE_ADMIN")' , securityMessage: 'Only admins can delete games.'),
     ],
-    normalizationContext: ['groups' => ['read-game', 'read-game-mutation']],
+    normalizationContext: ['groups' => ['read-game', 'read-game-mutation','read-one-game']],
 )]
 class Game
 {
@@ -35,12 +38,22 @@ class Game
     private ?int $id = null;
 
     #[ORM\Column(length: 255 , unique: true)]
-    #[Groups(['read-game', 'create-game'])]
+    #[Groups(['read-game', 'create-game','read-one-game'])]
     private ?string $name = null;
 
     #[ORM\OneToMany(mappedBy: 'game', targetEntity: Rank::class, cascade: ['persist', 'remove'])]
     #[Groups(['read-game', 'create-game'])]
     private Collection $ranks;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Assert\File(maxSize: '10M', mimeTypes: ['image/jpeg', 'image/png', 'image/gif'])]
+    #[Vich\UploadableField(mapping: 'game_images', fileNameProperty: 'imageName')]
+    #[Groups(['read-one-game', 'create-game'])]
+    private ?File $imageFile = null;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['read-game', 'read-one-game', 'create-game'])]
+    private ?string $imageName = null;
 
     public function __construct()
     {
@@ -93,4 +106,30 @@ class Game
 
         return $this;
     }
+
+    public function getImageFile(): ?File
+    {
+        return $this->imageFile;
+    }
+
+    public function setImageFile(?File $imageFile): void
+    {
+        $this->imageFile = $imageFile;
+
+        if ($imageFile) {
+            // It's required to trigger the update of the entity
+            $this->updatedAt = new \DateTimeImmutable();
+        }
+    }
+
+    public function getImageName(): ?string
+    {
+        return $this->imageName;
+    }
+
+    public function setImageName(?string $imageName): void
+    {
+        $this->imageName = $imageName;
+    }
+
 }

@@ -38,13 +38,6 @@ function AdminGamesView() {
 
   return (
     <>
-      <Typography variant="h4" gutterBottom>
-        Gestion des jeux et des rangs
-      </Typography>
-      <Typography variant="h5" gutterBottom>
-        Jeux
-      </Typography>
-
       {loading ? (
         <Grid container justifyContent={"center"}>
           <CircularProgress />
@@ -54,6 +47,7 @@ function AdminGamesView() {
           <AdminGamesModal
             fullScreen={fullScreen}
             addToGamesList={setGamesList}
+            mode="add"
           />
           <AdminGameList games={gamesList} updateGamesList={setGamesList} />
         </>
