@@ -12,6 +12,7 @@ import { useForm, useFieldArray } from "react-hook-form";
 import ENDPOINTS from "@/services/endpoints";
 import { httpPost, isAdmin } from "@/services/api";
 import { Alert } from "@mui/material";
+import AdminGameCreateForm from "./forms/AdminGameCreateForm";
 
 export default function AdminGamesModal({ fullScreen, addToGamesList }) {
   const [open, setOpen] = React.useState(false);
@@ -78,73 +79,7 @@ export default function AdminGamesModal({ fullScreen, addToGamesList }) {
         Ajouter un jeu
       </Button>
       <Dialog open={open} onClose={handleClose}>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <DialogTitle>Nouveau jeu</DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-              Ajouter un nouveau jeu et associez lui des rangs
-            </DialogContentText>
-            <TextField
-              {...register("name", { required: true })}
-              autoFocus
-              margin="dense"
-              id="name"
-              label="Nom du jeu"
-              type="text"
-              fullWidth
-            />
-            <InputFileUpload />
-
-            <DialogContentText>Ajouter des rangs</DialogContentText>
-            <Grid container spacing={2}>
-              {fields.map((item, index) => (
-                <Grid
-                  item
-                  xs={12}
-                  key={item.id}
-                  container
-                  spacing={2}
-                  justifyContent="center"
-                  alignItems="center"
-                >
-                  <Grid item xs={8}>
-                    <TextField
-                      key={item.id}
-                      {...register(`ranks.${index}.name`)}
-                      margin="dense"
-                      label={`Rank ${index}`}
-                      type="text"
-                      fullWidth
-                    />
-                  </Grid>
-                  <Grid item xs={4}>
-                    <Button
-                      variant="contained"
-                      fullWidth
-                      onClick={() => remove(index)}
-                    >
-                      Delete
-                    </Button>
-                  </Grid>
-                </Grid>
-              ))}
-            </Grid>
-
-            <Button
-              variant="contained"
-              onClick={() => append({ name: "" })}
-              style={{ marginTop: "16px" }}
-            >
-              Ajouter
-            </Button>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleClose}>Annuler</Button>
-            <Button onClick={handleClose} type="submit">
-              Enregister
-            </Button>
-          </DialogActions>
-        </form>
+        <AdminGameCreateForm />
       </Dialog>
     </React.Fragment>
   );
