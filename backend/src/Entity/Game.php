@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\GameRepository;
 use Doctrine\Common\Collections\ArrayCollection;
+use App\Entity\Traits\TimestampableTrait;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
@@ -14,16 +15,35 @@ use ApiPlatform\Metadata\Post;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use App\Controller\PostImageController;
+use Symfony\Component\HttpFoundation\File\File;
+
+
 
 
 use ApiPlatform\Metadata\Delete;
 
+#[Vich\Uploadable]
 #[ORM\Entity(repositoryClass: GameRepository::class)]
 #[ApiResource(
     operations:[
+        // 'image' => [
+        //     'method' => 'POST',
+        //     'path' => '/games/{id}/image',
+        //     'controller' => PostImageController::class,      
+        // ],
+        new Post(
+            uriTemplate: '/games/{id}/image',
+            controller: PostImageController::class,
+            denormalizationContext: ['groups' => ['test-img']],
+            normalizationContext: ['groups' => ['read-game']],
+            security: 'is_granted("ROLE_ADMIN")',
+            securityMessage: 'Only admins can create games.',
+            deserialize: false
+        ),
         new GetCollection(normalizationContext: ['groups' => ['read-game']]),
         new Get(normalizationContext: ['groups' => ['read-one-game']]),
-        new Post(denormalizationContext: ['groups' => ['create-game']], security: 'is_granted("ROLE_ADMIN")' , securityMessage: 'Only admins can create games.'),
+        new Post(denormalizationContext: ['groups' => ['test-img']], security: 'is_granted("ROLE_ADMIN")' , securityMessage: 'Only admins can create games.'),
         new Patch(denormalizationContext: ['groups' => ['update-game']], security: 'is_granted("ROLE_ADMIN")' , securityMessage: 'Only admins can update games.'),
         new Delete(security: 'is_granted("ROLE_ADMIN")' , securityMessage: 'Only admins can delete games.'),
     ],
@@ -31,6 +51,8 @@ use ApiPlatform\Metadata\Delete;
 )]
 class Game
 {
+    use TimestampableTrait;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -38,22 +60,25 @@ class Game
     private ?int $id = null;
 
     #[ORM\Column(length: 255 , unique: true)]
-    #[Groups(['read-game', 'create-game','read-one-game'])]
+    #[Groups(['read-game', 'create-game','read-one-game', 'update-game'])]
     private ?string $name = null;
 
     #[ORM\OneToMany(mappedBy: 'game', targetEntity: Rank::class, cascade: ['persist', 'remove'])]
     #[Groups(['read-game', 'create-game'])]
     private Collection $ranks;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    #[Assert\File(maxSize: '10M', mimeTypes: ['image/jpeg', 'image/png', 'image/gif'])]
-    #[Vich\UploadableField(mapping: 'game_images', fileNameProperty: 'imageName')]
-    #[Groups(['read-one-game', 'create-game'])]
-    private ?File $imageFile = null;
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $filePath = null;
+    
+    #[Groups(['read-game' ])]
+    private ?string $fileUrl = null;
+    
+    #[Vich\UploadableField(mapping: 'game_image', fileNameProperty: 'filePath')]
+    #[Groups(['test-img'])]
+    private ?File $file = null;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    #[Groups(['read-game', 'read-one-game', 'create-game'])]
-    private ?string $imageName = null;
+
+
 
     public function __construct()
     {
@@ -107,29 +132,39 @@ class Game
         return $this;
     }
 
-    public function getImageFile(): ?File
+    public function getFilePath(): ?string
     {
-        return $this->imageFile;
+        return $this->filePath;
     }
 
-    public function setImageFile(?File $imageFile): void
+    public function setFilePath(?string $filePath): static
     {
-        $this->imageFile = $imageFile;
+        $this->filePath = $filePath;
 
-        if ($imageFile) {
-            // It's required to trigger the update of the entity
-            $this->updatedAt = new \DateTimeImmutable();
-        }
+        return $this;
     }
 
-    public function getImageName(): ?string
+    public function getFile(): ?File
     {
-        return $this->imageName;
+        return $this->file;
     }
 
-    public function setImageName(?string $imageName): void
+    public function setFile(?File $file = null): static
     {
-        $this->imageName = $imageName;
+        $this->file = $file;
+        return $this;
+    }
+
+    public function getFileUrl(): ?string
+    {
+        return $this->fileUrl;
+    }
+
+    public function setFileUrl(?string $fileUrl): static
+    {
+        $this->fileUrl = $fileUrl;
+
+        return $this;
     }
 
 }

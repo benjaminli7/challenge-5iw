@@ -8,6 +8,7 @@ function AdminGameCreateForm({ addToGamesList, handleClose }) {
   const form = useForm({});
   const onSubmit = async (data) => {
     try {
+      console.log(data);
       const response = await httpPost(ENDPOINTS.games.root, data);
       addToGamesList((prev) => [...prev, response.data]);
       handleClose();
