@@ -8,18 +8,26 @@ import Typography from "@mui/material/Typography";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Box } from "@mui/material";
-import useFetch from "@/hooks/useFetch";
 import { useEffect, useState } from "react";
 import { useQueryClient, useMutation } from "react-query";
 import { Dialog } from "@mui/material";
 import AdminRankForm from "./forms/AdminRankForm";
-import AdminGamesModal from "./AdminGamesModal";
 import AdminGameUpdateForm from "./forms/AdminGameUpdateForm";
 import ENDPOINTS from "@/services/endpoints";
 import LoadingButton from "@mui/lab/LoadingButton";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import AdminGameImageUploader from "./forms/AdminGameImageUploader";
+import { useForm, useFieldArray } from "react-hook-form";
+import { Divider } from "@mui/material";
 
-import { httpPost, httpPatch, httpDelete, isAdmin } from "@/services/api";
+import {
+  httpPost,
+  httpPatch,
+  httpDelete,
+  isAdmin,
+  httpPostMultiPart,
+} from "@/services/api";
+import { MpTwoTone } from "@mui/icons-material";
 
 export default function AdminGameCard({ game, updateGamesList }) {
   const [actionType, setActionType] = useState("");
@@ -75,23 +83,51 @@ export default function AdminGameCard({ game, updateGamesList }) {
     setOpen(false);
     setActionType("");
   };
+
+  //Image part
+  const handleImageUpload = async (data, setFile) => {
+    try {
+      // console.log(ENDPOINTS.games.gameImg(game.id));
+      const response = await httpPostMultiPart(
+        ENDPOINTS.games.gameImg(game.id),
+        data
+      );
+      updateGamesList((prev) =>
+        prev.map((game) => {
+          if (game.id === response.data.id) {
+            return response.data;
+          }
+          return game;
+        })
+      );
+      setFile(null);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <>
-      <Card sx={{ maxWidth: 345, my: 5 }}>
+      <Card
+        sx={{ maxWidth: 900, mt: 3, height: "100%", "--Card-padding": "10px" }}
+      >
         <CardMedia
-          sx={{ height: 140 }}
-          image="/reptile.jpg"
+          sx={{ height: 300 }}
+          image={
+            (game.fileUrl && process.env.REACT_APP_API_URL + game.fileUrl) ||
+            "/reptile.jpg"
+          }
           title={game.title}
-        />
+        >
+          <AdminGameImageUploader onUpload={handleImageUpload} />
+        </CardMedia>
         <CardContent>
-          <Typography
-            sx={{ mx: "auto" }}
-            gutterBottom
-            variant="h4"
-            component="div"
-          >
+          <Divider />
+
+          <Typography sx={{ mt: 2 }} gutterBottom variant="h4" component="div">
             {game.name}
           </Typography>
+
           <Typography variant="body1" color="text.secondary">
             Ranks:
           </Typography>
@@ -144,14 +180,19 @@ export default function AdminGameCard({ game, updateGamesList }) {
             )}
           </Box>
         </CardContent>
-        <CardActions>
-          <Button
-            variant="outlined"
-            startIcon={<EditIcon />}
-            onClick={handleUpdateGame}
-          >
-            Edit
-          </Button>
+        <Divider />
+        {/* <Divider inset="none" /> */}
+
+        <CardActions sx={{ justifyContent: "space-between", pt: 4 }}>
+          <Typography level="title-lg" sx={{ mr: "auto" }}>
+            <Button
+              variant="outlined"
+              startIcon={<EditIcon />}
+              onClick={handleUpdateGame}
+            >
+              Edit
+            </Button>
+          </Typography>
           <LoadingButton
             onClick={() => handleClickDeleteGame(game.id)}
             loading={actionLoading}
@@ -198,7 +239,11 @@ export default function AdminGameCard({ game, updateGamesList }) {
           />
         )}
         {actionType === "updateGame" && (
-          <AdminGameUpdateForm game={game} handleClose={handleClose} />
+          <AdminGameUpdateForm
+            game={game}
+            handleClose={handleClose}
+            updateGamesList={updateGamesList}
+          />
         )}
       </Dialog>
     </>

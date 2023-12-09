@@ -10,8 +10,22 @@ import Grid from "@mui/material/Grid";
 import { httpPost, httpPatch, httpDelete, isAdmin } from "@/services/api";
 import ENDPOINTS from "@/services/endpoints";
 import TextField from "@mui/material/TextField";
-
+import InputFileUpload from "../AdminGamesFileUpload";
+import { styled } from "@mui/material/styles";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { useForm, useFieldArray } from "react-hook-form";
+
+const VisuallyHiddenInput = styled("input")({
+  clip: "rect(0 0 0 0)",
+  clipPath: "inset(50%)",
+  height: 1,
+  overflow: "hidden",
+  position: "absolute",
+  bottom: 0,
+  left: 0,
+  whiteSpace: "nowrap",
+  width: "100%",
+});
 
 function AdminGameForm({ form, onSubmit, handleClose }) {
   const [rankFields, setRankFields] = React.useState([{ id: 1, value: "" }]);
@@ -37,6 +51,19 @@ function AdminGameForm({ form, onSubmit, handleClose }) {
           fullWidth
           {...register("name", { required: true })}
         />
+        {/* <Button
+          component="label"
+          variant="contained"
+          startIcon={<CloudUploadIcon />}
+          sx={{ width: "100%" }}
+          id="image"
+        >
+          Upload Image
+          <VisuallyHiddenInput
+            {...register("file", { required: false })}
+            type="file"
+          />
+        </Button> */}
         {!getValues("id") ? (
           <>
             <DialogContentText>Ajouter des rangs</DialogContentText>

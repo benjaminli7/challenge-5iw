@@ -6,8 +6,12 @@ export default function AdminGameList({ games, updateGamesList }) {
   return (
     <Grid container spacing={2}>
       {games.map((game, index) => (
-        <Grid item key={game.id} xs={12} sm={6} md={3} sx={{ height: "100%" }}>
-          <AdminGameCard game={game} updateGamesList={updateGamesList} />
+        <Grid sx={{ display: "flex" }} item key={game.id} xs={12} sm={8} md={4}>
+          <AdminGameCard
+            game={game}
+            updateGamesList={updateGamesList}
+            sx={{ height: "100%", p: 12 }}
+          />
         </Grid>
       ))}
     </Grid>
