@@ -4,13 +4,22 @@ import Grid from "@mui/material/Grid";
 
 export default function AdminGameList({ games, updateGamesList }) {
   return (
-    <Grid container spacing={2}>
+    <Grid container spacing={4}>
       {games.map((game, index) => (
-        <Grid sx={{ display: "flex" }} item key={game.id} xs={12} sm={8} md={4}>
+        <Grid
+          sx={{ display: "flex", justify: "" }}
+          item
+          key={game.id}
+          xs={12}
+          sm={6}
+          md={4}
+          justifyContent="center"
+          alignItems="center"
+        >
           <AdminGameCard
             game={game}
             updateGamesList={updateGamesList}
-            sx={{ height: "100%", p: 12 }}
+            sx={{ backgroundColor: "black" }}
           />
         </Grid>
       ))}

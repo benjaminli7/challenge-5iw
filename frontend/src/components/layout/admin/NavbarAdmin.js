@@ -2,7 +2,7 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 import GroupIcon from "@mui/icons-material/Group";
 import LogoutIcon from "@mui/icons-material/Logout";
 import MenuIcon from "@mui/icons-material/Menu";
-import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
+import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
@@ -53,7 +53,10 @@ export default function NavbarAdmin({ window, drawerWidth, children }) {
     <div className="flex flex-col justify-between h-full">
       <div>
         <Toolbar>
-          <Typography>Logo</Typography>
+          <Typography>
+            {/* <img src="./GameElevate.png" alt="logo" /> */}
+            LOGO
+          </Typography>
         </Toolbar>
         <List>
           {navbarItems.map((item, index) => (

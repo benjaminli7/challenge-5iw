@@ -79,7 +79,10 @@ export default function AdminGamesModal({ fullScreen, addToGamesList }) {
         Ajouter un jeu
       </Button>
       <Dialog open={open} onClose={handleClose}>
-        <AdminGameCreateForm />
+        <AdminGameCreateForm
+          addToGamesList={addToGamesList}
+          handleClose={handleClose}
+        />
       </Dialog>
     </React.Fragment>
   );

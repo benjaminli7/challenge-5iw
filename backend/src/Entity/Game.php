@@ -43,7 +43,7 @@ use ApiPlatform\Metadata\Delete;
         ),
         new GetCollection(normalizationContext: ['groups' => ['read-game']]),
         new Get(normalizationContext: ['groups' => ['read-one-game']]),
-        new Post(denormalizationContext: ['groups' => ['test-img']], security: 'is_granted("ROLE_ADMIN")' , securityMessage: 'Only admins can create games.'),
+        new Post(denormalizationContext: ['groups' => ['create-game']], security: 'is_granted("ROLE_ADMIN")' , securityMessage: 'Only admins can create games.'),
         new Patch(denormalizationContext: ['groups' => ['update-game']], security: 'is_granted("ROLE_ADMIN")' , securityMessage: 'Only admins can update games.'),
         new Delete(security: 'is_granted("ROLE_ADMIN")' , securityMessage: 'Only admins can delete games.'),
     ],
