@@ -8,17 +8,45 @@ import Typography from "@mui/material/Typography";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Box } from "@mui/material";
-import { useEffect, useState } from "react";
-import { useQueryClient, useMutation } from "react-query";
+import { useState } from "react";
+import { useQueryClient } from "react-query";
 import { Dialog } from "@mui/material";
 import AdminRankForm from "./forms/AdminRankForm";
 import AdminGameUpdateForm from "./forms/AdminGameUpdateForm";
 import ENDPOINTS from "@/services/endpoints";
 import LoadingButton from "@mui/lab/LoadingButton";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import AdminGameImageUploader from "./forms/AdminGameImageUploader";
-import { useForm, useFieldArray } from "react-hook-form";
 import { Divider } from "@mui/material";
+
+// const useStyles = makeStyles(() => ({
+//   card: {
+//     width: '100%',
+//     borderRadius: 16,
+//     boxShadow: '0 8px 16px 0 #BDC9D7',
+//     overflow: 'hidden',
+//   },
+//   header: {
+//     fontFamily: 'Barlow, san-serif',
+//     backgroundColor: '#fff',
+//   },
+//   headline: {
+//     color: '#122740',
+//     fontSize: '1.25rem',
+//     fontWeight: 600,
+//   },
+//   link: {
+//     color: '#2281bb',
+//     padding: '0 0.25rem',
+//     fontSize: '0.875rem',
+//   },
+//   actions: {
+//     color: '#BDC9D7'
+//   },
+//   divider: {
+//     backgroundColor: '#d9e2ee',
+//     margin: '0 20px',
+//   }
+// }));
 
 import {
   httpPost,
@@ -45,13 +73,13 @@ export default function AdminGameCard({ game, updateGamesList }) {
     setOpen(true);
     setActionType("edit");
     setInitialRankValues({ name: rankName, id: rankId }); // Set initial values for the input
-    console.log("Edit");
+    // console.log("Edit");
   };
 
   const handleClickDelete = async (rankName, rankId) => {
-    setActionRankLoading(true);
+    // setActionRankLoading(true);
     await httpDelete(ENDPOINTS.ranks.rankId(rankId));
-    setActionRankLoading(false);
+    // setActionRankLoading(false);
     updateGamesList((prev) =>
       prev.map((game) => {
         if (game.ranks) {
@@ -64,19 +92,17 @@ export default function AdminGameCard({ game, updateGamesList }) {
   };
 
   const handleClickDeleteGame = async (gameId) => {
-    console.log("gameId", gameId);
-    setActionLoading(true);
+    // console.log("gameId", gameId);
+    // setActionLoadingStates((prev) => ({ ...prev, [gameId]: true }));
     await httpDelete(ENDPOINTS.games.gameId(gameId));
-    setActionLoading(false);
     updateGamesList((prev) => prev.filter((game) => game.id !== gameId));
 
-    console.log("Delete game");
+    // console.log("Delete game");
   };
 
   const handleUpdateGame = () => {
     setOpen(true);
     setActionType("updateGame");
-    console.log("Update game");
   };
 
   const handleClose = () => {
@@ -105,31 +131,80 @@ export default function AdminGameCard({ game, updateGamesList }) {
       console.log(error);
     }
   };
+  // const [buttonLoadingStates, setButtonLoadingState] = React.useState({
+  //   [buttonId]: false,
+  // });
+
+  // const handleClickAction = async (event) => {
+  //   const action = event.currentTarget.value;
+  //   setActionLoading(true);
+
+  //   setActionLoading(false);
 
   return (
     <>
       <Card
-        sx={{ maxWidth: 900, mt: 3, height: "100%", "--Card-padding": "10px" }}
+        variant="solid"
+        color="warning"
+        sx={{
+          width: "100%",
+          mt: 3,
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+          backgroundColor: "white",
+          borderRadius: 4,
+          boxShadow: "0 8px 16px 0 #BDC9D7",
+          overflow: "hidden",
+          transition: "0.4s",
+          "&:hover": {
+            transform: "translateY(-5px)",
+            position: "relative", // Add this line to reset position
+            boxShadow: "0 17px 24px 0 #BDC9D7",
+
+            "& $shadow": {
+              bottom: "-1.5rem",
+            },
+            "& $shadow2": {
+              bottom: "-2.5rem",
+            },
+          },
+          "&:before": {
+            content: '""',
+            position: "absolute",
+            display: "block",
+            bottom: -1,
+          },
+        }}
       >
         <CardMedia
-          sx={{ height: 300 }}
+          sx={{ height: 300, backgroundColor: "red" }}
           image={
             (game.fileUrl && process.env.REACT_APP_API_URL + game.fileUrl) ||
             "/reptile.jpg"
           }
           title={game.title}
         >
-          <AdminGameImageUploader onUpload={handleImageUpload} />
+          <AdminGameImageUploader
+            sx={{ backgroundColor: "white" }}
+            onUpload={handleImageUpload}
+          />
         </CardMedia>
-        <CardContent>
-          <Divider />
+        {/* <Divider component="div" role="presentation" /> */}
 
-          <Typography sx={{ mt: 2 }} gutterBottom variant="h4" component="div">
+        <CardContent sx={{ backgroundColor: "white" }}>
+          <Typography
+            sx={{ textAlign: "center" }}
+            gutterBottom
+            variant="h3"
+            component="div"
+          >
             {game.name}
           </Typography>
+          <Divider sx={{ m: 3 }} />
 
-          <Typography variant="body1" color="text.secondary">
-            Ranks:
+          <Typography sx={{ mt: 2 }} variant="h5" color="text.secondary">
+            Rangs:
           </Typography>
           <Box sx={{ ml: 3 }}>
             {game.ranks && (
@@ -158,6 +233,7 @@ export default function AdminGameCard({ game, updateGamesList }) {
                         onClick={() => handleClickDelete(rank.name, rank.id)}
                         loading={actionRankLoading}
                         size="small"
+                        sx={{ color: "red" }}
                       >
                         <DeleteIcon />
                       </LoadingButton>
@@ -179,35 +255,47 @@ export default function AdminGameCard({ game, updateGamesList }) {
               </div>
             )}
           </Box>
+          <Divider sx={{ m: 4 }} />
         </CardContent>
-        <Divider />
-        {/* <Divider inset="none" /> */}
-
-        <CardActions sx={{ justifyContent: "space-between", pt: 4 }}>
-          <Typography level="title-lg" sx={{ mr: "auto" }}>
-            <Button
-              variant="outlined"
-              startIcon={<EditIcon />}
-              onClick={handleUpdateGame}
-            >
-              Edit
-            </Button>
-          </Typography>
-          <LoadingButton
-            onClick={() => handleClickDeleteGame(game.id)}
-            loading={actionLoading}
-            variant="outlined"
+        <CardActions
+          sx={{
+            justifyContent: "space-between",
+            alignItems: "flex-end",
+            position: "relative",
+            alignItems: "flex-end",
+            p: 2,
+            flexGrow: 1,
+            backgroundColor: "white",
+          }}
+        >
+          <Button
+            size="large"
+            startIcon={<EditIcon />}
+            onClick={handleUpdateGame}
+            sx={{
+              mr: "auto",
+              position: "absolute",
+              bottom: 0,
+              left: 0,
+            }}
           >
-            Delete
-          </LoadingButton>
-
-          {/* Add more buttons or actions as needed */}
+            Modifier
+          </Button>
+          <Button
+            onClick={() => handleClickDeleteGame(game.id)}
+            startIcon={<DeleteIcon />}
+            loading={actionLoading}
+            variant=""
+            sx={{ position: "absolute", right: 0, bottom: 0, color: "red" }}
+          >
+            Supprimer
+          </Button>
         </CardActions>
       </Card>
       <Dialog open={open} onClose={handleClose}>
         {actionType === "edit" && (
           <AdminRankForm
-            title="Edit"
+            title="Modifier"
             inputs={[
               {
                 name: "name",

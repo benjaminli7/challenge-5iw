@@ -36,7 +36,7 @@ const AdminGameImageUploader = ({ onUpload }) => {
           startIcon={<CloudUploadIcon />}
           sx={{ width: "100%" }}
         >
-          Add Image
+          Ajouter une image
           <VisuallyHiddenInput
             type="file"
             accept="image/*"
@@ -50,12 +50,13 @@ const AdminGameImageUploader = ({ onUpload }) => {
           <Button
             component="label"
             variant="contained"
-            sx={{ width: "100%" }}
+            sx={{ width: "100%", backgroundColor: "#4caf50" }}
             onClick={() => {
               onUpload(file, setFile);
             }}
+            color="success"
           >
-            Upload Image
+            Confirmer
           </Button>
         </>
       )}
