@@ -36,17 +36,29 @@ export function retrieveToken() {
   return token ? token : null;
 }
 
-function makeHeaders() {
+function makeHeaders(type) {
   if (retrieveToken() !== null) {
-    return {
-      Authorization: `Bearer ${retrieveToken()}`,
-    };
+    if (type === "multipart") {
+      return {
+        Authorization: `Bearer ${retrieveToken()}`,
+        "Content-Type": "multipart/form-data",
+      };
+    } else if (type === "patch") {
+      return {
+        Authorization: `Bearer ${retrieveToken()}`,
+        "Content-Type": "application/merge-patch+json",
+      };
+    } else {
+      return {
+        Authorization: `Bearer ${retrieveToken()}`,
+      };
+    }
   }
 }
 
-export function makeConfig() {
+export function makeConfig(type) {
   return {
-    headers: makeHeaders(),
+    headers: makeHeaders(type),
   };
 }
 
@@ -76,6 +88,27 @@ export function httpPut(url, body) {
       ...makeConfig(),
     }
   );
+}
+
+export function httpPatch(url, body) {
+  return axios.patch(
+    makeUrl(url),
+    {
+      ...body,
+    },
+    {
+      ...makeConfig("patch"),
+    }
+  );
+}
+
+export function httpPostMultiPart(url, body) {
+  let formData = new FormData();
+  formData.append("file", body);
+
+  return axios.post(makeUrl(url), formData, {
+    ...makeConfig("multipart"),
+  });
 }
 
 export function httpDelete(url) {
