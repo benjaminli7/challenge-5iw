@@ -19,6 +19,7 @@ const GameCard = ({ game }) => {
         },
         height: 300,
         width: "100%",
+        borderRadius: "15px",
       }}
     >
       <CardActionArea>
