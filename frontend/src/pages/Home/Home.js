@@ -1,7 +1,8 @@
 import React from 'react'
+import GameView from '../Game/GameView'
 function Home() {
   return (
-    <div>Home test</div>
+    <div><GameView /></div>
   )
 }
 

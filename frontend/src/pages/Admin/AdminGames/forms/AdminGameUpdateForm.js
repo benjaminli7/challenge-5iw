@@ -9,6 +9,7 @@ function AdminGameUpdateForm({ game, handleClose, updateGamesList }) {
     defaultValues: {
       name: game.name,
       id: game.id,
+      color: game.color,
     },
   });
 

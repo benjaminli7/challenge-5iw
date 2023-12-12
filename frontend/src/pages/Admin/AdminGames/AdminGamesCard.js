@@ -201,6 +201,30 @@ export default function AdminGameCard({ game, updateGamesList }) {
           >
             {game.name}
           </Typography>
+
+          <Divider sx={{ m: 3 }} />
+          <Typography
+            sx={{ flex: 1, justifyContent: "center", flexDirection: "row" }}
+            variant="body2"
+            color="text.secondary"
+          >
+            <Typography sx={{ mt: 2 }} variant="h5" color="text.secondary">
+              Couleur de la carte :
+              <input
+                type="color"
+                value={game.color}
+                disabled
+                style={{
+                  width: 100,
+                  height: 30,
+                  marginLeft: 10,
+                  verticalAlign: "middle",
+                  borderRadius: "40%",
+                }}
+              />
+            </Typography>
+          </Typography>
+
           <Divider sx={{ m: 3 }} />
 
           <Typography sx={{ mt: 2 }} variant="h5" color="text.secondary">
