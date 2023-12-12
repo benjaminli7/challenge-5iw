@@ -14,6 +14,7 @@ import InputFileUpload from "../AdminGamesFileUpload";
 import { styled } from "@mui/material/styles";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { useForm, useFieldArray } from "react-hook-form";
+import { Typography } from "@mui/material";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -34,7 +35,7 @@ function AdminGameForm({ form, onSubmit, handleClose }) {
     control,
     name: "ranks",
   });
-  //   console.log(getValues);
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <DialogTitle>
@@ -51,19 +52,22 @@ function AdminGameForm({ form, onSubmit, handleClose }) {
           fullWidth
           {...register("name", { required: true })}
         />
-        {/* <Button
-          component="label"
-          variant="contained"
-          startIcon={<CloudUploadIcon />}
-          sx={{ width: "100%" }}
-          id="image"
-        >
-          Upload Image
-          <VisuallyHiddenInput
-            {...register("file", { required: false })}
-            type="file"
-          />
-        </Button> */}
+        <Typography id="discrete-slider" gutterBottom>
+          Color:
+        </Typography>
+        <input
+          type="color"
+          {...register("color", { required: true })}
+          autoFocus
+          key="color"
+          label="color"
+          sx={{
+            transform: "scale(1.5)",
+            marginLeft: "10px",
+            borderRadius: "50%",
+          }}
+          value={getValues("color")}
+        />
         {!getValues("id") ? (
           <>
             <DialogContentText>Ajouter des rangs</DialogContentText>

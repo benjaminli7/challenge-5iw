@@ -17,6 +17,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use App\Controller\PostImageController;
 use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\Validator\Constraints\Regex;
 
 
 
@@ -76,6 +77,12 @@ class Game
     #[Vich\UploadableField(mapping: 'game_image', fileNameProperty: 'filePath')]
     #[Groups(['test-img'])]
     private ?File $file = null;
+
+    #[ORM\Column(length: 255 , nullable: true)]
+    #[Groups(['read-game', 'create-game','read-one-game', 'update-game'])]
+    #[Assert\Regex(pattern: '/^#[a-f0-9]{6}$/i', message: 'The color must be a valid hex color')]
+    private ?string $color = null;
+
 
 
 
@@ -163,6 +170,18 @@ class Game
     public function setFileUrl(?string $fileUrl): static
     {
         $this->fileUrl = $fileUrl;
+
+        return $this;
+    }
+
+    public function getColor(): ?string
+    {
+        return $this->color;
+    }
+
+    public function setColor(?string $color): static
+    {
+        $this->color = $color;
 
         return $this;
     }
