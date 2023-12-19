@@ -43,7 +43,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['read-user', 'update-user'])]
+    #[Groups(['read-user'])]
     private ?int $id = null;
 
     #[Assert\Email()]
@@ -73,7 +73,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $plainPassword = null;
 
-    #[ORM\Column(type: 'boolean', options: ['default' => false], nullable: true)]
+    #[ORM\Column(type: 'boolean', nullable: true, options: ['default' => false])]
     private ?bool $isVerified = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -82,7 +82,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $resetToken = null;
 
-    #[Groups(['read-user'])]
+    #[Assert\Regex(
+        pattern: '/^0[1-9](?:[\s.-]?[0-9]{2}){4}$/',
+        message: 'Please enter a valid French phone number'
+    )]
+    #[Groups(['read-user', 'update-user'])]
     #[ORM\Column(length: 16, nullable: true)]
     private ?string $phone = null;
 
