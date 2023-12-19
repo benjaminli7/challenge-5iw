@@ -63,10 +63,32 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[Groups(['create-user', 'read-user', 'update-user'])]
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: 'Please enter a first name')]
+    #[Assert\Length(
+        min: 2,
+        max: 30,
+        minMessage: 'Your first name must be at least 2 characters long',
+        maxMessage: 'Your first name cannot be longer than 30 characters'
+    )]
+    #[Assert\Regex(
+        pattern: '/^[a-zA-ZÀ-ÿ\s-]+$/',
+        message: 'Your first name must contain only letters, spaces, or dashes'
+    )]
     private ?string $firstName = null;
 
     #[Groups(['create-user', 'read-user', 'update-user'])]
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: 'Please enter a last name')]
+    #[Assert\Length(
+        min: 2,
+        max: 30,
+        minMessage: 'Your last name must be at least 2 characters long',
+        maxMessage: 'Your last name cannot be longer than 30 characters'
+    )]
+    #[Assert\Regex(
+        pattern: '/^[a-zA-ZÀ-ÿ\s-]+$/',
+        message: 'Your last name must contain only letters, spaces, or dashes'
+    )]
     private ?string $lastName = null;
 
     #[Groups(['create-user', 'update-user'])]
