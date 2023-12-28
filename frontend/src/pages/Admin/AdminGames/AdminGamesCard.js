@@ -286,7 +286,6 @@ export default function AdminGameCard({ game, updateGamesList }) {
             justifyContent: "space-between",
             alignItems: "flex-end",
             position: "relative",
-            alignItems: "flex-end",
             p: 2,
             flexGrow: 1,
             backgroundColor: "white",

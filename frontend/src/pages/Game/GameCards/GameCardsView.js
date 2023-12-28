@@ -1,5 +1,5 @@
 import React from "react";
-import Grid from "@material-ui/core/Grid";
+import { Grid } from '@mui/material';
 import GameCard from "./GameCard";
 import CircularProgress from "@mui/material/CircularProgress";
 import useFetch from "@/hooks/useFetch";
