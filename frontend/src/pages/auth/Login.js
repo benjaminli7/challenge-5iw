@@ -40,6 +40,7 @@ export default function Login() {
 
   const onSubmit = async (data) => {
     try {
+      console.log(data)
       const response = await httpPost(`${ENDPOINTS.users.login}`, data);
       signIn({
         token: response.data.token,
