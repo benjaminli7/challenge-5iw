@@ -20,8 +20,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ORM\InheritanceType("SINGLE_TABLE")]
-#[ORM\DiscriminatorColumn(name: "user_type", type: "string")]
 #[ORM\Table(name: '`user`')]
 #[ApiResource(
     operations: [
@@ -97,7 +95,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
 
     # Client
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     #[Groups(['read-client'])]
     private ?int $coins = null;
 
