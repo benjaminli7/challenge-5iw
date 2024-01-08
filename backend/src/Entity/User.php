@@ -28,7 +28,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
         //        new Get(uriTemplate: '/users/{id}/infos', normalizationContext: ['groups' => ['read-user', 'read-user-as-admin']], security: 'is_granted("ROLE_ADMIN")'),
         new Post(denormalizationContext: ['groups' => ['create-user']]),
         new Patch(denormalizationContext: ['groups' => ['update-user']], securityPostDenormalize: 'is_granted("ROLE_ADMIN") or object == user', securityPostDenormalizeMessage: 'You can only edit your own user.'),
-        new Patch(uriTemplate: '/users/{id}/firstConnection', denormalizationContext: ['groups' => ['update-user-connection']], security: 'is_granted("ROLE_ADMIN") or object == user', securityMessage: 'You can only edit your own user.'),
     ],
     normalizationContext: ['groups' => ['read-user']],
 )]
@@ -85,13 +84,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 16, nullable: true)]
     private ?string $phone = null;
 
-
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Team::class)]
     private Collection $teams;
 
-    #[Groups(['create-user', 'read-user', 'update-user', 'update-user-connection'])]
-    #[ORM\Column(options: ['default' => true])]
-    private ?bool $isFirstConnection = null;
+    #[Groups(['create-user', 'read-user', 'update-user'])]
+    #[ORM\Column(nullable: true)]
+    private ?string $type = null;
 
 
     # Client
@@ -313,15 +311,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function isIsFirstConnection(): ?bool
+    public function getType(): ?string
     {
-        return $this->isFirstConnection;
+        return $this->type;
     }
 
-    public function setIsFirstConnection(bool $isFirstConnection): static
+    public function setType(string $type): static
     {
-        $this->isFirstConnection = $isFirstConnection;
-
+        $this->type = $type;
         return $this;
     }
 
