@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20231208215115 extends AbstractMigration
+final class Version20240102092219 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -20,16 +20,13 @@ final class Version20231208215115 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE game ADD file_path VARCHAR(255) DEFAULT NULL');
-        $this->addSql('ALTER TABLE game DROP image_file');
-        $this->addSql('ALTER TABLE game DROP image_name');
+        $this->addSql('ALTER TABLE "user" DROP user_type');
     }
 
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->addSql('CREATE SCHEMA public');
-        $this->addSql('ALTER TABLE game ADD image_name VARCHAR(255) DEFAULT NULL');
-        $this->addSql('ALTER TABLE game RENAME COLUMN file_path TO image_file');
+        $this->addSql('ALTER TABLE "user" ADD user_type VARCHAR(255) NOT NULL');
     }
 }

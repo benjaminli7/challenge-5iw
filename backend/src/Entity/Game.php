@@ -31,7 +31,7 @@ use ApiPlatform\Metadata\Delete;
         // 'image' => [
         //     'method' => 'POST',
         //     'path' => '/games/{id}/image',
-        //     'controller' => PostImageController::class,      
+        //     'controller' => PostImageController::class,
         // ],
         new Post(
             uriTemplate: '/games/{id}/image',
@@ -43,7 +43,7 @@ use ApiPlatform\Metadata\Delete;
             deserialize: false
         ),
         new GetCollection(normalizationContext: ['groups' => ['read-game']]),
-        new Get(normalizationContext: ['groups' => ['read-one-game']]),
+        new Get(normalizationContext: ['groups' => ['read-game']]),
         new Post(denormalizationContext: ['groups' => ['create-game']], security: 'is_granted("ROLE_ADMIN")' , securityMessage: 'Only admins can create games.'),
         new Patch(denormalizationContext: ['groups' => ['update-game']], security: 'is_granted("ROLE_ADMIN")' , securityMessage: 'Only admins can update games.'),
         new Delete(security: 'is_granted("ROLE_ADMIN")' , securityMessage: 'Only admins can delete games.'),
@@ -61,7 +61,7 @@ class Game
     private ?int $id = null;
 
     #[ORM\Column(length: 255 , unique: true)]
-    #[Groups(['read-game', 'create-game','read-one-game', 'update-game'])]
+    #[Groups(['read-game', 'create-game', 'update-game'])]
     private ?string $name = null;
 
     #[ORM\OneToMany(mappedBy: 'game', targetEntity: Rank::class, cascade: ['persist', 'remove'])]
@@ -70,16 +70,16 @@ class Game
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $filePath = null;
-    
+
     #[Groups(['read-game' ])]
     private ?string $fileUrl = null;
-    
+
     #[Vich\UploadableField(mapping: 'game_image', fileNameProperty: 'filePath')]
     #[Groups(['test-img'])]
     private ?File $file = null;
 
     #[ORM\Column(length: 255 , nullable: true)]
-    #[Groups(['read-game', 'create-game','read-one-game', 'update-game'])]
+    #[Groups(['read-game', 'create-game', 'update-game'])]
     #[Assert\Regex(pattern: '/^#[a-f0-9]{6}$/i', message: 'The color must be a valid hex color')]
     private ?string $color = null;
 

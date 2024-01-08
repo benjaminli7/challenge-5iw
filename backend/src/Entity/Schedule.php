@@ -27,7 +27,7 @@ class Schedule
 
     #[ORM\ManyToOne(inversedBy: 'schedule')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Booster $booster = null;
+    private ?User $booster = null;
 
     public function getId(): ?int
     {
@@ -70,12 +70,12 @@ class Schedule
         return $this;
     }
 
-    public function getBooster(): ?Booster
+    public function getBooster(): ?User
     {
         return $this->booster;
     }
 
-    public function setBooster(?Booster $booster): static
+    public function setBooster(?User $booster): static
     {
         $this->booster = $booster;
 

@@ -31,15 +31,13 @@ export default function Login() {
     formState: { errors, isSubmitting },
   } = useForm();
 
-  if (isFirstConnection) {
-    return <Navigate to="/first-connection" replace />;
-  }
   if (isAuthenticated()) {
     return <Navigate to={from} replace state={"test"} />;
   }
 
   const onSubmit = async (data) => {
     try {
+      console.log(data)
       const response = await httpPost(`${ENDPOINTS.users.login}`, data);
       signIn({
         token: response.data.token,
