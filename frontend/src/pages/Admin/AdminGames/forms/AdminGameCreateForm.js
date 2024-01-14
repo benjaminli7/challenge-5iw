@@ -1,25 +1,18 @@
-import React from "react";
+import { useCustomMutation } from "@/hooks/usePost";
 import AdminGameForm from "./AdminGameForm";
-import { useForm } from "react-hook-form";
-import { httpPost, isAdmin } from "@/services/api";
 import ENDPOINTS from "@/services/endpoints";
 
-function AdminGameCreateForm({ addToGamesList, handleClose }) {
-  const form = useForm({});
+function AdminGameCreateForm({ handleClose }) {
   const onSubmit = async (data) => {
     try {
-      console.log(data);
-      const response = await httpPost(ENDPOINTS.games.root, data);
-      addToGamesList((prev) => [...prev, response.data]);
-      handleClose();
-      console.log(response);
-    } catch (error) {
-      console.log(error);
+      const { mutateAsync: addGameMutation} = useCustomMutation(ENDPOINTS.games.root, data, "games");
+      await addGameMutation();
+      console.log("game created")
+    } catch (e) {
+      console.log(e);
     }
   };
-  return (
-    <AdminGameForm onSubmit={onSubmit} form={form} handleClose={handleClose} />
-  );
+  return <AdminGameForm onSubmit={onSubmit} actionType="create" handleClose={handleClose} />;
 }
 
 export default AdminGameCreateForm;

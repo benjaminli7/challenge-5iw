@@ -1,57 +1,35 @@
 import useFetch from "@/hooks/useFetch";
 import ENDPOINTS from "@/services/endpoints";
-import { Typography } from "@mui/material";
-import { useEffect, useState } from "react";
-import Button from "@mui/material/Button";
-import useMediaQuery from "@mui/material/useMediaQuery";
-import { useTheme } from "@mui/material/styles";
-import AdminGamesModal from "./AdminGamesModal";
-import AdminGameList from "./AdminGamesList";
+import { Button, Dialog, Typography } from "@mui/material";
 import CircularProgress from "@mui/material/CircularProgress";
-import Grid from "@mui/material/Grid";
+import AdminGamesList from "./AdminGamesList";
+import { useDialog } from "@/hooks/useDialog";
+import AdminGameCreateForm from "./forms/AdminGameCreateForm";
 
 function AdminGamesView() {
-  const { data: games, error } = useFetch("games", ENDPOINTS.games.root);
-  const [loading, setLoading] = useState(true);
-  const [gamesList, setGamesList] = useState([]);
+  const {
+    data: games,
+    isError,
+    error,
+    isLoading,
+  } = useFetch("games", ENDPOINTS.games.root);
+  const { open, handleOpen, handleClose } = useDialog();
 
-  useEffect(() => {
-    console.log("USE EFFECT ADMIN GAMES");
-    if (error) {
-      setLoading(false);
-    }
-    if (games) {
-      setLoading(false);
-      setGamesList(games);
-    }
-  }, [games, error]);
+  if (isError) {
+    return <Typography>{error.message}</Typography>;
+  }
 
-  const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
-
-  // useEffect(() => {
-  //   if (success) {
-  //     setSuccess(false);
-  //     window.location.reload();
-  //   }
-  // }, [success]);
+  // if (isLoading) return <CircularProgress />;
 
   return (
     <>
-      {loading ? (
-        <Grid container justifyContent={"center"}>
-          <CircularProgress />
-        </Grid>
-      ) : (
-        <>
-          <AdminGamesModal
-            fullScreen={fullScreen}
-            addToGamesList={setGamesList}
-            mode="add"
-          />
-          <AdminGameList games={gamesList} updateGamesList={setGamesList} />
-        </>
-      )}
+      <Button color="primary" onClick={handleOpen}>
+        Open modal
+      </Button>
+      <AdminGamesList games={games} />
+      <Dialog open={open} onClose={handleClose}>
+        <AdminGameCreateForm handleClose={handleClose}/>
+      </Dialog>
     </>
   );
 }
