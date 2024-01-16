@@ -1,18 +1,25 @@
-import { useCustomMutation } from "@/hooks/usePost";
-import AdminGameForm from "./AdminGameForm";
+import { useCustomMutation } from "@/hooks/useCustomMutation";
 import ENDPOINTS from "@/services/endpoints";
+import AdminGameForm from "./AdminGameForm";
 
 function AdminGameCreateForm({ handleClose }) {
+  const addGameMutation = useCustomMutation(ENDPOINTS.games.root, 'post', ["games"]);
+
   const onSubmit = async (data) => {
     try {
-      const { mutateAsync: addGameMutation} = useCustomMutation(ENDPOINTS.games.root, data, "games");
-      await addGameMutation();
-      console.log("game created")
-    } catch (e) {
-      console.log(e);
+      await addGameMutation.mutateAsync(data);
+      await handleClose()
+    } catch (error) {
+      console.error("Error creating game:", error);
     }
   };
-  return <AdminGameForm onSubmit={onSubmit} actionType="create" handleClose={handleClose} />;
+  return (
+    <AdminGameForm
+      onSubmit={onSubmit}
+      actionType="create"
+      handleClose={handleClose}
+    />
+  );
 }
 
 export default AdminGameCreateForm;
