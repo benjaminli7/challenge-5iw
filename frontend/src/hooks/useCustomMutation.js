@@ -11,6 +11,9 @@ export const useCustomMutation = (endpoint, method, resource) => {
         case "post":
           const responsePost = await axios.post(makeUrl(endpoint), data, makeConfig());
           return responsePost.data;
+        case "patch":
+          const responsePatch = await axios.patch(makeUrl(endpoint), data, makeConfig("patch"));
+          return responsePatch.data;
         case "put":
           const responsePut = await axios.put(makeUrl(endpoint), data, makeConfig());
           return responsePut.data;

@@ -19,7 +19,6 @@ import { Navigate, Link as RouterLink, useLocation } from "react-router-dom";
 
 export default function Login() {
   const [errorLogin, setErrorLogin] = useState(null);
-  const [isFirstConnection, setIsFirstConnection] = useState(false);
   const signIn = useSignIn();
   const isAuthenticated = useIsAuthenticated();
   const location = useLocation();
@@ -47,7 +46,6 @@ export default function Login() {
           user: response.data.user,
         },
       });
-      setIsFirstConnection(response.data?.user.isFirstConnection);
     } catch (error) {
       console.log(error);
       setErrorLogin(error.response.data.message);

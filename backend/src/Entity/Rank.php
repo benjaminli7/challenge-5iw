@@ -36,7 +36,7 @@ class Rank
 
     #[ORM\ManyToOne(inversedBy: 'ranks')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups([ 'create-rank'])]
+    #[Groups(['create-rank'])]
     private ?Game $game = null;
 
     #[ORM\Column(length: 255)]

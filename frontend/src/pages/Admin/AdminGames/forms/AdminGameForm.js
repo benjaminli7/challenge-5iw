@@ -3,17 +3,27 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  TextField,
 } from "@mui/material";
-import TextField from "@mui/material/TextField";
 import { useForm } from "react-hook-form";
+import CustomButton from "@/components/commons/CustomButton";
 
-function AdminGameForm({ onSubmit, actionType, handleClose }) {
+function AdminGameForm({
+  selectedGame,
+  onSubmit,
+  actionType,
+  handleDialogClose,
+}) {
+  const defaultValues = {
+    name: selectedGame?.name || "",
+  };
+
   const {
     register,
     handleSubmit,
     control,
-    formState: { errors },
-  } = useForm();
+    formState: { errors, isSubmitting },
+  } = useForm({ defaultValues });
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -32,8 +42,14 @@ function AdminGameForm({ onSubmit, actionType, handleClose }) {
         />
       </DialogContent>
       <DialogActions>
-        <Button type="submit">Send</Button>
-        <Button onClick={handleClose}>Cancel</Button>
+        <CustomButton
+          type="submit"
+          variant="contained"
+          isSubmitting={isSubmitting}
+        >
+          Submit
+        </CustomButton>
+        <Button onClick={handleDialogClose}>Cancel</Button>
       </DialogActions>
     </form>
   );

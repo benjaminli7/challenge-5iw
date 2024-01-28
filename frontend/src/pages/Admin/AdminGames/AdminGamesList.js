@@ -1,6 +1,11 @@
-import { Button, Card, Grid, Typography } from "@mui/material";
+import { Box, Button, Card, Grid, Typography } from "@mui/material";
 
-export default function AdminGamesList({ games, handleOpen }) {
+export default function AdminGamesList({
+  games,
+  setSelectedGame,
+  handleActionType,
+  ACTION_TYPES,
+}) {
   return (
     <Grid container spacing={4}>
       {games?.map((game) => (
@@ -12,9 +17,25 @@ export default function AdminGamesList({ games, handleOpen }) {
                 {rank.name}
               </Typography>
             ))}
-            <Button variant="contained" color="primary" onClick={handleOpen}>
-              Add rank
-            </Button>
+            <Box sx={{ display: 'flex', gap: 2 }}>
+
+              <Button variant="contained" color="primary" onClick={() => {
+                handleActionType(ACTION_TYPES.EDIT_GAME);
+                setSelectedGame(game);
+              }}>
+                Edit game
+              </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => {
+                  handleActionType(ACTION_TYPES.CREATE_RANK);
+                  setSelectedGame(game);
+                }}
+              >
+                Add rank
+              </Button>
+            </Box>
           </Card>
         </Grid>
       ))}
