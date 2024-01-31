@@ -1,3 +1,4 @@
+import CustomButton from "@/components/commons/CustomButton";
 import { httpPost, isAdmin } from "@/services/api";
 import ENDPOINTS from "@/services/endpoints";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
@@ -16,6 +17,7 @@ import { useState } from "react";
 import { useIsAuthenticated, useSignIn } from "react-auth-kit";
 import { useForm } from "react-hook-form";
 import { Navigate, Link as RouterLink, useLocation } from "react-router-dom";
+import { toast } from "sonner";
 
 export default function Login() {
   const [errorLogin, setErrorLogin] = useState(null);
@@ -36,8 +38,8 @@ export default function Login() {
 
   const onSubmit = async (data) => {
     try {
-      console.log(data)
       const response = await httpPost(`${ENDPOINTS.users.login}`, data);
+      toast.success("Logged in successfully!");
       signIn({
         token: response.data.token,
         expiresIn: 3600,
@@ -113,15 +115,15 @@ export default function Login() {
           >
             {errorLogin}
           </Alert>
-          <Button
-            disabled={isSubmitting}
+          <CustomButton
+            isSubmitting={isSubmitting}
             type="submit"
             fullWidth
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
           >
             Sign In
-          </Button>
+          </CustomButton>
           <Grid container>
             <Grid item xs>
               <Link href="#" variant="body2">

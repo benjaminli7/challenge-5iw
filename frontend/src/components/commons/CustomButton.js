@@ -6,7 +6,7 @@ function CustomButton({
     ...props
 }) {
   return (
-    <Box sx={{ m: 1, position: "relative" }}>
+    <Box sx={{ position: "relative" }}>
       <Button disabled={isSubmitting} {...props}>
         {children}
       </Button>

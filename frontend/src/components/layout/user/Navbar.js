@@ -44,7 +44,6 @@ export default function Navbar({ window }) {
   const drawer = (
     <Box onClick={handleDrawerToggle} sx={{ textAlign: "center" }}>
       <Typography variant="h6" sx={{ my: 2 }}>
-        {/* <img src="./GameElevate.png" alt="logo" /> */}
         Logo
       </Typography>
       <Divider />

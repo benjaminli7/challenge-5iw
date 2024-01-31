@@ -19,7 +19,6 @@ function AdminGameCreateForm({ handleDialogClose }) {
     <AdminGameForm
       onSubmit={onSubmit}
       actionType="create"
-      handleDialogClose={handleDialogClose}
     />
   );
 }

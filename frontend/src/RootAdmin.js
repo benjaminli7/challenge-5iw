@@ -3,6 +3,7 @@ import { Outlet } from "react-router-dom";
 import NavbarAdmin from "./components/layout/admin/NavbarAdmin";
 import { isAdmin } from "./services/api";
 import Page404 from "./components/layout/404";
+import { Toaster } from "sonner";
 
 const drawerWidth = 240;
 
@@ -13,6 +14,7 @@ function RootAdmin() {
   return (
     <>
       <CssBaseline />
+      <Toaster position="top-center" richColors />
       <NavbarAdmin drawerWidth={drawerWidth}>
         <Box
           component="main"

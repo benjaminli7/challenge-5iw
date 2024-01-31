@@ -23,7 +23,6 @@ function AdminRankCreateForm({ handleDialogClose, selectedGame }) {
     <AdminRankForm
       onSubmit={onSubmit}
       actionType="create"
-      handleDialogClose={handleDialogClose}
     />
   );
 }

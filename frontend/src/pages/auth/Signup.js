@@ -12,17 +12,27 @@ import { Link as RouterLink } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { httpPost } from "@/services/api";
 import ENDPOINTS from "@/services/endpoints";
+import { MenuItem } from "@mui/material";
+import CustomSelectForm from "@/components/commons/CustomSelectForm";
+import CustomButton from "@/components/commons/CustomButton";
+import { toast } from "sonner"
 
 export default function Signup() {
-
-  const { register, handleSubmit, formState: { errors, isSubmitting }, reset, getValues } = useForm();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+    getValues,
+    control,
+  } = useForm();
 
   const onSubmit = async (data) => {
     try {
       await httpPost(`${ENDPOINTS.users.root}`, {
         ...data,
-        isFirstConnection: true,
       })
+      toast.success("Sign up successfully");
       reset();
     } catch (error) {
       console.log(error);
@@ -82,6 +92,19 @@ export default function Signup() {
               />
             </Grid>
             <Grid item xs={12}>
+              <CustomSelectForm
+                id="type"
+                name="type"
+                label="Type"
+                control={control}
+                defaultValue={"client"}
+                fullWidth
+              >
+                <MenuItem value="client">Client</MenuItem>
+                <MenuItem value="manager">Manager</MenuItem>
+              </CustomSelectForm>
+            </Grid>
+            <Grid item xs={12}>
               <TextField
                 {...register("email", {
                   required: "Email is required",
@@ -128,7 +151,9 @@ export default function Signup() {
                     value: 8,
                     message: "Password must be at least 8 characters",
                   },
-                  validate: (value) => value === getValues("plainPassword") || "The passwords do not match",
+                  validate: (value) =>
+                    value === getValues("plainPassword") ||
+                    "The passwords do not match",
                 })}
                 required
                 fullWidth
@@ -144,15 +169,15 @@ export default function Signup() {
               />
             </Grid>
           </Grid>
-          <Button
-            disabled={isSubmitting}
+          <CustomButton
+            isSubmitting={isSubmitting}
             type="submit"
             fullWidth
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
           >
             Sign Up
-          </Button>
+          </CustomButton>
           <Grid container justifyContent="flex-end">
             <Grid item>
               <Link component={RouterLink} to="/login" variant="body2">

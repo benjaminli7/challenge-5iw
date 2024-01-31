@@ -8,13 +8,23 @@ import {
 } from "@mui/material";
 import { useForm } from "react-hook-form";
 
-function AdminRankForm({ onSubmit, actionType, handleDialogClose }) {
+function AdminRankForm({
+  deleteRankMutation,
+  handleDeleteRank,
+  selectedRank,
+  onSubmit,
+  actionType,
+}) {
+  const defaultValues = {
+    name: selectedRank?.name || "",
+  };
+
   const {
     register,
     handleSubmit,
     control,
     formState: { errors, isSubmitting },
-  } = useForm();
+  } = useForm({ defaultValues });
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -40,7 +50,17 @@ function AdminRankForm({ onSubmit, actionType, handleDialogClose }) {
         >
           Submit
         </CustomButton>
-        <Button onClick={handleDialogClose}>Cancel</Button>
+        {actionType === "update" && (
+          <CustomButton
+            type="button"
+            isSubmitting={deleteRankMutation.isLoading}
+            onClick={handleDeleteRank}
+            variant="contained"
+            color="error"
+          >
+            Delete
+          </CustomButton>
+        )}
       </DialogActions>
     </form>
   );

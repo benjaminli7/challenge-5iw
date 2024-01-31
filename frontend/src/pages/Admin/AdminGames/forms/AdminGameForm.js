@@ -9,10 +9,11 @@ import { useForm } from "react-hook-form";
 import CustomButton from "@/components/commons/CustomButton";
 
 function AdminGameForm({
+  deleteGameMutation,
+  handleDeleteGame,
   selectedGame,
   onSubmit,
   actionType,
-  handleDialogClose,
 }) {
   const defaultValues = {
     name: selectedGame?.name || "",
@@ -49,7 +50,17 @@ function AdminGameForm({
         >
           Submit
         </CustomButton>
-        <Button onClick={handleDialogClose}>Cancel</Button>
+        {actionType === "update" && (
+          <CustomButton
+            type="button"
+            isSubmitting={deleteGameMutation.isLoading}
+            onClick={handleDeleteGame}
+            variant="contained"
+            color="error"
+          >
+            Delete
+          </CustomButton>
+        )}
       </DialogActions>
     </form>
   );

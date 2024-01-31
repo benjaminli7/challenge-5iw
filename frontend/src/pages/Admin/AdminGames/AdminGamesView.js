@@ -3,15 +3,16 @@ import ENDPOINTS from "@/services/endpoints";
 import { Button, Dialog, Typography } from "@mui/material";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useState } from "react";
-import AdminGamesList from "./AdminGamesList";
-import AdminGameCreateForm from "./forms/AdminGameCreateForm";
-import AdminRankCreateForm from "./forms/AdminRankCreateForm";
-
+import AdminGamesList from "@/pages/Admin/AdminGames/AdminGamesList";
+import AdminGameCreateForm from "@/pages/Admin/AdminGames/forms/AdminGameCreateForm";
+import AdminRankCreateForm from "@/pages/Admin/AdminGames/forms/AdminRankCreateForm";
 import useActionHandlers from "@/hooks/useActionHandlers";
-import AdminGameUpdateForm from "./forms/AdminGameUpdateForm";
+import AdminGameUpdateForm from "@/pages/Admin/AdminGames/forms/AdminGameUpdateForm";
+import AdminRankUpdateForm from "@/pages/Admin/AdminGames/forms/AdminRankUpdateForm";
 
 function AdminGamesView() {
   const [selectedGame, setSelectedGame] = useState(null);
+  const [selectedRank, setSelectedRank] = useState(null);
   const {
     data: games,
     isError,
@@ -47,6 +48,7 @@ function AdminGamesView() {
       <AdminGamesList
         games={games}
         setSelectedGame={setSelectedGame}
+        setSelectedRank={setSelectedRank}
         handleActionType={handleActionType}
         ACTION_TYPES={ACTION_TYPES}
       />
@@ -64,6 +66,12 @@ function AdminGamesView() {
           <AdminRankCreateForm
             handleDialogClose={handleDialogClose}
             selectedGame={selectedGame}
+          />
+        )}
+        {actionType === ACTION_TYPES.EDIT_RANK && (
+          <AdminRankUpdateForm
+            handleDialogClose={handleDialogClose}
+            selectedRank={selectedRank}
           />
         )}
       </Dialog>

@@ -1,22 +1,26 @@
+import Root from "@/Root";
+import RootAdmin from "@/RootAdmin";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import ProtectedUserTypeRoute from "@/components/ProtectedUserTypeRoute";
+import Page404 from "@/components/layout/404";
+import AdminDashboardView from "@/pages/Admin/AdminDashboardView";
+import AdminGamesView from "@/pages/Admin/AdminGames/AdminGamesView";
+import AdminUsersView from "@/pages/Admin/AdminUsersView";
+import Home from "@/pages/Home/Home";
+import ProfileView from "@/pages/Profile/ProfileView";
+import Login from "@/pages/auth/Login";
+import Signup from "@/pages/auth/Signup";
+import ClientBoostersList from "@/pages/client/ClientBoostersList";
+import ClientView from "@/pages/client/ClientView";
+import theme from "@/theme/theme";
 import { ThemeProvider } from "@emotion/react";
 import React from "react";
 import { AuthProvider } from "react-auth-kit";
 import ReactDOM from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Page404 from "./components/layout/404";
-import ProtectedRoute from "./components/ProtectedRoute";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import "./index.css";
-import AdminDashboardView from "./pages/Admin/AdminDashboardView";
-import AdminUsersView from "./pages/Admin/AdminUsersView";
-import Login from "./pages/auth/Login";
-import Signup from "./pages/auth/Signup";
-import Home from "./pages/Home/Home";
-import ProfileView from "./pages/Profile/ProfileView";
-import Root from "./Root";
-import RootAdmin from "./RootAdmin";
-import theme from "./theme/theme";
-import AdminGamesView from "./pages/Admin/AdminGames/AdminGamesView";
+import ManagerView from "./pages/manager/ManagerView";
 const queryClient = new QueryClient();
 
 const router = createBrowserRouter([
@@ -45,6 +49,40 @@ const router = createBrowserRouter([
           </ProtectedRoute>
         ),
       },
+      {
+        path: "client",
+        children: [
+          {
+            path: "",
+            element: (
+              <ProtectedUserTypeRoute type="client">
+                <ClientView />
+              </ProtectedUserTypeRoute>
+            ),
+          },
+          {
+            path: "boosters",
+            element: (
+              <ProtectedUserTypeRoute type="client">
+                <ClientBoostersList />
+              </ProtectedUserTypeRoute>
+            ),
+          },
+        ],
+      },
+      {
+        path: "manager",
+        children: [
+          {
+            path: "",
+            element: (
+              <ProtectedUserTypeRoute type="manager">
+                <ManagerView />
+              </ProtectedUserTypeRoute>
+            ),
+          },
+        ],
+      },
     ],
   },
   {
@@ -67,7 +105,7 @@ const router = createBrowserRouter([
       {
         path: "games",
         element: <AdminGamesView />,
-      }
+      },
     ],
   },
 ]);
