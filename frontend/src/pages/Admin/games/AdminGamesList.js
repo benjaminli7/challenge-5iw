@@ -1,5 +1,5 @@
-import { Box, Button, Card, Grid, Stack, Typography, IconButton } from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
+import { Box, Button, Card, Grid, Stack, Typography } from "@mui/material";
+import AdminRankItem from "@/pages/admin/games/AdminRankItem";
 
 export default function AdminGamesList({
   games,
@@ -11,28 +11,18 @@ export default function AdminGamesList({
   return (
     <Grid container spacing={4}>
       {games?.map((game) => (
-        <Grid item key={game.id} xs={12} sm={4}>
-          <Card variant="outlined" sx={{ p: 3 }}>
+        <Grid item key={game.id} xs={12} md={6} lg={4}>
+          <Card variant="outlined" sx={{ p: 3, height: '100%' }}>
             <Stack spacing={2}>
               <Typography variant="h6">{game.name}</Typography>
               {game.ranks.map((rank) => (
-                <Card key={rank.id} variant="outlined" sx={{ p: 2 }}>
-                  <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 2 }}>
-                    <Typography key={rank.id} variant="body1">
-                      {rank.name}
-                    </Typography>
-                    <IconButton
-                      color="primary"
-                      aria-label="edit rank"
-                      onClick={() => {
-                        handleActionType(ACTION_TYPES.EDIT_RANK)
-                        setSelectedRank(rank)
-                      }}
-                    >
-                      <EditIcon />
-                    </IconButton>
-                  </Box>
-                </Card>
+                <AdminRankItem
+                  key={rank.id}
+                  rank={rank}
+                  handleActionType={handleActionType}
+                  setSelectedRank={setSelectedRank}
+                  ACTION_TYPES={ACTION_TYPES}
+                />
               ))}
               <Box sx={{ display: "flex", gap: 2 }}>
                 <Button

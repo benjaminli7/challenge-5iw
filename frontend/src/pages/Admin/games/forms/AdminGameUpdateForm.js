@@ -1,18 +1,12 @@
 import React from "react";
-import AdminGameForm from "./AdminGameForm";
-import ENDPOINTS from "@/services/endpoints";
-import { useCustomMutation } from "@/hooks/useCustomMutation";
+import AdminGameForm from "@/pages/admin/games/forms/AdminGameForm";
+import { useGames } from "@/hooks/models/useGames";
 
 function AdminGameUpdateForm({
   selectedGame,
   handleDialogClose,
 }) {
-  const updateGameMutation = useCustomMutation(ENDPOINTS.games.gameId(selectedGame.id), "patch", ["games"])
-  const deleteGameMutation = useCustomMutation(
-    ENDPOINTS.games.gameId(selectedGame.id),
-    "delete",
-    ["games"]
-  );
+  const { updateGameMutation, deleteGameMutation } = useGames(selectedGame);
 
   const onSubmit = async (data) => {
     try {

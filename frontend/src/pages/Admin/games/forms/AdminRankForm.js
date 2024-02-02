@@ -1,6 +1,5 @@
 import CustomButton from "@/components/commons/CustomButton";
 import {
-  Button,
   DialogActions,
   DialogContent,
   DialogTitle,

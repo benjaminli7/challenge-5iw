@@ -1,39 +1,35 @@
-import useFetch from "@/hooks/useFetch";
-import ENDPOINTS from "@/services/endpoints";
 import { Button, Dialog, Typography } from "@mui/material";
 import CircularProgress from "@mui/material/CircularProgress";
-import { useState } from "react";
-import AdminGamesList from "@/pages/Admin/AdminGames/AdminGamesList";
-import AdminGameCreateForm from "@/pages/Admin/AdminGames/forms/AdminGameCreateForm";
-import AdminRankCreateForm from "@/pages/Admin/AdminGames/forms/AdminRankCreateForm";
-import useActionHandlers from "@/hooks/useActionHandlers";
-import AdminGameUpdateForm from "@/pages/Admin/AdminGames/forms/AdminGameUpdateForm";
-import AdminRankUpdateForm from "@/pages/Admin/AdminGames/forms/AdminRankUpdateForm";
+import AdminGamesList from "@/pages/admin/games/AdminGamesList";
+import AdminGameCreateForm from "@/pages/admin/games/forms/AdminGameCreateForm";
+import AdminRankCreateForm from "@/pages/admin/games/forms/AdminRankCreateForm";
+import AdminGameUpdateForm from "@/pages/admin/games/forms/AdminGameUpdateForm";
+import AdminRankUpdateForm from "@/pages/admin/games/forms/AdminRankUpdateForm";
+import { useAdminGamesView } from "@/pages/admin/games/hooks/useAdminGamesView";
 
 function AdminGamesView() {
-  const [selectedGame, setSelectedGame] = useState(null);
-  const [selectedRank, setSelectedRank] = useState(null);
   const {
-    data: games,
+    ACTION_TYPES,
+    games,
     isError,
-    error,
     isLoading,
-  } = useFetch("games", ENDPOINTS.games.root);
-  const { actionType, openDialog, handleDialogClose, handleActionType } =
-    useActionHandlers();
-
-  const ACTION_TYPES = {
-    CREATE_GAME: "CREATE_GAME",
-    EDIT_GAME: "EDIT_GAME",
-    CREATE_RANK: "CREATE_RANK",
-    EDIT_RANK: "EDIT_RANK",
-  };
+    error,
+    selectedGame,
+    setSelectedGame,
+    selectedRank,
+    setSelectedRank,
+    actionType,
+    openDialog,
+    handleDialogClose,
+    handleActionType,
+   } = useAdminGamesView()
 
   if (isError) {
     return <Typography>{error.message}</Typography>;
   }
 
   if (isLoading) return <CircularProgress />;
+
 
   return (
     <>

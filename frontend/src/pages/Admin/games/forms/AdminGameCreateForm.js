@@ -1,12 +1,8 @@
-import { useCustomMutation } from "@/hooks/useCustomMutation";
-import ENDPOINTS from "@/services/endpoints";
-import AdminGameForm from "./AdminGameForm";
+import AdminGameForm from "@/pages/admin/games/forms/AdminGameForm";
+import { useGames } from "@/hooks/models/useGames";
 
 function AdminGameCreateForm({ handleDialogClose }) {
-  const addGameMutation = useCustomMutation(ENDPOINTS.games.root, "post", [
-    "games",
-  ]);
-
+  const { addGameMutation } = useGames();
   const onSubmit = async (data) => {
     try {
       await addGameMutation.mutateAsync(data);

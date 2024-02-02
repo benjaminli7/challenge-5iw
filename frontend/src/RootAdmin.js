@@ -1,8 +1,8 @@
 import { Box, CssBaseline, Toolbar } from "@mui/material";
 import { Outlet } from "react-router-dom";
-import NavbarAdmin from "./components/layout/admin/NavbarAdmin";
-import { isAdmin } from "./services/api";
-import Page404 from "./components/layout/404";
+import NavbarAdmin from "@/components/layout/admin/NavbarAdmin";
+import { isAdmin } from "@/services/api";
+import Page404 from "@/components/layout/404";
 import { Toaster } from "sonner";
 
 const drawerWidth = 240;

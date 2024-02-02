@@ -1,4 +1,4 @@
-import useFormDialog from "./useFormDialog";
+import useFormDialog from "@/hooks/useFormDialog";
 import { useState } from "react";
 
 export default function useActionHandlers(selectedElementInitialValue = []) {

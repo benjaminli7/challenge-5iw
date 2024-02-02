@@ -1,12 +1,11 @@
 import CustomButton from "@/components/commons/CustomButton";
-import { httpPost, isAdmin } from "@/services/api";
-import ENDPOINTS from "@/services/endpoints";
+import { useUsers } from "@/hooks/models/useUsers";
+import { isAdmin } from "@/services/api";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import {
   Alert,
   Avatar,
   Box,
-  Button,
   Container,
   Grid,
   Link,
@@ -21,6 +20,7 @@ import { toast } from "sonner";
 
 export default function Login() {
   const [errorLogin, setErrorLogin] = useState(null);
+  const { loginMutation } = useUsers();
   const signIn = useSignIn();
   const isAuthenticated = useIsAuthenticated();
   const location = useLocation();
@@ -38,14 +38,14 @@ export default function Login() {
 
   const onSubmit = async (data) => {
     try {
-      const response = await httpPost(`${ENDPOINTS.users.login}`, data);
+      const response = await loginMutation.mutateAsync(data);
       toast.success("Logged in successfully!");
       signIn({
-        token: response.data.token,
+        token: response.token,
         expiresIn: 3600,
         tokenType: "Bearer",
         authState: {
-          user: response.data.user,
+          user: response.user,
         },
       });
     } catch (error) {

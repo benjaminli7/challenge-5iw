@@ -1,19 +1,8 @@
-import { useCustomMutation } from "@/hooks/useCustomMutation";
-import ENDPOINTS from "@/services/endpoints";
-import AdminRankForm from "./AdminRankForm";
+import AdminRankForm from "@/pages/admin/games/forms/AdminRankForm";
+import { useRanks } from "@/hooks/models/useRanks";
 
 function AdminRankUpdateForm({ selectedRank, handleDialogClose }) {
-  const updateRankMutation = useCustomMutation(
-    ENDPOINTS.ranks.rankId(selectedRank.id),
-    "patch",
-    ["games"]
-  );
-
-  const deleteRankMutation = useCustomMutation(
-    ENDPOINTS.ranks.rankId(selectedRank.id),
-    "delete",
-    ["games"]
-  )
+  const { updateRankMutation, deleteRankMutation } = useRanks(selectedRank);
 
   const onSubmit = async (data) => {
     try {

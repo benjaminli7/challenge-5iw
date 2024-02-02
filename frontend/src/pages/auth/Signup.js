@@ -1,6 +1,5 @@
 import * as React from "react";
 import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
@@ -10,14 +9,15 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { Link as RouterLink } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { httpPost } from "@/services/api";
-import ENDPOINTS from "@/services/endpoints";
 import { MenuItem } from "@mui/material";
 import CustomSelectForm from "@/components/commons/CustomSelectForm";
 import CustomButton from "@/components/commons/CustomButton";
 import { toast } from "sonner"
+import { useUsers } from "@/hooks/models/useUsers";
 
 export default function Signup() {
+  const { registerMutation } = useUsers();
+
   const {
     register,
     handleSubmit,
@@ -29,10 +29,8 @@ export default function Signup() {
 
   const onSubmit = async (data) => {
     try {
-      await httpPost(`${ENDPOINTS.users.root}`, {
-        ...data,
-      })
-      toast.success("Sign up successfully");
+      await registerMutation.mutateAsync(data);
+      toast.success("Signed up successfully");
       reset();
     } catch (error) {
       console.log(error);

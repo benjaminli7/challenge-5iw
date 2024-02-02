@@ -1,11 +1,8 @@
-import { useCustomMutation } from "@/hooks/useCustomMutation";
-import ENDPOINTS from "@/services/endpoints";
-import AdminRankForm from "./AdminRankForm";
+import AdminRankForm from "@/pages/admin/games/forms/AdminRankForm";
+import { useRanks } from "@/hooks/models/useRanks";
 
 function AdminRankCreateForm({ handleDialogClose, selectedGame }) {
-  const addRankMutation = useCustomMutation(ENDPOINTS.ranks.root, "post", [
-    "games",
-  ]);
+  const { addRankMutation } = useRanks();
 
   const onSubmit = async (data) => {
     try {
