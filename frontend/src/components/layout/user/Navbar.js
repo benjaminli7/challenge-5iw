@@ -11,35 +11,19 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import { useState } from "react";
-import { useIsAuthenticated, useSignOut } from "react-auth-kit";
 import { Link } from "react-router-dom";
+import useNavbar from "@/components/layout/user/hooks/useNavbar";
 
 const drawerWidth = 240;
 
 export default function Navbar({ window }) {
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const signOut = useSignOut();
-  const isAuthenticated = useIsAuthenticated();
-  const globalNavItems = [
-    {
-      label: "Home",
-      path: "/",
-    },
-  ];
-  const authNavItems = [
-    {
-      label: "Profile",
-      path: "/profile",
-    },
-  ];
-  const navItems = isAuthenticated()
-    ? globalNavItems.concat(authNavItems)
-    : globalNavItems;
-
-  const handleDrawerToggle = () => {
-    setMobileOpen((prevState) => !prevState);
-  };
+  const {
+    handleDrawerToggle,
+    mobileOpen,
+    signOut,
+    getNavItems,
+    isAuthenticated,
+  } = useNavbar();
 
   const drawer = (
     <Box onClick={handleDrawerToggle} sx={{ textAlign: "center" }}>
@@ -48,7 +32,7 @@ export default function Navbar({ window }) {
       </Typography>
       <Divider />
       <List>
-        {navItems.map((item, index) => (
+        {getNavItems().map((item, index) => (
           <Link key={index} to={item.path}>
             <ListItem key={index} disablePadding>
               <ListItemButton sx={{ textAlign: "center" }}>
@@ -90,7 +74,7 @@ export default function Navbar({ window }) {
             Logo
           </Typography>
           <Box sx={{ display: { xs: "none", sm: "block" } }}>
-            {navItems.map((item, index) => (
+            {getNavItems().map((item, index) => (
               <Link key={index} to={item.path}>
                 <Button key={index} sx={{ color: "#fff" }}>
                   {item.label}
