@@ -7,24 +7,37 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: TeamRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    normalizationContext: ['groups' => ['read-team']],
+    denormalizationContext: ['groups' => ['write-team']],
+)]
+
 class Team
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['read-team'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['read-team', 'write-team'])]
     private ?string $name = null;
+
+    #[ORM\Column]
+    #[Groups(['read-team'])]
+    private ?int $coins = null;
 
     #[ORM\ManyToOne(inversedBy: 'teams')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['read-team'])]
     private ?User $manager = null;
 
-    #[ORM\OneToMany(mappedBy: 'team', targetEntity: Booster::class)]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: User::class)]
+    #[Groups(['read-team'])]
     private Collection $boosters;
 
     public function __construct()
@@ -61,6 +74,18 @@ class Team
         return $this;
     }
 
+    public function getCoins(): ?int
+    {
+        return $this->coins;
+    }
+
+    public function setCoins(int $coins): static
+    {
+        $this->coins = $coins;
+
+        return $this;
+    }
+
     /**
      * @return Collection<int, Booster>
      */
@@ -69,7 +94,7 @@ class Team
         return $this->boosters;
     }
 
-    public function addBooster(Booster $booster): static
+    public function addBooster(?User $booster): static
     {
         if (!$this->boosters->contains($booster)) {
             $this->boosters->add($booster);
@@ -79,7 +104,7 @@ class Team
         return $this;
     }
 
-    public function removeBooster(Booster $booster): static
+    public function removeBooster(?User $booster): static
     {
         if ($this->boosters->removeElement($booster)) {
             // set the owning side to null (unless already changed)

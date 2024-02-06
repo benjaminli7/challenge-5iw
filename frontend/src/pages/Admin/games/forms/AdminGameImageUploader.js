@@ -22,11 +22,6 @@ const AdminGameImageUploader = ({ onUpload }) => {
   const { register } = form;
   const [file, setFile] = useState(null);
 
-  //   const handleImageUpload = (data) => {
-  //     console.log(data);
-  //     onUpload(data.image[0]);
-  //   };
-
   return (
     <>
       {!file ? (
