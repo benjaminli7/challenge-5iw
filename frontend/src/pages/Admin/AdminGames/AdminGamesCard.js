@@ -178,7 +178,7 @@ export default function AdminGameCard({ game, updateGamesList }) {
         }}
       >
         <CardMedia
-          sx={{ height: 300, backgroundColor: "red" }}
+          sx={{ height: 300 }}
           image={
             (game.fileUrl && process.env.REACT_APP_API_URL + game.fileUrl) ||
             "/reptile.jpg"
