@@ -3,8 +3,9 @@ import Grid from "@material-ui/core/Grid";
 import GameCard from "./GameCard";
 import CircularProgress from "@mui/material/CircularProgress";
 import useFetch from "@/hooks/useFetch";
-import GamesSearchBar from "./GamesSearchBar";
+import SearchBar from "@/components/layout/user/SearchBar";
 import ENDPOINTS from "@/services/endpoints";
+import { Link, useLocation } from "react-router-dom";
 
 const GameCardsView = () => {
   const { data: games, error } = useFetch("games", ENDPOINTS.games.root);
@@ -29,14 +30,16 @@ const GameCardsView = () => {
 
   return (
     <>
-      <GamesSearchBar setSearchValue={setSearchValue} />
+      <SearchBar setSearchValue={setSearchValue} />
 
       {!loading ? (
         <div>
           <Grid container spacing={4}>
             {filteredGamesList.map((game) => (
               <Grid item key={game.id} xs={12} sm={6} md={4}>
-                <GameCard game={game} />
+                <Link to={`/games/${game.id}`}>
+                  <GameCard game={game} />
+                </Link>
               </Grid>
             ))}
           </Grid>

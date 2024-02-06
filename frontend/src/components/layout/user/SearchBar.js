@@ -46,7 +46,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-export default function GamesSearchBar({ setSearchValue }) {
+export default function SearchBar({ setSearchValue }) {
   const handleSearch = (e) => {
     setSearchValue(e.target.value);
   };
