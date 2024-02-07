@@ -20,7 +20,7 @@ class Team
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['read-team'])]
+    #[Groups(['read-team', 'read-user'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]

@@ -23,7 +23,7 @@ export default function useNavbar() {
   const managerNavItems = [
     {
       label: "My team",
-      path: "/manager",
+      path: "/my-team",
     },
   ];
   const getNavItems = () => {

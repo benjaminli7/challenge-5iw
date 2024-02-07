@@ -18,6 +18,7 @@ class AuthenticationSuccessHandler
 
         // Add user data to the token payload
         $data['user'] = [
+            'id' => $user->getId(),
             'email' => $user->getEmail(),
             'firstName' => $user->getFirstName(),
             'lastName' => $user->getLastName(),
