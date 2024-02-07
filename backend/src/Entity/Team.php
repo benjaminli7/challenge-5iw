@@ -20,7 +20,7 @@ class Team
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['read-team'])]
+    #[Groups(['read-team', 'read-user'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
@@ -30,6 +30,10 @@ class Team
     #[ORM\Column]
     #[Groups(['read-team'])]
     private ?int $coins = null;
+
+    #[ORM\Column]
+    #[Groups(['read-team'])]
+    private ?bool $isApproved = null;
 
     #[ORM\ManyToOne(inversedBy: 'teams')]
     #[ORM\JoinColumn(nullable: false)]
@@ -82,6 +86,18 @@ class Team
     public function setCoins(int $coins): static
     {
         $this->coins = $coins;
+
+        return $this;
+    }
+
+    public function getIsApproved(): ?bool
+    {
+        return $this->isApproved;
+    }
+
+    public function setIsApproved(bool $isApproved): static
+    {
+        $this->isApproved = $isApproved;
 
         return $this;
     }
