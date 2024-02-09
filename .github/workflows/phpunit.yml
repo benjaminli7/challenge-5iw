@@ -37,6 +37,9 @@ jobs:
       - name: Change directory
         run: cd backend
 
+      - name: Show in console where we are
+        run: pwd
+
       - name: Build Docker image
         run: docker build -t my-backend-image .
 
