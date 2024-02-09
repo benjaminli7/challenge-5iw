@@ -21,12 +21,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Install Make
-      - name: Install Make
-        run: |
-          sudo apt-get update
-          sudo apt-get install make
-
       # Install Docker
       - name: Install Docker
         run: |
@@ -37,30 +31,29 @@ jobs:
           sudo apt-get update
           sudo apt-get install docker-ce
 
+      # Install Make
+      - name: Install Make
+        run: sudo apt install make
+        
       # Build Docker image
       - name: Build Docker image
         working-directory: ./backend
-        run: docker build -t my-backend-image .
+        run: docker build
 
-      # Run Docker container in the background
-      - name: Run Docker container
-        run: docker run -d --name my-backend-container my-backend-image
+      # Install Docker compose
+      - name: Run Docker compose
+        run: apt install docker-compose
 
-        #Make an ls to see what is inside the container
-      - name: List files in the container
-        run: docker exec my-backend-container ls
+      # Run Docker container
+        - name: Docker compose up
+        run: docker-compose up -d
 
-        #Show pwd to see where we are inside the container
-      - name: Show pwd
-        run: docker exec my-backend-container pwd
-
-      - name: Check that the vendor/bin/phpunit file exists
-        run: docker exec my-backend-container sh -c "composer require --dev phpunit/phpunit"
-
-      # Run PHPUnit tests inside Docker container
+      # Run PHPUnit tests (Make sh to connect to the Docker container) then run the tests
       - name: Run PHPUnit tests
-        run: docker exec my-backend-container ./vendor/bin/phpunit
-
+        run: |
+          docker exec -it my-backend-container sh
+          make test
+          exit
       # Stop and remove Docker container
       - name: Stop and remove Docker container
         run: |
