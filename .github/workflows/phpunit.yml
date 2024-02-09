@@ -46,6 +46,14 @@ jobs:
       - name: Run Docker container
         run: docker run -d --name my-backend-container my-backend-image
 
+        #Make an ls to see what is inside the container
+      - name: List files in the container
+        run: docker exec my-backend-container ls
+
+        #Show pwd to see where we are inside the container
+      - name: Show pwd
+        run: docker exec my-backend-container pwd
+
       - name: Check that the vendor/bin/phpunit file exists
         run: docker exec my-backend-container sh -c "composer require --dev phpunit/phpunit"
 
