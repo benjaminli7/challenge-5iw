@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+// declare(strict_types=1);
 
 namespace App\Controller;
 
@@ -11,11 +11,7 @@ use Doctrine\ORM\EntityNotFoundException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Mime\Email;
-use SendinBlue\Client\Configuration;
-use SendinBlue\Client\Api\SMTPApi;
-use SendinBlue\Client\Model\SendSmtpEmail;
-use SendinBlue\Client\Model\SendSmtpEmailSender;
+use Symfony\Component\Mime\Message;
 
 #[AsController]
 class ResetPasswordController
@@ -32,36 +28,12 @@ class ResetPasswordController
         $user = $this->userRepository->findOneBy(['email' => $dto->getEmail()]);
 
         if (null === $user) {
-            throw new EntityNotFoundException('Email not found');
+            throw new EntityNotFoundException('email not found');
         }
 
-        // Configurer l'email pour Sendinblue
-        $emailSender = new SendSmtpEmailSender(['name' => 'Your Name', 'email' => 'your_email@example.com']);
-        $email = new SendSmtpEmail([
-            'to' => [['email' => $user->getEmail()]],
-            'subject' => 'Password Reset',
-            'htmlContent' => 'Your password reset email content goes here.',
-            'sender' => $emailSender,
-        ]);
-
-        // Envoyer l'email via l'API Sendinblue
-        $this->sendEmailViaSendinblue($email);
+        $message = new Message();
+        $this->mailer->send($message);
 
         return $user;
-    }
-
-    protected function sendEmailViaSendinblue(SendSmtpEmail $email): void
-    {
-        $configuration = Configuration::getDefaultConfiguration()->setApiKey('api-key', $_ENV['MAILER_DSN']);
-        $apiInstance = new SMTPApi(null, $configuration);
-
-        try {
-            $result = $apiInstance->sendTransacEmail($email);
-            // Gérer la réponse de l'API Sendinblue
-            // ...
-        } catch (\Exception $e) {
-            // Gérer les exceptions
-            throw new \RuntimeException('Failed to send email via Sendinblue: ' . $e->getMessage());
-        }
     }
 }
