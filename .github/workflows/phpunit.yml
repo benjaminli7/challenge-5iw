@@ -43,10 +43,7 @@ jobs:
       - name: Wait for the container to start and check that the vendor/bin/phpunit file exists
         run: |
           sleep 10
-          docker compose exec php sh 
-         # when inside the container install the phpunit then exit the container
-          composer require --dev phpunit/phpunit
-          exit
+          docker exec my-backend-container sh -c "composer require --dev phpunit/phpunit"
 
       # Run PHPUnit tests inside Docker container
       - name: Run PHPUnit tests
