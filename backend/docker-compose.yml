@@ -1,59 +1,46 @@
-name: PHPUnit Tests
+version: '3'
 
-on:
-  push:
-    branches:
-      - main
-      - develop
-      - feature/unitTest
-  pull_request:
-    branches:
-      - main
-      - develop
-      - feature/unitTest
+services:
+  server:
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      target: server
+    volumes:
+      - .:/srv/app
+    links:
+      - php
+    ports:
+      - '8888:80'
+  php:
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      target: php_dev
+    volumes:
+      - ./.docker/php/conf.d/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
+      - ~/.config/composer:/home/prod/.composer
+      - .:/srv/app
+  database:
+    image: postgres:15.4-alpine
+    environment:
+      POSTGRES_DB: symfony
+      POSTGRES_PASSWORD: root
+      POSTGRES_USER: root
+    volumes:
+      - database_data:/var/lib/postgresql/data:rw
+    ports:
+      - "5432:5432"
 
-jobs:
-  test:
-    name: Run PHPUnit tests in Docker
-    runs-on: ubuntu-latest
+  ###> symfony/mailer ###
+  mailer:
+    image: schickling/mailcatcher
+    ports: ["1025:1025", "1080:1080"]
+###< symfony/mailer ###
 
-    steps:
-      - name: Show working directory
-        run: pwd
-
-      - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          path: backend  # Specify the directory to checkout code into
-
-      # Install Docker
-      - name: Install Docker
-        run: |
-          sudo apt-get update
-          sudo apt-get install apt-transport-https ca-certificates curl software-properties-common
-          curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-          sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-          sudo apt-get update
-          sudo apt-get install docker-ce
-
-      # Build Docker image
-      - name: Build Docker image
-        run: docker build -t my-backend-image backend  # Specify the directory for Docker build
-
-      # Run Docker container in the background
-      - name: Run Docker container
-        run: docker run -d --name my-backend-container my-backend-image
-
-      # Install dependencies inside Docker container
-      - name: Install dependencies
-        run: docker exec my-backend-container composer install --no-interaction --no-suggest
-
-      # Run PHPUnit tests inside Docker container
-      - name: Run PHPUnit tests
-        run: docker exec my-backend-container ./vendor/bin/phpunit
-
-      # Stop and remove Docker container
-      - name: Stop and remove Docker container
-        run: |
-          docker stop my-backend-container
-          docker rm my-backend-container
+volumes:
+  database_data:
