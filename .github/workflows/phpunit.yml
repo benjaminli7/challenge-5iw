@@ -40,6 +40,11 @@ jobs:
       - name: Run Docker container
         run: docker run -d --name my-backend-container my-backend-image
 
+      - name: Wait for the container to start and check that the vendor/bin/phpunit file exists
+        run: |
+          sleep 10
+          docker exec my-backend-container ls vendor/bin/phpunit
+
       # Run PHPUnit tests inside Docker container
       - name: Run PHPUnit tests
         run: docker exec my-backend-container ./vendor/bin/phpunit
