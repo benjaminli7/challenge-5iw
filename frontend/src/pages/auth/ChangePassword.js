@@ -10,7 +10,7 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { Link as RouterLink } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { httpPost } from "@/services/api";
+import { httpPatch } from "@/services/api";
 import ENDPOINTS from "@/services/endpoints";
 
 export default function ChangePassword() {
@@ -19,7 +19,7 @@ export default function ChangePassword() {
 
   const onSubmit = async (data) => {
     try {
-      const response = await httpPost(`${ENDPOINTS.users.changePassword}`, data) // Adjust the endpoint
+      const response = await httpPatch(`${ENDPOINTS.users.updateUser }`, data) // Adjust the endpoint
       console.log(response)
       reset();
     } catch (error) {

@@ -18,8 +18,8 @@ export default function ForgotPassword() {
 
   const onSubmit = async (data) => {
     try {
-      // Send a request to the backend to initiate the password reset
-      //await httpPost(`${ENDPOINTS.resetPassword}`, data);
+      const response = await httpPost(`${ENDPOINTS.users.resetPassword}`, data) // Adjust the endpoint
+      console.log(response)
       console.log("click")
       setSnackbarOpen(true);
       setEmailSent(true);
