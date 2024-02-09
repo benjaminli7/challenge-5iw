@@ -34,7 +34,7 @@ jobs:
       # Install Make
       - name: Install Make
         run: sudo apt install make
-        
+
       # Build Docker image
       - name: Build Docker image
         working-directory: ./backend
@@ -42,17 +42,18 @@ jobs:
 
       # Install Docker compose
       - name: Run Docker compose
-        run: apt install docker-compose
+        run: apt-get install docker-compose
 
       # Run Docker container
-        - name: Docker compose up
+      - name: Docker compose up
+        working-directory: ./backend
         run: docker-compose up -d
 
       # Run PHPUnit tests (Make sh to connect to the Docker container) then run the tests
       - name: Run PHPUnit tests
         run: |
-          docker exec -it my-backend-container sh
-          make test
+          make sh
+          ./vendor/bin/phpunit
           exit
       # Stop and remove Docker container
       - name: Stop and remove Docker container
