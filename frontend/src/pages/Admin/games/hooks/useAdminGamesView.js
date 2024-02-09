@@ -13,6 +13,7 @@ export function useAdminGamesView() {
     EDIT_GAME: "EDIT_GAME",
     CREATE_RANK: "CREATE_RANK",
     EDIT_RANK: "EDIT_RANK",
+    EDIT_IMAGE: "EDIT_IMAGE",
   };
   return {
     ACTION_TYPES,

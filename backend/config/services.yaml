@@ -27,9 +27,11 @@ services:
           method: onAuthenticationSuccess,
         }
 
-  App\Controller\PostImageController:
+  App\Controller\PostImageGameController:
     tags: ["controller.service_arguments"]
 
+  App\Controller\PostImageRankController:
+    tags: ["controller.service_arguments"]
 
   # add more service definitions when explicit configuration is needed
   # please note that last definitions always *replace* previous ones

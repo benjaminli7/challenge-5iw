@@ -11,12 +11,7 @@ function AdminGameCreateForm({ handleDialogClose }) {
       console.error("Error creating game:", error);
     }
   };
-  return (
-    <AdminGameForm
-      onSubmit={onSubmit}
-      actionType="create"
-    />
-  );
+  return <AdminGameForm onSubmit={onSubmit} actionType="create" />;
 }
 
 export default AdminGameCreateForm;

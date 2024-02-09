@@ -16,12 +16,7 @@ function AdminRankCreateForm({ handleDialogClose, selectedGame }) {
       console.error("Error creating rank:", error);
     }
   };
-  return (
-    <AdminRankForm
-      onSubmit={onSubmit}
-      actionType="create"
-    />
-  );
+  return <AdminRankForm onSubmit={onSubmit} actionType="create" />;
 }
 
 export default AdminRankCreateForm;

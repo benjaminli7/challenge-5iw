@@ -5,6 +5,7 @@ import AdminGameCreateForm from "@/pages/admin/games/forms/AdminGameCreateForm";
 import AdminRankCreateForm from "@/pages/admin/games/forms/AdminRankCreateForm";
 import AdminGameUpdateForm from "@/pages/admin/games/forms/AdminGameUpdateForm";
 import AdminRankUpdateForm from "@/pages/admin/games/forms/AdminRankUpdateForm";
+import AdminRankUpdateImage from "@/pages/admin/games/forms/AdminRankUpdateImage";
 import { useAdminGamesView } from "@/pages/admin/games/hooks/useAdminGamesView";
 
 function AdminGamesView() {
@@ -22,14 +23,13 @@ function AdminGamesView() {
     openDialog,
     handleDialogClose,
     handleActionType,
-   } = useAdminGamesView()
+  } = useAdminGamesView();
 
   if (isError) {
     return <Typography>{error.message}</Typography>;
   }
 
   if (isLoading) return <CircularProgress />;
-
 
   return (
     <>
