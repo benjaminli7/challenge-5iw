@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\Entity\Rank;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-// RuntimeException is a built-in PHP class that throws an exception when an error occurs
 use RuntimeException;
 
 
