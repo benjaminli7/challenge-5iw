@@ -18,13 +18,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Show working directory
-        run: pwd
-
       - name: Checkout code
         uses: actions/checkout@v3
-        with:
-          path: backend # Specify the directory to checkout code into
 
       # Install Docker
       - name: Install Docker
@@ -38,7 +33,8 @@ jobs:
 
       # Build Docker image
       - name: Build Docker image
-        run: docker build -t my-backend-image backend # Specify the directory for Docker build
+        working-directory: ./backend
+        run: docker build -t my-backend-image .
 
       # Run Docker container in the background
       - name: Run Docker container
