@@ -7,10 +7,25 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
+use App\Controller\CreateTeamController;
 use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
 
 #[ORM\Entity(repositoryClass: TeamRepository::class)]
 #[ApiResource(
+    operations: [
+        new Post(
+            uriTemplate: '/teams/new',
+            controller: CreateTeamController::class,
+            normalizationContext: ['groups' => ['read-team']],
+            denormalizationContext: ['groups' => ['create-team']],
+            securityPostDenormalize: 'is_granted("TEAM_CREATE", user)',
+            securityPostDenormalizeMessage: 'Only managers or admins can create teams.',
+        ),
+    ],
     normalizationContext: ['groups' => ['read-team']],
     denormalizationContext: ['groups' => ['write-team']],
 )]

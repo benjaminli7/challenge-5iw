@@ -12,7 +12,6 @@ function ManagerView() {
     return <div>Loading...</div>
   }
 
-  console.log(user)
   return (
     <div>
       {!user?.ownedTeam && (

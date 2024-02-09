@@ -19,11 +19,13 @@ export function useGames(selectedGame) {
     "patch",
     "games"
   );
+
   const deleteGameMutation = useCustomMutation(
     ENDPOINTS.games.gameId(selectedGame?.id),
     "delete",
     "games"
   );
+
 
   return {
     games,

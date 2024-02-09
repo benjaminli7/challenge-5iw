@@ -26,6 +26,12 @@ export default function useNavbar() {
       path: "/my-team",
     },
   ];
+  const clientNavItems = [
+    {
+      label: "Liste de joueurs",
+      path: "/players",
+    }
+  ]
   const getNavItems = () => {
     let navItems = globalNavItems;
     if (isAuthenticated()) {
@@ -33,7 +39,7 @@ export default function useNavbar() {
         navItems = navItems.concat(managerNavItems);
       }
       if (user.type === "client") {
-        navItems = navItems.concat(authNavItems);
+        navItems = navItems.concat(clientNavItems);
       }
       navItems = navItems.concat(authNavItems);
     }
