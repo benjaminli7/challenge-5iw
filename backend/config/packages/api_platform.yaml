@@ -27,7 +27,7 @@ api_platform:
 
   swagger:
     api_keys:
-      JWT:x:
+      jwt_x:
         name: Authorization
         type: header
 
