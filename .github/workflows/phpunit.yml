@@ -54,6 +54,8 @@ jobs:
         working-directory: ./backend
         run: |
           make sh
+          composer install 
+          ls -la
           ./vendor/bin/phpunit
           exit
       # Stop and remove Docker container
