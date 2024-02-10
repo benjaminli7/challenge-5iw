@@ -14,12 +14,14 @@ class CreateTeamController
 {
     public function __construct(
         protected UserRepository $userRepository,
-    )
-    {
+    ) {
     }
 
-    public function __invoke(Request $request)
+    public function __invoke(Team $data, Request $request)
     {
+        $data = json_decode($request->getContent(), true);
+        // dd($data["name"]);
 
+        return $data;
     }
 }

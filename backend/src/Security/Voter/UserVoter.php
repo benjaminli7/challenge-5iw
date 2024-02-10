@@ -20,7 +20,7 @@ class UserVoter extends Voter
 
     protected function supports($attribute, $subject): bool
     {
-        $supportsAttribute = in_array($attribute, ['PLAYER_READ']);
+        $supportsAttribute = in_array($attribute, ['MANAGER']);
         $supportsSubject = $subject instanceof User;
 
         return $supportsAttribute && $supportsSubject;
@@ -35,19 +35,10 @@ class UserVoter extends Voter
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool
     {
         switch ($attribute) {
-            case 'PLAYER_READ':
-                // if ($this->security->isGranted('ROLE_MANAGER')) {
-                //     return true;
-                // }
-                // if ($subject->getType() === 'manager' || $this->security->isGranted('ROLE_ADMIN')) {
-                //     return true;
-                // }
-
-                // if($subject->getType() === 'player' && $this->security->getUser() === $subject){
-                //     return true;
-                // }
-
-
+            case 'MANAGER':
+                if ($subject->getType() === 'manager' || $this->security->isGranted('ROLE_ADMIN')) {
+                    return true;
+                }
                 break;
 
         }
