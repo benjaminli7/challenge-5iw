@@ -2,7 +2,7 @@ import React from 'react'
 
 function ManagerIbanForm() {
   return (
-    <div>Bank Form</div>
+    <div>ManagerIbanForm</div>
   )
 }
 

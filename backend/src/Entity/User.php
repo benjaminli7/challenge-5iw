@@ -117,17 +117,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Booking::class)]
-    #[Groups(['read-client'])]
+    #[Groups(['read-user'])]
     private Collection $bookings;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Review::class)]
-    #[Groups(['read-client'])]
+    #[Groups(['read-user'])]
     private Collection $reviews;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $discord = null;
+
+    #[ORM\ManyToOne(inversedBy: 'users')]
+    #[Groups(['read-user', 'read-player', 'create-player', 'update-player'])]
+    private ?Game $assignedGame = null;
 
     public function __construct()
     {
         $this->schedule = new ArrayCollection();
-        $this->teams = new ArrayCollection();
         $this->bookings = new ArrayCollection();
         $this->reviews = new ArrayCollection();
     }
@@ -448,6 +454,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setTeam(?Team $team): static
     {
         $this->team = $team;
+
+        return $this;
+    }
+
+    public function getDiscord(): ?string
+    {
+        return $this->discord;
+    }
+
+    public function setDiscord(?string $discord): static
+    {
+        $this->discord = $discord;
+
+        return $this;
+    }
+
+    public function getAssignedGame(): ?Game
+    {
+        return $this->assignedGame;
+    }
+
+    public function setAssignedGame(?Game $assignedGame): static
+    {
+        $this->assignedGame = $assignedGame;
 
         return $this;
     }
