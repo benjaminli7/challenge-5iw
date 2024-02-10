@@ -51,6 +51,7 @@ jobs:
 
       # Run PHPUnit tests (Make sh to connect to the Docker container) then run the tests
       - name: Run PHPUnit tests
+        working-directory: ./backend
         run: |
           make sh
           ./vendor/bin/phpunit
