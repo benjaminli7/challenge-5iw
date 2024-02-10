@@ -54,6 +54,7 @@ jobs:
         working-directory: ./backend
         run: |
           make sh
+          composer update
           composer install 
           ls -la
           ./vendor/bin/phpunit
