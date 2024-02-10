@@ -33,7 +33,7 @@ jobs:
 
       # Install Make
       - name: Install Make
-        run: sudo apt install make
+        run: sudo apt-get -y install make
 
       # Build Docker image
       - name: Build Docker image
