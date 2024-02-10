@@ -59,8 +59,3 @@ jobs:
           ls -la
           ./vendor/bin/phpunit
           exit
-      # Stop and remove Docker container
-      - name: Stop and remove Docker container
-        run: |
-          docker stop my-backend-container
-          docker rm my-backend-container
