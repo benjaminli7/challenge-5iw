@@ -64,4 +64,14 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 //            ->getOneOrNullResult()
 //        ;
 //    }
+
+    public function changeUserType(User $user, string $type): array
+    {
+        return $this->createQueryBuilder('u')
+            // ->andWhere('u.user_type = :type')
+            // ->setParameter('type', $type)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 }

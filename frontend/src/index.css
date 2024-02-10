@@ -74,3 +74,9 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Import Keania One font */
+@import url('https://fonts.googleapis.com/css2?family=Keania+One&display=swap');
+
+/* Import Montserrat font with specific weights (500 in this case) */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap');

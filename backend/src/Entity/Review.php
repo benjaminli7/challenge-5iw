@@ -26,11 +26,11 @@ class Review
 
     #[ORM\ManyToOne(inversedBy: 'reviews')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Client $client = null;
+    private ?User $client = null;
 
     #[ORM\ManyToOne(inversedBy: 'reviews')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Booster $booster = null;
+    private ?User $booster = null;
 
     public function getId(): ?int
     {
@@ -73,24 +73,24 @@ class Review
         return $this;
     }
 
-    public function getClient(): ?Client
+    public function getClient(): ?User
     {
         return $this->client;
     }
 
-    public function setClient(?Client $client): static
+    public function setClient(?User $client): static
     {
         $this->client = $client;
 
         return $this;
     }
 
-    public function getBooster(): ?Booster
+    public function getBooster(): ?User
     {
         return $this->booster;
     }
 
-    public function setBooster(?Booster $booster): static
+    public function setBooster(?User $booster): static
     {
         $this->booster = $booster;
 
