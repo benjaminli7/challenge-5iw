@@ -56,6 +56,5 @@ jobs:
           make sh
           composer update
           composer install 
-          ls -la
           ./vendor/bin/phpunit
           exit
