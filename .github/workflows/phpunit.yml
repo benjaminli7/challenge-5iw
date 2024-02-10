@@ -38,7 +38,7 @@ jobs:
       # Build Docker image
       - name: Build Docker image
         working-directory: ./backend
-        run: docker build
+        run: docker build .
 
       # Install Docker compose
       - name: Run Docker compose
