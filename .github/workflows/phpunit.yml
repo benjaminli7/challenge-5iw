@@ -42,7 +42,7 @@ jobs:
 
       # Install Docker compose
       - name: Run Docker compose
-        run: apt-get install docker-compose
+        run: sudo apt-get install docker-compose
 
       # Run Docker container
       - name: Docker compose up
