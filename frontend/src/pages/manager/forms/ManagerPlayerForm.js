@@ -1,37 +1,29 @@
-import React from 'react'
-import { useForm } from "react-hook-form";
 import CustomButton from "@/components/commons/CustomButton";
+import CustomSelectForm from "@/components/commons/CustomSelectForm";
 import {
-  Button,
   DialogActions,
   DialogContent,
   DialogTitle,
   Grid,
+  MenuItem,
   TextField,
 } from "@mui/material";
-import CustomSelectForm from '@/components/commons/CustomSelectForm';
-import useFetch from '@/hooks/useFetch';
-import ENDPOINTS from "@/services/endpoints";
+import { useForm } from "react-hook-form";
 
 function ManagerPlayerForm({
-  deletePlayerMutation,
-  handleDeleteUser,
+  deleteUserMutation,
+  handleDeletePlayer,
   selectedUser,
   onSubmit,
   actionType,
+  games,
 }) {
-  const {
-    data: games,
-    isError,
-    error,
-    isLoading,
-  } = useFetch("games", ENDPOINTS.games.root);
   const defaultValues = {
     email: selectedUser?.email || "",
+    username: selectedUser?.username || "",
     firstName: selectedUser?.firstName || "",
     lastName: selectedUser?.lastName || "",
-    game: selectedUser?.game || "",
-    plainPassword: selectedUser?.plainPassword || "",
+    assignedGame: selectedUser?.assignedGame.id || "",
     discord: selectedUser?.discord || "",
   };
 
@@ -39,16 +31,17 @@ function ManagerPlayerForm({
     register,
     handleSubmit,
     control,
+    getValues,
     formState: { errors, isSubmitting },
   } = useForm({ defaultValues });
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <DialogTitle>
-        {actionType === "create" ? "Create a new game" : "Edit game"}
+        {actionType === "create" ? "Add a new player" : "Edit player"}
       </DialogTitle>
       <DialogContent>
-        <Grid container spacing={2}>
+        <Grid container spacing={2} sx={{ mt: 1 }}>
           <Grid item xs={12}>
             <TextField
               {...register("email", {
@@ -71,11 +64,30 @@ function ManagerPlayerForm({
               helperText={errors.email && errors.email.message}
             />
           </Grid>
+          <Grid item xs={12}>
+            <TextField
+              {...register("username", {
+                required: "Username is required",
+              })}
+              disabled={actionType === "update"}
+              autoComplete="given-name"
+              name="username"
+              required
+              fullWidth
+              id="username"
+              label="Username"
+              placeholder="johndoe123"
+              autoFocus
+              error={errors.username ? true : false}
+              helperText={errors.username && errors.username.message}
+            />
+          </Grid>
           <Grid item xs={12} sm={6}>
             <TextField
               {...register("firstName", {
                 required: "First name is required",
               })}
+              disabled={actionType === "update"}
               autoComplete="given-name"
               name="firstName"
               required
@@ -88,11 +100,13 @@ function ManagerPlayerForm({
               helperText={errors.firstName && errors.firstName.message}
             />
           </Grid>
+
           <Grid item xs={12} sm={6}>
             <TextField
               {...register("lastName", {
                 required: "Last name is required",
               })}
+              disabled={actionType === "update"}
               autoComplete="given-name"
               name="lastName"
               required
@@ -105,14 +119,94 @@ function ManagerPlayerForm({
               helperText={errors.lastName && errors.lastName.message}
             />
           </Grid>
+          {actionType === "create" && (
+            <>
+              <Grid item xs={12}>
+                <TextField
+                  {...register("plainPassword", {
+                    required: "Password is required",
+                    minLength: {
+                      value: 8,
+                      message: "Password must have at least 8 characters",
+                    },
+                  })}
+                  required
+                  fullWidth
+                  name="plainPassword"
+                  label="Password"
+                  type="password"
+                  id="plainPassword"
+                  placeholder="********"
+                  error={errors.plainPassword ? true : false}
+                  helperText={
+                    errors.plainPassword && errors.plainPassword.message
+                  }
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  {...register("confirmPassword", {
+                    required: "Confirm password is required",
+                    minLength: {
+                      value: 8,
+                      message: "Password must be at least 8 characters",
+                    },
+                    validate: (value) =>
+                      value === getValues("plainPassword") ||
+                      "The passwords do not match",
+                  })}
+                  required
+                  fullWidth
+                  name="confirmPassword"
+                  label="Confirm password"
+                  type="password"
+                  id="confirmPassword"
+                  placeholder="********"
+                  autoComplete="new-password"
+                  error={errors.confirmPassword ? true : false}
+                  helperText={
+                    errors.confirmPassword && errors.confirmPassword.message
+                  }
+                />
+              </Grid>
+            </>
+          )}
           <Grid item xs={12}>
             <CustomSelectForm
-              id="game"
-              name="game"
+              id="assignedGame"
+              name="assignedGame"
               label="Game"
               control={control}
+              required
               fullWidth
-            ></CustomSelectForm>
+            >
+              {games?.map((game) => (
+                <MenuItem key={game.id} value={game.id}>
+                  {game.name}
+                </MenuItem>
+              ))}
+            </CustomSelectForm>
+          </Grid>
+
+          <Grid item xs={12}>
+            <TextField
+              {...register("discord", {
+                required: "Your discord name is required",
+                pattern: {
+                  value: /^.{3,32}#[0-9]{4}$/i,
+                  message: "Invalid Discord format. Example: username#1234",
+                },
+              })}
+              required
+              fullWidth
+              name="discord"
+              label="Discord"
+              type="text"
+              id="discord"
+              placeholder="username#1234"
+              error={errors.discord ? true : false}
+              helperText={errors.discord && errors.discord.message}
+            />
           </Grid>
         </Grid>
       </DialogContent>
@@ -127,8 +221,8 @@ function ManagerPlayerForm({
         {actionType === "update" && (
           <CustomButton
             type="button"
-            isSubmitting={deletePlayerMutation.isLoading}
-            onClick={handleDeleteUser}
+            isSubmitting={deleteUserMutation.isLoading}
+            onClick={handleDeletePlayer}
             variant="contained"
             color="error"
           >
@@ -140,4 +234,4 @@ function ManagerPlayerForm({
   );
 }
 
-export default ManagerPlayerForm
+export default ManagerPlayerForm;

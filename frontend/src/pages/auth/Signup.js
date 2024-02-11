@@ -145,6 +145,7 @@ export default function Signup() {
                 name="plainPassword"
                 label="Password"
                 type="password"
+                placeholder="********"
                 id="plainPassword"
                 autoComplete="new-password"
                 error={errors.password ? true : false}
@@ -167,6 +168,7 @@ export default function Signup() {
                 fullWidth
                 name="confirmPassword"
                 label="Confirm password"
+                placeholder="********"
                 type="password"
                 id="confirmPassword"
                 autoComplete="new-password"

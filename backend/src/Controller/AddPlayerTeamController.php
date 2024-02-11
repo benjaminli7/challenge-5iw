@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Team;
 use App\Entity\User;
-use App\Repository\UserRepository;
+use App\Repository\GameRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -12,25 +12,34 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 class AddPlayerTeamController
 {
     public function __construct(
-        protected UserRepository $userRepository,
+        protected GameRepository $gameRepository,
         protected UserPasswordHasherInterface $hasher,
     ) {
     }
 
     public function __invoke(Team $data, Request $request, EntityManagerInterface $entityManager)
     {
-        $user = new User();
-        // $user->setFirstName("John");
-        // $user->setLastName("Doe");
-        // $user->setEmail("test@test.fr");
-        // $plainPassword = "test";
+        $values = json_decode($request->getContent(), true);
+        $game = $this->gameRepository->findOneBy(['id' => $values["assignedGame"]]);
 
-        // $hashedPassword = $this->hasher->hashPassword($user, $plainPassword);
-        // $user->setPassword($hashedPassword);
+        $plainPassword = $values["plainPassword"];
 
-        $entityManager->persist($user);
+        $player = new User();
+        $player->setAssignedGame($game);
+        $player->setDiscord($values["discord"]);
+        $player->setEmail($values["email"]);
+        $player->setFirstName($values["firstName"]);
+        $player->setLastName($values["lastName"]);
+        $player->setUsername($values["username"]);
+
+        $hashedPassword = $this->hasher->hashPassword($player, $plainPassword);
+        $player->setPassword($hashedPassword);
+        $player->setTeam($data);
+        $player->setType("player");
+
+        $entityManager->persist($player);
         $entityManager->flush();
-        $data->addBooster($user);
+        $data->addBooster($player);
 
         return $data;
     }

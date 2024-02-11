@@ -1,10 +1,12 @@
+import ManagerPlayerCreateForm from "@/pages/manager/forms/ManagerPlayerCreateForm";
 import { useMembersView } from "@/pages/manager/hooks/useMembersView";
 import { Button, Dialog, Stack, Typography } from "@mui/material";
-import ManagerPlayerCreateForm from "@/pages/manager/forms/ManagerPlayerCreateForm";
-import { useTeams } from "@/hooks/models/useTeams";
-import { toast } from "sonner";
+import ManagerPlayerList from "@/pages/manager/ManagerPlayerList";
+import ManagerPlayerUpdateForm from "@/pages/manager/forms/ManagerPlayerUpdateForm";
+import useFetch from "@/hooks/useFetch";
+import ENDPOINTS from "@/services/endpoints";
 
-function MembersView({ team }) {
+function MembersView({ team, games }) {
   const {
     ACTION_TYPES,
     selectedUser,
@@ -14,9 +16,6 @@ function MembersView({ team }) {
     handleDialogClose,
     handleActionType,
   } = useMembersView();
-
-
-
 
   return (
     <div>
@@ -33,9 +32,26 @@ function MembersView({ team }) {
           Add player
         </Button>
       </Stack>
+      <ManagerPlayerList
+        players={team.boosters}
+        setSelectedUser={setSelectedUser}
+        ACTION_TYPES={ACTION_TYPES}
+        handleActionType={handleActionType}
+      />
       <Dialog open={openDialog} onClose={handleDialogClose}>
         {actionType === ACTION_TYPES.CREATE_PLAYER && (
-          <ManagerPlayerCreateForm team={team} handleDialogClose={handleDialogClose} />
+          <ManagerPlayerCreateForm
+            team={team}
+            handleDialogClose={handleDialogClose}
+            games={games}
+          />
+        )}
+        {actionType === ACTION_TYPES.EDIT_PLAYER && (
+          <ManagerPlayerUpdateForm
+            selectedUser={selectedUser}
+            handleDialogClose={handleDialogClose}
+            games={games}
+          />
         )}
       </Dialog>
     </div>
