@@ -1,6 +1,5 @@
 import * as React from "react";
 import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
@@ -10,22 +9,32 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { Link as RouterLink } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { httpPost } from "@/services/api";
-import ENDPOINTS from "@/services/endpoints";
+import { MenuItem } from "@mui/material";
+import CustomSelectForm from "@/components/commons/CustomSelectForm";
+import CustomButton from "@/components/commons/CustomButton";
+import { toast } from "sonner"
+import { useUsers } from "@/hooks/models/useUsers";
 
 export default function Signup() {
+  const { registerMutation } = useUsers();
 
-  const { register, handleSubmit, formState: { errors, isSubmitting }, reset, getValues } = useForm();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+    getValues,
+    control,
+  } = useForm();
 
   const onSubmit = async (data) => {
     try {
-      await httpPost(`${ENDPOINTS.users.root}`, {
-        ...data,
-        isFirstConnection: true,
-      })
+      await registerMutation.mutateAsync(data);
+      toast.success("Signed up successfully");
       reset();
     } catch (error) {
       console.log(error);
+      toast.error("Error signing up");
     }
   }
 
@@ -52,34 +61,55 @@ export default function Signup() {
           sx={{ mt: 3 }}
         >
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12}>
               <TextField
-                {...register("firstName", {
-                  required: "First name is required",
+                {...register("username", {
+                  required: "Username is required",
                 })}
                 autoComplete="given-name"
-                name="firstName"
+                name="username"
                 required
                 fullWidth
-                id="firstName"
-                label="First Name"
+                id="username"
+                label="Username"
+                placeholder="johndoe123"
                 autoFocus
-                error={errors.firstName ? true : false}
-                helperText={errors.firstName && errors.firstName.message}
+                error={errors.username ? true : false}
+                helperText={errors.username && errors.username.message}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12}>
               <TextField
-                {...register("lastName", {
-                  required: "Last name is required",
+                {...register("discord", {
+                  required: "Your discord name is required",
+                  pattern: {
+                    value: /^.{3,32}#[0-9]{4}$/i,
+                    message: "Invalid Discord format. Example: username#1234",
+                  },
                 })}
                 required
                 fullWidth
-                id="lastName"
-                label="Last Name"
-                name="lastName"
-                autoComplete="family-name"
+                name="discord"
+                label="Discord"
+                type="text"
+                id="discord"
+                placeholder="username#1234"
+                error={errors.discord ? true : false}
+                helperText={errors.discord && errors.discord.message}
               />
+            </Grid>
+            <Grid item xs={12}>
+              <CustomSelectForm
+                id="type"
+                name="type"
+                label="Type"
+                control={control}
+                defaultValue={"client"}
+                fullWidth
+              >
+                <MenuItem value="client">Client</MenuItem>
+                <MenuItem value="manager">Manager</MenuItem>
+              </CustomSelectForm>
             </Grid>
             <Grid item xs={12}>
               <TextField
@@ -96,6 +126,7 @@ export default function Signup() {
                 label="Email Address"
                 name="email"
                 autoComplete="email"
+                placeholder="johndoe@gmail.com"
                 error={errors.email ? true : false}
                 helperText={errors.email && errors.email.message}
               />
@@ -114,6 +145,7 @@ export default function Signup() {
                 name="plainPassword"
                 label="Password"
                 type="password"
+                placeholder="********"
                 id="plainPassword"
                 autoComplete="new-password"
                 error={errors.password ? true : false}
@@ -128,12 +160,15 @@ export default function Signup() {
                     value: 8,
                     message: "Password must be at least 8 characters",
                   },
-                  validate: (value) => value === getValues("plainPassword") || "The passwords do not match",
+                  validate: (value) =>
+                    value === getValues("plainPassword") ||
+                    "The passwords do not match",
                 })}
                 required
                 fullWidth
                 name="confirmPassword"
                 label="Confirm password"
+                placeholder="********"
                 type="password"
                 id="confirmPassword"
                 autoComplete="new-password"
@@ -144,15 +179,15 @@ export default function Signup() {
               />
             </Grid>
           </Grid>
-          <Button
-            disabled={isSubmitting}
+          <CustomButton
+            isSubmitting={isSubmitting}
             type="submit"
             fullWidth
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
           >
             Sign Up
-          </Button>
+          </CustomButton>
           <Grid container justifyContent="flex-end">
             <Grid item>
               <Link component={RouterLink} to="/login" variant="body2">

@@ -1,11 +1,10 @@
-import { httpPost, isAdmin } from "@/services/api";
-import ENDPOINTS from "@/services/endpoints";
+import CustomButton from "@/components/commons/CustomButton";
+import { useUsers } from "@/hooks/models/useUsers";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import {
   Alert,
   Avatar,
   Box,
-  Button,
   Container,
   Grid,
   Link,
@@ -16,10 +15,12 @@ import { useState } from "react";
 import { useIsAuthenticated, useSignIn } from "react-auth-kit";
 import { useForm } from "react-hook-form";
 import { Navigate, Link as RouterLink, useLocation } from "react-router-dom";
+import { toast } from "sonner";
+import { isAdmin } from "@/services/api";
 
 export default function Login() {
   const [errorLogin, setErrorLogin] = useState(null);
-  const [isFirstConnection, setIsFirstConnection] = useState(false);
+  const { loginMutation } = useUsers();
   const signIn = useSignIn();
   const isAuthenticated = useIsAuthenticated();
   const location = useLocation();
@@ -31,26 +32,22 @@ export default function Login() {
     formState: { errors, isSubmitting },
   } = useForm();
 
-  if (isFirstConnection) {
-    return <Navigate to="/first-connection" replace />;
-  }
   if (isAuthenticated()) {
     return <Navigate to={from} replace state={"test"} />;
   }
 
   const onSubmit = async (data) => {
     try {
-      const response = await httpPost(`${ENDPOINTS.users.login}`, data);
+      const response = await loginMutation.mutateAsync(data);
+      toast.success("Logged in successfully!");
       signIn({
-        token: response.data.token,
-        expiresIn: 3600,
+        token: response.token,
+        expiresIn: 60 * 60 * 24 * 7, // 7 days
         tokenType: "Bearer",
         authState: {
-          user: response.data.user,
+          user: response.user,
         },
       });
-      console.log(response.data.user);
-      setIsFirstConnection(response.data?.user.isFirstConnection);
     } catch (error) {
       console.log(error);
       setErrorLogin(error.response.data.message);
@@ -93,6 +90,7 @@ export default function Login() {
             label="Email Address"
             name="email"
             autoComplete="email"
+            placeholder="johndoe@gmail.com"
             autoFocus
             error={errors.email ? true : false}
             helperText={errors.email && errors.email.message}
@@ -108,6 +106,7 @@ export default function Login() {
             label="Password"
             type="password"
             id="password"
+            placeholder="********"
             autoComplete="current-password"
             error={errors.password ? true : false}
             helperText={errors.password && errors.password.message}
@@ -118,15 +117,15 @@ export default function Login() {
           >
             {errorLogin}
           </Alert>
-          <Button
-            disabled={isSubmitting}
+          <CustomButton
+            isSubmitting={isSubmitting}
             type="submit"
             fullWidth
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
           >
             Sign In
-          </Button>
+          </CustomButton>
           <Grid container>
             <Grid item xs>
               <Link href="#" variant="body2">

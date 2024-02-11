@@ -31,7 +31,7 @@ use ApiPlatform\Metadata\Delete;
         // 'image' => [
         //     'method' => 'POST',
         //     'path' => '/games/{id}/image',
-        //     'controller' => PostImageController::class,      
+        //     'controller' => PostImageController::class,
         // ],
         new Post(
             uriTemplate: '/games/{id}/image',
@@ -43,7 +43,7 @@ use ApiPlatform\Metadata\Delete;
             deserialize: false
         ),
         new GetCollection(normalizationContext: ['groups' => ['read-game']]),
-        new Get(normalizationContext: ['groups' => ['read-one-game']]),
+        new Get(normalizationContext: ['groups' => ['read-game']]),
         new Post(denormalizationContext: ['groups' => ['create-game']], security: 'is_granted("ROLE_ADMIN")' , securityMessage: 'Only admins can create games.'),
         new Patch(denormalizationContext: ['groups' => ['update-game']], security: 'is_granted("ROLE_ADMIN")' , securityMessage: 'Only admins can update games.'),
         new Delete(security: 'is_granted("ROLE_ADMIN")' , securityMessage: 'Only admins can delete games.'),
@@ -57,11 +57,11 @@ class Game
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['read-game', 'update-rank'])]
+    #[Groups(['read-game', 'update-rank', 'read-team'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255 , unique: true)]
-    #[Groups(['read-game', 'create-game','read-one-game', 'update-game'])]
+    #[Groups(['read-game', 'create-game', 'update-game', 'read-team'])]
     private ?string $name = null;
 
     #[ORM\OneToMany(mappedBy: 'game', targetEntity: Rank::class, cascade: ['persist', 'remove'])]
@@ -70,18 +70,21 @@ class Game
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $filePath = null;
-    
+
     #[Groups(['read-game' ])]
     private ?string $fileUrl = null;
-    
+
     #[Vich\UploadableField(mapping: 'game_image', fileNameProperty: 'filePath')]
     #[Groups(['test-img'])]
     private ?File $file = null;
 
     #[ORM\Column(length: 255 , nullable: true)]
-    #[Groups(['read-game', 'create-game','read-one-game', 'update-game'])]
+    #[Groups(['read-game', 'create-game', 'update-game'])]
     #[Assert\Regex(pattern: '/^#[a-f0-9]{6}$/i', message: 'The color must be a valid hex color')]
     private ?string $color = null;
+
+    #[ORM\OneToMany(mappedBy: 'assignedGame', targetEntity: User::class)]
+    private Collection $users;
 
 
 
@@ -90,6 +93,7 @@ class Game
     public function __construct()
     {
         $this->ranks = new ArrayCollection();
+        $this->users = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -182,6 +186,36 @@ class Game
     public function setColor(?string $color): static
     {
         $this->color = $color;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
+
+    public function addUser(User $user): static
+    {
+        if (!$this->users->contains($user)) {
+            $this->users->add($user);
+            $user->setAssignedGame($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUser(User $user): static
+    {
+        if ($this->users->removeElement($user)) {
+            // set the owning side to null (unless already changed)
+            if ($user->getAssignedGame() === $this) {
+                $user->setAssignedGame(null);
+            }
+        }
 
         return $this;
     }

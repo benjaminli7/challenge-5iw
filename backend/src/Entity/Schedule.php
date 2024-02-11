@@ -25,9 +25,6 @@ class Schedule
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $endTime = null;
 
-    #[ORM\ManyToOne(inversedBy: 'schedule')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Booster $booster = null;
 
     public function getId(): ?int
     {
@@ -66,18 +63,6 @@ class Schedule
     public function setEndTime(\DateTimeInterface $endTime): static
     {
         $this->endTime = $endTime;
-
-        return $this;
-    }
-
-    public function getBooster(): ?Booster
-    {
-        return $this->booster;
-    }
-
-    public function setBooster(?Booster $booster): static
-    {
-        $this->booster = $booster;
 
         return $this;
     }

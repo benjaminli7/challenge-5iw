@@ -15,22 +15,31 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Delete;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
+use App\Controller\GetManagerTeamController;
 
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ORM\InheritanceType("SINGLE_TABLE")]
-#[ORM\DiscriminatorColumn(name: "user_type", type: "string")]
 #[ORM\Table(name: '`user`')]
 #[ApiResource(
     operations: [
         new GetCollection(normalizationContext: ['groups' => ['read-user']], security: 'is_granted("ROLE_ADMIN")', securityMessage: 'Only admins can see all users.'),
         new Get(normalizationContext: ['groups' => ['read-user']], security: 'is_granted("ROLE_ADMIN") or object == user', securityMessage: 'You can only see your own user.'),
-        //        new Get(uriTemplate: '/users/{id}/infos', normalizationContext: ['groups' => ['read-user', 'read-user-as-admin']], security: 'is_granted("ROLE_ADMIN")'),
+        //  new Get(uriTemplate: '/users/{id}/infos', normalizationContext: ['groups' => ['read-user', 'read-user-as-admin']], security: 'is_granted("ROLE_ADMIN")'),
+        // new Get(uriTemplate: '/players/{id}', normalizationContext: ['groups' => ['read-player']], security: 'is_granted("PLAYER_READ", object) or is_granted("ROLE_ADMIN")', securityMessage: 'Only players can see their own user.'),
         new Post(denormalizationContext: ['groups' => ['create-user']]),
-        new Patch(denormalizationContext: ['groups' => ['update-user']], securityPostDenormalize: 'is_granted("ROLE_ADMIN") or object == user', securityPostDenormalizeMessage: 'You can only edit your own user.' ),
-        new Patch(uriTemplate: '/users/{id}/firstConnection', denormalizationContext: ['groups' => ['update-user-connection']], security: 'is_granted("ROLE_ADMIN") or object == user', securityMessage: 'You can only edit your own user.')
+        new Patch(denormalizationContext: ['groups' => ['update-user']], securityPostDenormalize: 'is_granted("ROLE_ADMIN") or object == user', securityPostDenormalizeMessage: 'You can only edit your own user.'),
+        new Get(
+            uriTemplate: '/users/{id}/team',
+            controller: GetManagerTeamController::class,
+            normalizationContext: ['groups' => ['read-team']],
+            security: 'is_granted("ROLE_ADMIN") or (object == user)',
+            securityMessage: 'You can only see your own team.'
+        ),
+        // can only delete if you're the manager of the team which contains the user
+        new Delete(security: 'is_granted("ROLE_ADMIN") or (object.ownedTeam.manager == user)', securityMessage: 'You can only delete your own user.'),
     ],
     normalizationContext: ['groups' => ['read-user']],
 )]
@@ -43,13 +52,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['read-user'])]
+
+    #[Groups(['read-user', 'update-user', 'read-team'])]
     private ?int $id = null;
 
     #[Assert\Email()]
-    #[Groups(['create-user','read-user'])]
+    #[Groups(['create-user', 'read-user', 'read-player', 'read-team'])]
     #[ORM\Column(length: 180, unique: true)]
     private ?string $email = null;
+
+    #[Assert\Length(min: 3, max: 50)]
+    #[ORM\Column(length: 50, unique: true)]
+    #[Groups(['create-user', 'read-user', 'read-player', 'read-team'])]
+    private ?string $username = null;
 
     #[ORM\Column]
     #[Groups(['read-user'])]
@@ -61,41 +76,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $password = null;
 
-    #[Groups(['create-user', 'read-user', 'update-user'])]
-    #[ORM\Column(length: 255)]
-    #[Assert\NotBlank(message: 'Please enter a first name')]
-    #[Assert\Length(
-        min: 2,
-        max: 30,
-        minMessage: 'Your first name must be at least 2 characters long',
-        maxMessage: 'Your first name cannot be longer than 30 characters'
-    )]
-    #[Assert\Regex(
-        pattern: '/^[a-zA-ZÀ-ÿ\s-]+$/',
-        message: 'Your first name must contain only letters, spaces, or dashes'
-    )]
+
+    #[Groups(['read-user', 'read-player', 'read-team'])]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $firstName = null;
 
-    #[Groups(['create-user', 'read-user', 'update-user'])]
-    #[ORM\Column(length: 255)]
-    #[Assert\NotBlank(message: 'Please enter a last name')]
-    #[Assert\Length(
-        min: 2,
-        max: 30,
-        minMessage: 'Your last name must be at least 2 characters long',
-        maxMessage: 'Your last name cannot be longer than 30 characters'
-    )]
-    #[Assert\Regex(
-        pattern: '/^[a-zA-ZÀ-ÿ\s-]+$/',
-        message: 'Your last name must contain only letters, spaces, or dashes'
-    )]
+    #[Groups(['read-user', 'read-player', 'read-team'])]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $lastName = null;
 
     #[Groups(['create-user', 'update-user'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $plainPassword = null;
 
-    #[ORM\Column(type: 'boolean', nullable: true, options: ['default' => false])]
+
+    #[ORM\Column(type: 'boolean', options: ['default' => false], nullable: true)]
+    #[Groups(['update-user', 'read-client', 'read-user'])]
     private ?bool $isVerified = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -104,25 +100,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $resetToken = null;
 
-    #[Assert\Regex(
-        pattern: '/^0[1-9](?:[\s.-]?[0-9]{2}){4}$/',
-        message: 'Please enter a valid French phone number'
-    )]
-    #[Groups(['read-user', 'update-user'])]
+
+    #[Groups(['read-user', 'read-client', 'read-player'])]
     #[ORM\Column(length: 16, nullable: true)]
     private ?string $phone = null;
 
-    #[ORM\OneToMany(mappedBy: 'manager', targetEntity: Team::class)]
-    private Collection $teams;
+    #[Groups(['create-user', 'read-user', 'update-user', 'read-player'])]
+    #[ORM\Column(nullable: true)]
+    private ?string $type = null;
 
-    #[Groups(['create-user', 'read-user', 'update-user', 'update-user-connection'])]
-    #[ORM\Column(options: ['default' => true])]
-    private ?bool $isFirstConnection = null;
+    #[ORM\Column(nullable: true)]
+    #[Groups(['read-user'])]
+    private ?int $coins = null;
 
-    public function __construct()
-    {
-        $this->teams = new ArrayCollection();
-    }
+    #[Groups(['read-user', 'create-user', 'update-user', 'read-team', 'read-player'])]
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $discord = null;
+
+    #[ORM\ManyToOne(inversedBy: 'users')]
+    #[Groups(['read-user', 'read-player', 'update-user', 'create-player', 'update-player', 'read-team'])]
+    private ?Game $assignedGame = null;
+
+    #[ORM\OneToOne(mappedBy: 'manager', cascade: ['persist', 'remove'])]
+    #[Groups(['read-user'])]
+    private ?Team $ownedTeam = null;
+
+    #[Groups(['read-player'])]
+    #[ORM\ManyToOne(inversedBy: 'boosters')]
+    private ?Team $team = null;
+
 
     public function getId(): ?int
     {
@@ -278,51 +284,99 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @return Collection<int, Team>
-     */
-    public function getTeams(): Collection
+    public function getType(): ?string
     {
-        return $this->teams;
+        return $this->type;
     }
 
-    public function addTeam(Team $team): static
+    public function setType(string $type): static
     {
-        if (!$this->teams->contains($team)) {
-            $this->teams->add($team);
-            $team->setManager($this);
+        $this->type = $type;
+        return $this;
+    }
+
+    # Client
+
+    public function getCoins(): ?int
+    {
+        return $this->coins;
+    }
+
+    public function setCoins(int $coins): static
+    {
+        $this->coins = $coins;
+
+        return $this;
+    }
+
+
+    public function getDiscord(): ?string
+    {
+        return $this->discord;
+    }
+
+    public function setDiscord(?string $discord): static
+    {
+        $this->discord = $discord;
+
+        return $this;
+    }
+
+    public function getAssignedGame(): ?Game
+    {
+        return $this->assignedGame;
+    }
+
+    public function setAssignedGame(?Game $assignedGame): static
+    {
+        $this->assignedGame = $assignedGame;
+
+        return $this;
+    }
+
+    public function getOwnedTeam(): ?Team
+    {
+        return $this->ownedTeam;
+    }
+
+    public function setOwnedTeam(?Team $ownedTeam): static
+    {
+        // unset the owning side of the relation if necessary
+        if ($ownedTeam === null && $this->ownedTeam !== null) {
+            $this->ownedTeam->setManager(null);
         }
 
-        return $this;
-    }
-
-    public function removeTeam(Team $team): static
-    {
-        if ($this->teams->removeElement($team)) {
-            // set the owning side to null (unless already changed)
-            if ($team->getManager() === $this) {
-                $team->setManager(null);
-            }
+        // set the owning side of the relation if necessary
+        if ($ownedTeam !== null && $ownedTeam->getManager() !== $this) {
+            $ownedTeam->setManager($this);
         }
 
-        return $this;
-    }
-
-    public function isIsFirstConnection(): ?bool
-    {
-        return $this->isFirstConnection;
-    }
-
-    public function setIsFirstConnection(bool $isFirstConnection): static
-    {
-        $this->isFirstConnection = $isFirstConnection;
+        $this->ownedTeam = $ownedTeam;
 
         return $this;
     }
 
-    // public function getCreatedAt(): ?DateTimeInterface
-    // {
-    //     return $this->createdAt;
-    // }
+    public function getTeam(): ?Team
+    {
+        return $this->team;
+    }
 
+    public function setTeam(?Team $team): static
+    {
+        $this->team = $team;
+
+        return $this;
+    }
+
+    public function getUsername(): ?string
+    {
+        return $this->username;
+    }
+
+    public function setUsername(string $username): static
+    {
+        $this->username = $username;
+
+        return $this;
+    }
 }

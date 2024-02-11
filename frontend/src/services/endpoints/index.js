@@ -13,6 +13,12 @@ const ENDPOINTS = {
     root: "api/ranks",
     rankId: (rankId) => `api/ranks/${rankId}`,
   },
+  teams: {
+    root: "api/teams",
+    teamId: (teamId) => `api/teams/${teamId}`,
+    manager: (managerId) => `api/users/${managerId}/team`,
+    addPlayer: (teamId) => `api/teams/${teamId}/players`,
+  }
 };
 
 export default ENDPOINTS;

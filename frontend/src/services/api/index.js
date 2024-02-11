@@ -8,7 +8,7 @@ const getBaseUrl = () => {
     : "https://api.game-elevate.ovh";
 };
 
-const REACT_APP_BASE_URL = getBaseUrl();
+export const REACT_APP_BASE_URL = getBaseUrl();
 
 export const getJwtToken = () => {
   return Cookies.get("_auth");
