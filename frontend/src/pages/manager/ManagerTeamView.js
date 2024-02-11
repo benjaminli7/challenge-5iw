@@ -25,7 +25,7 @@ function CustomTabPanel(props) {
 }
 
 
-function ManagerTeamView({ team }) {
+function ManagerTeamView({ team, games }) {
 
   const [value, setValue] = React.useState(0);
 
@@ -51,7 +51,7 @@ function ManagerTeamView({ team }) {
           <TeamView team={team} />
         </CustomTabPanel>
         <CustomTabPanel value={value} index={1}>
-          <MembersView team={team} />
+          <MembersView team={team} games={games} />
         </CustomTabPanel>
         <CustomTabPanel value={value} index={2}>
           <WithdrawView team={team} />

@@ -35,7 +35,7 @@ class TeamFixtures extends Fixture implements DependentFixtureInterface
 
         // Create a booster user
         $boosterUser = new User();
-        $boosterUser->setEmail('booster@booster.fr');
+        $boosterUser->setEmail('faker@faker.fr');
         $boosterUser->setUsername('Faker');
         $boosterUser->setRoles(['ROLE_USER']);
         $boosterUser->setPassword($this->hasher->hashPassword($boosterUser, "booster"));
@@ -47,7 +47,6 @@ class TeamFixtures extends Fixture implements DependentFixtureInterface
         $boosterUser->setCoins(25);
         $boosterUser->setDiscord('faker#1234');
         $boosterUser->setAssignedGame($lol);
-        // Set other properties as needed
 
         $manager->persist($boosterUser);
 

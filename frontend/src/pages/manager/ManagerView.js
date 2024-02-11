@@ -9,14 +9,17 @@ function ManagerView() {
 
   const userId = auth()?.user.id;
 
-  console.log(auth()?.user)
-
   const { data: managerTeam, isLoading: isLoadingManagerTeam } = useFetch(
     "team",
     ENDPOINTS.teams.manager(userId)
   );
 
-  if (isLoadingManagerTeam) {
+  const {
+    data: games,
+    isLoading: isLoadingGames,
+  } = useFetch("games", ENDPOINTS.games.root);
+
+  if (isLoadingManagerTeam && isLoadingGames) {
     return <div>Loading...</div>;
   }
 
@@ -29,7 +32,7 @@ function ManagerView() {
           <Link to="/my-team/create">Create a team</Link>
         </div>
       ) : (
-        <ManagerTeamView team={managerTeam} />
+        <ManagerTeamView team={managerTeam} games={games} />
       )}
     </div>
   );
