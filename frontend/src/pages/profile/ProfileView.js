@@ -120,7 +120,7 @@ function ProfileView() {
                      Cookies.set('_auth_state', JSON.stringify(authCookie));
                 }
                 setFormState(updatedUserData);
-                setSnackbarMessage('Profile updated successfully!');
+                setSnackbarMessage('profile updated successfully!');
                 setAlertSeverity('success');
                 setOpenSnackbar(true);
             } catch (error) {
