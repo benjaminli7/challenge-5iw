@@ -17,22 +17,28 @@ use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
+use App\Controller\GetManagerTeamController;
 
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ORM\InheritanceType("SINGLE_TABLE")]
-#[ORM\DiscriminatorColumn(name: "user_type", type: "string")]
 #[ORM\Table(name: '`user`')]
 #[ApiResource(
     operations: [
         new GetCollection(normalizationContext: ['groups' => ['read-user']], security: 'is_granted("ROLE_ADMIN")', securityMessage: 'Only admins can see all users.'),
-        new Get(normalizationContext: ['groups' => ['read-user']], security: 'is_granted("ROLE_ADMIN") object == user', securityMessage: 'You can only see your own user.'),
-        //        new Get(uriTemplate: '/users/{id}/infos', normalizationContext: ['groups' => ['read-user', 'read-user-as-admin']], security: 'is_granted("ROLE_ADMIN")'),
+        new Get(normalizationContext: ['groups' => ['read-user']], security: 'is_granted("ROLE_ADMIN") or object == user', securityMessage: 'You can only see your own user.'),
+        //  new Get(uriTemplate: '/users/{id}/infos', normalizationContext: ['groups' => ['read-user', 'read-user-as-admin']], security: 'is_granted("ROLE_ADMIN")'),
+        // new Get(uriTemplate: '/players/{id}', normalizationContext: ['groups' => ['read-player']], security: 'is_granted("PLAYER_READ", object) or is_granted("ROLE_ADMIN")', securityMessage: 'Only players can see their own user.'),
         new Post(denormalizationContext: ['groups' => ['create-user']]),
-        new Patch(denormalizationContext: ['groups' => ['update-user']], securityPostDenormalize: 'is_granted("ROLE_ADMIN") or object == user', securityPostDenormalizeMessage: 'You can only edit your own user.' ),
-        new Patch(uriTemplate: '/users/{id}/firstConnection', denormalizationContext: ['groups' => ['update-user-connection']], security: 'is_granted("ROLE_ADMIN") or object == user', securityMessage: 'You can only edit your own user.')
+        new Patch(denormalizationContext: ['groups' => ['update-user']], securityPostDenormalize: 'is_granted("ROLE_ADMIN") or object == user', securityPostDenormalizeMessage: 'You can only edit your own user.'),
+        new Get(
+            uriTemplate: '/users/{id}/team',
+            controller: GetManagerTeamController::class,
+            normalizationContext: ['groups' => ['read-team']],
+            security: 'is_granted("ROLE_ADMIN") or (object == user)',
+            securityMessage: 'You can only see your own team.'
+        ),
     ],
-    normalizationContext: ['groups' => ['read-user', 'read-user-mutation']],
+    normalizationContext: ['groups' => ['read-user']],
 )]
 #[UniqueEntity(['email'])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
@@ -47,9 +53,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[Assert\Email()]
-    #[Groups(['create-user','read-user'])]
+    #[Groups(['create-user', 'read-user', 'read-player', 'read-team'])]
     #[ORM\Column(length: 180, unique: true)]
     private ?string $email = null;
+
+    #[Assert\Length(min: 3, max: 50)]
+    #[ORM\Column(length: 50, unique: true)]
+    #[Groups(['create-user', 'read-user', 'read-player', 'read-team'])]
+    private ?string $username = null;
 
     #[ORM\Column]
     #[Groups(['read-user'])]
@@ -61,12 +72,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $password = null;
 
-    #[Groups(['create-user', 'read-user', 'update-user'])]
-    #[ORM\Column(length: 255)]
+    #[Groups(['read-user', 'read-player', 'read-team'])]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $firstName = null;
 
-    #[Groups(['create-user', 'read-user', 'update-user'])]
-    #[ORM\Column(length: 255)]
+    #[Groups(['read-user', 'read-player', 'read-team'])]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $lastName = null;
 
     #[Groups(['create-user', 'update-user'])]
@@ -74,6 +85,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $plainPassword = null;
 
     #[ORM\Column(type: 'boolean', options: ['default' => false], nullable: true)]
+    #[Groups(['update-user', 'read-client', 'read-user'])]
     private ?bool $isVerified = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -82,21 +94,34 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $resetToken = null;
 
-    #[Groups(['read-user'])]
+    #[Groups(['read-user', 'read-client', 'read-player'])]
     #[ORM\Column(length: 16, nullable: true)]
     private ?string $phone = null;
 
-    #[ORM\OneToMany(mappedBy: 'manager', targetEntity: Team::class)]
-    private Collection $teams;
+    #[Groups(['create-user', 'read-user', 'update-user', 'read-player'])]
+    #[ORM\Column(nullable: true)]
+    private ?string $type = null;
 
-    #[Groups(['create-user', 'read-user', 'update-user', 'update-user-connection'])]
-    #[ORM\Column(options: ['default' => true])]
-    private ?bool $isFirstConnection = null;
+    #[ORM\Column(nullable: true)]
+    #[Groups(['read-user'])]
+    private ?int $coins = null;
 
-    public function __construct()
-    {
-        $this->teams = new ArrayCollection();
-    }
+    #[Groups(['read-user', 'create-user', 'update-user', 'read-team', 'read-player'])]
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $discord = null;
+
+    #[ORM\ManyToOne(inversedBy: 'users')]
+    #[Groups(['read-user', 'read-player', 'create-player', 'update-player'])]
+    private ?Game $assignedGame = null;
+
+    #[ORM\OneToOne(mappedBy: 'manager', cascade: ['persist', 'remove'])]
+    #[Groups(['read-user'])]
+    private ?Team $ownedTeam = null;
+
+    #[Groups(['read-player'])]
+    #[ORM\ManyToOne(inversedBy: 'boosters')]
+    private ?Team $team = null;
+
 
     public function getId(): ?int
     {
@@ -252,44 +277,98 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @return Collection<int, Team>
-     */
-    public function getTeams(): Collection
+    public function getType(): ?string
     {
-        return $this->teams;
+        return $this->type;
     }
 
-    public function addTeam(Team $team): static
+    public function setType(string $type): static
     {
-        if (!$this->teams->contains($team)) {
-            $this->teams->add($team);
-            $team->setManager($this);
-        }
+        $this->type = $type;
+        return $this;
+    }
+
+    # Client
+
+    public function getCoins(): ?int
+    {
+        return $this->coins;
+    }
+
+    public function setCoins(int $coins): static
+    {
+        $this->coins = $coins;
 
         return $this;
     }
 
-    public function removeTeam(Team $team): static
+
+    public function getDiscord(): ?string
     {
-        if ($this->teams->removeElement($team)) {
-            // set the owning side to null (unless already changed)
-            if ($team->getManager() === $this) {
-                $team->setManager(null);
-            }
-        }
+        return $this->discord;
+    }
+
+    public function setDiscord(?string $discord): static
+    {
+        $this->discord = $discord;
 
         return $this;
     }
 
-    public function isIsFirstConnection(): ?bool
+    public function getAssignedGame(): ?Game
     {
-        return $this->isFirstConnection;
+        return $this->assignedGame;
     }
 
-    public function setIsFirstConnection(bool $isFirstConnection): static
+    public function setAssignedGame(?Game $assignedGame): static
     {
-        $this->isFirstConnection = $isFirstConnection;
+        $this->assignedGame = $assignedGame;
+
+        return $this;
+    }
+
+    public function getOwnedTeam(): ?Team
+    {
+        return $this->ownedTeam;
+    }
+
+    public function setOwnedTeam(?Team $ownedTeam): static
+    {
+        // unset the owning side of the relation if necessary
+        if ($ownedTeam === null && $this->ownedTeam !== null) {
+            $this->ownedTeam->setManager(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($ownedTeam !== null && $ownedTeam->getManager() !== $this) {
+            $ownedTeam->setManager($this);
+        }
+
+        $this->ownedTeam = $ownedTeam;
+
+        return $this;
+    }
+
+    public function getTeam(): ?Team
+    {
+        return $this->team;
+    }
+
+    public function setTeam(?Team $team): static
+    {
+        $this->team = $team;
+
+        return $this;
+    }
+
+    public function getUsername(): ?string
+    {
+        return $this->username;
+    }
+
+    public function setUsername(string $username): static
+    {
+        $this->username = $username;
 
         return $this;
     }
