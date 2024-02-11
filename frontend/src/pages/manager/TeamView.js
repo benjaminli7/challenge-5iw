@@ -11,8 +11,8 @@ function TeamView({ team }) {
     formState: { errors, isSubmitting },
   } = useForm({
     defaultValues: {
-      name: team.name,
-      iban: team.iban,
+      name: team?.name,
+      iban: team?.iban,
     },
   });
   const onSubmit = async (data) => {
@@ -32,10 +32,10 @@ function TeamView({ team }) {
       sx={{ mt: 1 }}
     >
       <Stack spacing={4}>
-        <Typography variant="h4" className="titleBorder">
-          Team {team.name}
+        <Typography variant="h4" component={"span"} className="titleBorder">
+          Team {team?.name}
         </Typography>
-        <Box>
+        <div>
           <TextField
             key={"name"}
             autoFocus
@@ -72,13 +72,14 @@ function TeamView({ team }) {
           <CustomButton
             isSubmitting={isSubmitting}
             type="submit"
+            color="blue"
             fullWidth
             variant="contained"
-            sx={{ mt: 3, mb: 2 }}
+            sx={{ mt: 3, mb: 2, color: "#fff"}}
           >
             Save
           </CustomButton>
-        </Box>
+        </div>
       </Stack>
     </Box>
   );

@@ -22,6 +22,7 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import "./index.css";
 import ManagerView from "@/pages/manager/ManagerView";
 import ManagerCreateTeamForm from "@/pages/manager/ManagerCreateTeamForm";
+import { Box } from "@mui/material";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -139,7 +140,10 @@ root.render(
         cookieSecure={false}
       >
         <ThemeProvider theme={theme}>
+          <Box sx={{height: "100vh", position: "relative"}}>
+
           <RouterProvider router={router} />
+          </Box>
         </ThemeProvider>
       </AuthProvider>
     </QueryClientProvider>

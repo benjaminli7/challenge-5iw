@@ -15,6 +15,7 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Delete;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
 use App\Controller\GetManagerTeamController;
@@ -37,6 +38,8 @@ use App\Controller\GetManagerTeamController;
             security: 'is_granted("ROLE_ADMIN") or (object == user)',
             securityMessage: 'You can only see your own team.'
         ),
+        // can only delete if you're the manager of the team which contains the user
+        new Delete(security: 'is_granted("ROLE_ADMIN") or (object.ownedTeam.manager == user)', securityMessage: 'You can only delete your own user.'),
     ],
     normalizationContext: ['groups' => ['read-user']],
 )]
@@ -49,7 +52,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['read-user', 'update-user'])]
+    #[Groups(['read-user', 'update-user', 'read-team'])]
     private ?int $id = null;
 
     #[Assert\Email()]
@@ -111,7 +114,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $discord = null;
 
     #[ORM\ManyToOne(inversedBy: 'users')]
-    #[Groups(['read-user', 'read-player', 'create-player', 'update-player'])]
+    #[Groups(['read-user', 'read-player', 'update-user', 'create-player', 'update-player', 'read-team'])]
     private ?Game $assignedGame = null;
 
     #[ORM\OneToOne(mappedBy: 'manager', cascade: ['persist', 'remove'])]

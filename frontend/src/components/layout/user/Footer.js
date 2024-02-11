@@ -20,7 +20,7 @@ function Footer() {
               className="inline-block max-h-10"
             />
           </Link>
-          <div className="text-center font-semibold max-[991px]:ml-0 max-[991px]:mr-0 max-[991px]:py-1">
+          {/* <div className="text-center font-semibold max-[991px]:ml-0 max-[991px]:mr-0 max-[991px]:py-1">
             <Link
               to="/"
               className="inline-block px-6 py-2 font-normal transition hover:text-[#d6a701]"
@@ -51,7 +51,7 @@ function Footer() {
             >
               Accueil
             </Link>
-          </div>
+          </div> */}
           <div className="w-48 mt-8 mb-8 border-b border-solid border-b-white"></div>
           <div className="mb-12 grid w-full max-w-[208px] grid-flow-col grid-cols-4 gap-3">
             <Link

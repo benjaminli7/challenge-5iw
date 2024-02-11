@@ -1,8 +1,7 @@
 import { useCustomMutation } from "@/hooks/useCustomMutation";
-import useFetch from "@/hooks/useFetch";
 import ENDPOINTS from "@/services/endpoints";
 
-export function useUsers() {
+export function useUsers(userId) {
   // const {
   //   data: users,
   //   isError,
@@ -17,20 +16,30 @@ export function useUsers() {
   //   isLoading: isLoadingUser,
   // } = useFetch("user", ENDPOINTS.users.userId(userId));
 
-  const loginMutation = useCustomMutation(
-    ENDPOINTS.users.login,
-    "post",
-    "users"
+  const loginMutation = useCustomMutation(ENDPOINTS.users.login, "post", [
+    "users",
+  ]);
+
+  const registerMutation = useCustomMutation(ENDPOINTS.users.root, "post", [
+    "users",
+  ]);
+
+  const updateUserMutation = useCustomMutation(
+    ENDPOINTS.users.userId(userId),
+    "patch",
+    ["users", "team"]
   );
 
-  const registerMutation = useCustomMutation(
-    ENDPOINTS.users.root,
-    "post",
-    "users"
+  const deleteUserMutation = useCustomMutation(
+    ENDPOINTS.users.userId(userId),
+    "delete",
+    ["users", "team"]
   );
 
   return {
     loginMutation,
     registerMutation,
+    updateUserMutation,
+    deleteUserMutation,
   };
 }

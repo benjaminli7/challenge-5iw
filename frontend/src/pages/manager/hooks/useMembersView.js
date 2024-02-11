@@ -2,7 +2,7 @@ import { useState } from "react";
 import useActionHandlers from "@/hooks/useActionHandlers";
 
 export function useMembersView() {
-  const [selectedUserId, setSelectedUserId] = useState(null);
+  const [selectedUser, setSelectedUser] = useState(null);
   const { actionType, openDialog, handleDialogClose, handleActionType } =
     useActionHandlers();
   const ACTION_TYPES = {
@@ -11,8 +11,8 @@ export function useMembersView() {
   };
   return {
     ACTION_TYPES,
-    selectedUserId,
-    setSelectedUserId,
+    selectedUser,
+    setSelectedUser,
     actionType,
     openDialog,
     handleDialogClose,

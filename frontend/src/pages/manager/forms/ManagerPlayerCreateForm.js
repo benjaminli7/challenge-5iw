@@ -1,7 +1,9 @@
 import React from 'react'
 import ManagerPlayerForm from '@/pages/manager/forms/ManagerPlayerForm';
+import { useTeams } from '@/hooks/models/useTeams';
+import { toast } from 'sonner';
 
-function ManagerPlayerCreateForm({ team, handleDialogClose }) {
+function ManagerPlayerCreateForm({ team, handleDialogClose, games }) {
   const { addPlayerMutation } = useTeams(team.id);
 
     const onSubmit = async (data) => {
@@ -14,7 +16,7 @@ function ManagerPlayerCreateForm({ team, handleDialogClose }) {
         toast.error("Error creating player");
       }
     };
-  return <ManagerPlayerForm onSubmit={onSubmit} actionType="create" />;
+  return <ManagerPlayerForm onSubmit={onSubmit} actionType="create" games={games} />;
 }
 
 export default ManagerPlayerCreateForm
