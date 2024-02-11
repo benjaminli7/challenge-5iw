@@ -21,7 +21,18 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import "./index.css";
 import ManagerView from "@/pages/manager/ManagerView";
-const queryClient = new QueryClient();
+import ManagerCreateTeamForm from "@/pages/manager/ManagerCreateTeamForm";
+import { Box } from "@mui/material";
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      refetchOnmount: false,
+      refetchOnReconnect: false,
+      retry: false,
+    },
+  },
+});
 
 const router = createBrowserRouter([
   {
@@ -71,13 +82,21 @@ const router = createBrowserRouter([
         ],
       },
       {
-        path: "manager",
+        path: "my-team",
         children: [
           {
             path: "",
             element: (
               <ProtectedUserTypeRoute type="manager">
                 <ManagerView />
+              </ProtectedUserTypeRoute>
+            ),
+          },
+          {
+            path: "create",
+            element: (
+              <ProtectedUserTypeRoute type="manager">
+                <ManagerCreateTeamForm />
               </ProtectedUserTypeRoute>
             ),
           },
@@ -121,7 +140,10 @@ root.render(
         cookieSecure={false}
       >
         <ThemeProvider theme={theme}>
+          <Box sx={{height: "100vh", position: "relative"}}>
+
           <RouterProvider router={router} />
+          </Box>
         </ThemeProvider>
       </AuthProvider>
     </QueryClientProvider>

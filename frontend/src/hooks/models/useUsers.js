@@ -1,33 +1,45 @@
 import { useCustomMutation } from "@/hooks/useCustomMutation";
-import useFetch from "@/hooks/useFetch";
 import ENDPOINTS from "@/services/endpoints";
 
-export function useUsers() {
-  const {
-    data: users,
-    isError,
-    error,
-    isLoading,
-  } = useFetch("users", ENDPOINTS.users.root);
+export function useUsers(userId) {
+  // const {
+  //   data: users,
+  //   isError,
+  //   error,
+  //   isLoading,
+  // } = useFetch("users", ENDPOINTS.users.root);
 
-  const loginMutation = useCustomMutation(
-    ENDPOINTS.users.login,
-    "post",
-    "users"
+  // const {
+  //   data: user,
+  //   isError: isErrorUser,
+  //   error: errorUser,
+  //   isLoading: isLoadingUser,
+  // } = useFetch("user", ENDPOINTS.users.userId(userId));
+
+  const loginMutation = useCustomMutation(ENDPOINTS.users.login, "post", [
+    "users",
+  ]);
+
+  const registerMutation = useCustomMutation(ENDPOINTS.users.root, "post", [
+    "users",
+  ]);
+
+  const updateUserMutation = useCustomMutation(
+    ENDPOINTS.users.userId(userId),
+    "patch",
+    ["users", "team"]
   );
 
-  const registerMutation = useCustomMutation(
-    ENDPOINTS.users.root,
-    "post",
-    "users"
+  const deleteUserMutation = useCustomMutation(
+    ENDPOINTS.users.userId(userId),
+    "delete",
+    ["users", "team"]
   );
 
   return {
-    users,
-    isError,
-    error,
-    isLoading,
     loginMutation,
     registerMutation,
+    updateUserMutation,
+    deleteUserMutation,
   };
 }

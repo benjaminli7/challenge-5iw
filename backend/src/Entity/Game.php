@@ -57,11 +57,11 @@ class Game
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['read-game', 'update-rank'])]
+    #[Groups(['read-game', 'update-rank', 'read-team'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255, unique: true)]
-    #[Groups(['read-game', 'create-game', 'update-game'])]
+    #[Groups(['read-game', 'create-game', 'update-game', 'read-team'])]
     private ?string $name = null;
 
     #[ORM\OneToMany(mappedBy: 'game', targetEntity: Rank::class, cascade: ['persist', 'remove'])]
@@ -83,6 +83,9 @@ class Game
     #[Assert\Regex(pattern: '/^#[a-f0-9]{6}$/i', message: 'The color must be a valid hex color')]
     private ?string $color = null;
 
+    #[ORM\OneToMany(mappedBy: 'assignedGame', targetEntity: User::class)]
+    private Collection $users;
+
 
 
 
@@ -90,6 +93,7 @@ class Game
     public function __construct()
     {
         $this->ranks = new ArrayCollection();
+        $this->users = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -183,6 +187,36 @@ class Game
     public function setColor(?string $color): static
     {
         $this->color = $color;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
+
+    public function addUser(User $user): static
+    {
+        if (!$this->users->contains($user)) {
+            $this->users->add($user);
+            $user->setAssignedGame($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUser(User $user): static
+    {
+        if ($this->users->removeElement($user)) {
+            // set the owning side to null (unless already changed)
+            if ($user->getAssignedGame() === $this) {
+                $user->setAssignedGame(null);
+            }
+        }
 
         return $this;
     }

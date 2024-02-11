@@ -10,7 +10,7 @@ function Root() {
       <CssBaseline />
       <Toaster position="top-center" richColors />
       <Navbar/>
-      <Box className="container" component="main" sx={{ p: 3 }}>
+      <Box className="container" component="main" sx={{ p: 3}}>
         <Toolbar />
         <Outlet />
       </Box>
