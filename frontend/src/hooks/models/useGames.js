@@ -1,6 +1,6 @@
+import { useCustomMutation } from "@/hooks/useCustomMutation";
 import useFetch from "@/hooks/useFetch";
 import ENDPOINTS from "@/services/endpoints";
-import { useCustomMutation } from "@/hooks/useCustomMutation";
 
 export function useGames(selectedGame) {
   const {
@@ -17,12 +17,13 @@ export function useGames(selectedGame) {
   const updateGameMutation = useCustomMutation(
     ENDPOINTS.games.gameId(selectedGame?.id),
     "patch",
-    "games"
+    ["games"]
   );
+
   const deleteGameMutation = useCustomMutation(
     ENDPOINTS.games.gameId(selectedGame?.id),
     "delete",
-    "games"
+    ["games"]
   );
 
   return {
@@ -35,4 +36,3 @@ export function useGames(selectedGame) {
     deleteGameMutation,
   };
 }
-

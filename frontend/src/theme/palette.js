@@ -13,6 +13,9 @@ const palette = {
   primary: {
     main: grey[800],
   },
+  blue: {
+    main: "#1976D2",
+  },
   secondary: {
     main: grey[900],
   },
