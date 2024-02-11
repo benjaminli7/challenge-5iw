@@ -16,14 +16,13 @@ class AuthenticationSuccessHandler
             return;
         }
 
+
         // Add user data to the token payload
         $data['user'] = [
             'id' => $user->getId(),
             'email' => $user->getEmail(),
-            'firstName' => $user->getFirstName(),
-            'lastName' => $user->getLastName(),
-            'phone' => $user->getPhone(),
             'type' => $user->getType(),
+            'roles' => $user->getRoles(),
         ];
 
         $event->setData($data);

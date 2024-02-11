@@ -17,6 +17,9 @@ const ENDPOINTS = {
   },
   teams: {
     root: "api/teams",
+    teamId: (teamId) => `api/teams/${teamId}`,
+    manager: (managerId) => `api/users/${managerId}/team`,
+    addPlayer: (teamId) => `api/teams/${teamId}/players`,
   }
 };
 

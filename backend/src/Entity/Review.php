@@ -24,14 +24,6 @@ class Review
     #[ORM\Column(length: 20)]
     private ?string $authorType = null;
 
-    #[ORM\ManyToOne(inversedBy: 'reviews')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?User $client = null;
-
-    #[ORM\ManyToOne(inversedBy: 'reviews')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?User $booster = null;
-
     public function getId(): ?int
     {
         return $this->id;
@@ -73,27 +65,5 @@ class Review
         return $this;
     }
 
-    public function getClient(): ?User
-    {
-        return $this->client;
-    }
-
-    public function setClient(?User $client): static
-    {
-        $this->client = $client;
-
-        return $this;
-    }
-
-    public function getBooster(): ?User
-    {
-        return $this->booster;
-    }
-
-    public function setBooster(?User $booster): static
-    {
-        $this->booster = $booster;
-
-        return $this;
-    }
 }
+

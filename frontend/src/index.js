@@ -20,9 +20,25 @@ import ReactDOM from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import "./index.css";
+<<<<<<< HEAD
 
 import FirstConnection from "./pages/first-connection/FirstConnection";
 const queryClient = new QueryClient();
+=======
+import ManagerView from "@/pages/manager/ManagerView";
+import ManagerCreateTeamForm from "@/pages/manager/ManagerCreateTeamForm";
+import { Box } from "@mui/material";
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      refetchOnmount: false,
+      refetchOnReconnect: false,
+      retry: false,
+    },
+  },
+});
+>>>>>>> dev
 
 const router = createBrowserRouter([
   {
@@ -134,7 +150,10 @@ root.render(
         cookieSecure={false}
       >
         <ThemeProvider theme={theme}>
+          <Box sx={{height: "100vh", position: "relative"}}>
+
           <RouterProvider router={router} />
+          </Box>
         </ThemeProvider>
       </AuthProvider>
     </QueryClientProvider>

@@ -41,7 +41,9 @@ export const useCustomMutation = (endpoint, method, resource) => {
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries(resource);
+        resource.forEach((res) => {
+          queryClient.invalidateQueries(res);
+        });
       },
     }
   );

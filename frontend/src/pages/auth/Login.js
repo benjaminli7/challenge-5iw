@@ -1,6 +1,5 @@
 import CustomButton from "@/components/commons/CustomButton";
 import { useUsers } from "@/hooks/models/useUsers";
-import { isAdmin } from "@/services/api";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import {
   Alert,
@@ -17,6 +16,7 @@ import { useIsAuthenticated, useSignIn } from "react-auth-kit";
 import { useForm } from "react-hook-form";
 import { Navigate, Link as RouterLink, useLocation } from "react-router-dom";
 import { toast } from "sonner";
+import { isAdmin } from "@/services/api";
 
 export default function Login() {
   const [errorLogin, setErrorLogin] = useState(null);
@@ -42,7 +42,7 @@ export default function Login() {
       toast.success("Logged in successfully!");
       signIn({
         token: response.token,
-        expiresIn: 3600,
+        expiresIn: 60 * 60 * 24 * 7, // 7 days
         tokenType: "Bearer",
         authState: {
           user: response.user,
@@ -90,6 +90,7 @@ export default function Login() {
             label="Email Address"
             name="email"
             autoComplete="email"
+            placeholder="johndoe@gmail.com"
             autoFocus
             error={errors.email ? true : false}
             helperText={errors.email && errors.email.message}
@@ -105,6 +106,7 @@ export default function Login() {
             label="Password"
             type="password"
             id="password"
+            placeholder="********"
             autoComplete="current-password"
             error={errors.password ? true : false}
             helperText={errors.password && errors.password.message}
