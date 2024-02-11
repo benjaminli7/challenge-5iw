@@ -22,14 +22,6 @@ class Booking
     #[ORM\Column(length: 50)]
     private ?string $status = null;
 
-    #[ORM\ManyToOne(inversedBy: 'bookings')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?User $booster = null;
-
-    #[ORM\ManyToOne(inversedBy: 'bookings')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?User $client = null;
-
     public function getId(): ?int
     {
         return $this->id;
@@ -55,30 +47,6 @@ class Booking
     public function setStatus(string $status): static
     {
         $this->status = $status;
-
-        return $this;
-    }
-
-    public function getBooster(): ?User
-    {
-        return $this->booster;
-    }
-
-    public function setBooster(?User $booster): static
-    {
-        $this->booster = $booster;
-
-        return $this;
-    }
-
-    public function getClient(): ?User
-    {
-        return $this->client;
-    }
-
-    public function setClient(?User $client): static
-    {
-        $this->client = $client;
 
         return $this;
     }
