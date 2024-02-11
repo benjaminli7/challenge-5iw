@@ -34,6 +34,7 @@ export default function Signup() {
       reset();
     } catch (error) {
       console.log(error);
+      toast.error("Error signing up");
     }
   }
 
@@ -60,33 +61,41 @@ export default function Signup() {
           sx={{ mt: 3 }}
         >
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12}>
               <TextField
-                {...register("firstName", {
-                  required: "First name is required",
+                {...register("username", {
+                  required: "Username is required",
                 })}
                 autoComplete="given-name"
-                name="firstName"
+                name="username"
                 required
                 fullWidth
-                id="firstName"
-                label="First Name"
+                id="username"
+                label="Username"
+                placeholder="johndoe123"
                 autoFocus
-                error={errors.firstName ? true : false}
-                helperText={errors.firstName && errors.firstName.message}
+                error={errors.username ? true : false}
+                helperText={errors.username && errors.username.message}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12}>
               <TextField
-                {...register("lastName", {
-                  required: "Last name is required",
+                {...register("discord", {
+                  required: "Your discord name is required",
+                  pattern: {
+                    value: /^.{3,32}#[0-9]{4}$/i,
+                    message: "Invalid Discord format. Example: username#1234",
+                  },
                 })}
                 required
                 fullWidth
-                id="lastName"
-                label="Last Name"
-                name="lastName"
-                autoComplete="family-name"
+                name="discord"
+                label="Discord"
+                type="text"
+                id="discord"
+                placeholder="username#1234"
+                error={errors.discord ? true : false}
+                helperText={errors.discord && errors.discord.message}
               />
             </Grid>
             <Grid item xs={12}>
@@ -117,6 +126,7 @@ export default function Signup() {
                 label="Email Address"
                 name="email"
                 autoComplete="email"
+                placeholder="johndoe@gmail.com"
                 error={errors.email ? true : false}
                 helperText={errors.email && errors.email.message}
               />

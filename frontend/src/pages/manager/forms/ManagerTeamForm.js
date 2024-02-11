@@ -1,15 +1,13 @@
 import { TextField } from "@mui/material";
-import React from "react";
 import { useFormContext } from "react-hook-form";
 
 function ManagerTeamForm() {
-  const { register, formState: {
-    errors
-
-  } } = useFormContext();
+  const {
+    register,
+    formState: { errors },
+  } = useFormContext();
   return (
-    <div>
-      <h1>Team Form</h1>
+    <div className="mt-12">
       <TextField
         key={"name"}
         autoFocus
@@ -20,7 +18,10 @@ function ManagerTeamForm() {
         required
         error={errors.name ? true : false}
         helperText={errors.name && errors.name.message}
-        {...register("name", { required: "Name required" })}
+        {...register("name", {
+          required: "Team name required",
+          minLength: { value: 3, message: "Minimum 3 characters" },
+        })}
       />
     </div>
   );

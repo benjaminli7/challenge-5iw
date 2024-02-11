@@ -1,10 +1,14 @@
 import { Typography } from "@mui/material";
 import AdminUsersTable from "@/pages/admin/users/tables/AdminUsersTable";
-import { useUsers } from "@/hooks/models/useUsers";
-
+import useFetch from "@/hooks/useFetch";
+import ENDPOINTS from "@/services/endpoints";
 function AdminUsersView() {
-  const { users, error } = useUsers();
-
+  const {
+    data: users,
+    isError,
+    error,
+    isLoading,
+  } = useFetch("users", ENDPOINTS.users.root);
   return (
     <>
       <Typography variant="h4" gutterBottom>
