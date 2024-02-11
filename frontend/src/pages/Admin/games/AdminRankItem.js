@@ -1,6 +1,9 @@
 import React from "react";
 import { Box, Card, Typography, IconButton, Avatar } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
+import AdminRankImageUploader from "./forms/AdminRankImageUploader";
+import { httpPostMultiPart } from "@/services/api";
+import ENDPOINTS from "@/services/endpoints";
 
 function AdminRankItem({
   rank,
@@ -8,7 +11,20 @@ function AdminRankItem({
   setSelectedRank,
   ACTION_TYPES,
 }) {
-  console.log(rank);
+  const handleImageUpload = async (data, setFile, rankId) => {
+    try {
+      // console.log({ data, setFile, rankId });
+      const response = await httpPostMultiPart(
+        ENDPOINTS.ranks.rankImg(rankId),
+        data
+      );
+      // console.log(response);
+      setFile(null);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  // console.log(rank);
   return (
     <Card key={rank.id} variant="outlined" sx={{ p: 2 }}>
       <Box
@@ -22,11 +38,7 @@ function AdminRankItem({
         <Typography key={rank.id} variant="body1">
           {rank.name}
         </Typography>
-        <Avatar
-          src={rank.fileUrl && process.env.REACT_APP_API_URL + rank.fileUrl}
-          alt={rank.name}
-          sx={{ width: 50, height: 50 }}
-        />
+        <AdminRankImageUploader onUpload={handleImageUpload} rank={rank} />
         <IconButton
           color="primary"
           aria-label="edit rank"

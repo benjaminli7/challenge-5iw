@@ -34,7 +34,6 @@ class RankNormalizer implements ContextAwareNormalizerInterface, NormalizerAware
     {
         $object->setFileUrl($this->storage->resolveUri($object, 'file'));
         $context[self::ALREADY_CALLED_NORMALIZER] = true;
-        //dd($this->normalizer->normalize($object, $format, $context));
 
         return $this->normalizer->normalize($object, $format, $context);
     }

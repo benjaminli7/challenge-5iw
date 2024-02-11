@@ -41,13 +41,13 @@ function AdminRankForm({
           {...register("name", { required: true })}
         />
       </DialogContent>
-      <DialogContent>
+      {/* <DialogContent>
         <input
           type="file"
           accept="image/*"
           {...register("file", { required: false })}
         />
-      </DialogContent>
+      </DialogContent> */}
       <DialogActions>
         <CustomButton
           type="submit"

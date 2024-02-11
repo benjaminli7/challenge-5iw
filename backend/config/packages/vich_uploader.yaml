@@ -2,8 +2,8 @@ vich_uploader:
   db_driver: orm
   mappings:
     rank_image:
-      uri_prefix: /images/rank
-      upload_destination: "%kernel.project_dir%/public/images/rank"
+      uri_prefix: /images/ranks
+      upload_destination: "%kernel.project_dir%/public/images/ranks"
       namer: Vich\UploaderBundle\Naming\OrignameNamer
 
     game_image:

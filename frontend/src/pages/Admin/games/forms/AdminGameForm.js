@@ -4,6 +4,7 @@ import {
   DialogContent,
   DialogTitle,
   TextField,
+  Typography,
 } from "@mui/material";
 import { useForm } from "react-hook-form";
 import CustomButton from "@/components/commons/CustomButton";
@@ -41,6 +42,21 @@ function AdminGameForm({
           fullWidth
           {...register("name", { required: true })}
         />
+        <Typography variant="">
+          Pick a color for the game
+          <input
+            type="color"
+            {...register("color", { required: true })}
+            autoFocus
+            key="color"
+            label="color"
+            sx={{
+              transform: "scale(1.5)",
+              marginLeft: "10px",
+              borderRadius: "50%",
+            }}
+          />
+        </Typography>
       </DialogContent>
       <DialogActions>
         <CustomButton

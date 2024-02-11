@@ -25,7 +25,7 @@ use App\Entity\Traits\TimestampableTrait;
         new Patch(denormalizationContext: ['groups' => ['update-rank']], security: 'is_granted("ROLE_ADMIN")', securityMessage: 'Only admins can update Ranks.'),
         new Delete(security: 'is_granted("ROLE_ADMIN")', securityMessage: 'Only admins can delete Ranks.'),
         new Post(
-            uriTemplate: '/rank/{id}/image',
+            uriTemplate: '/ranks/{id}/image',
             controller: PostImageRankController::class,
             denormalizationContext: ['groups' => ['test-img-rank']],
             normalizationContext: ['groups' => ['read-rank']],
@@ -33,7 +33,7 @@ use App\Entity\Traits\TimestampableTrait;
             securityMessage: 'Only admins can create ranks.',
             deserialize: false
         ),
-        new GetCollection(normalizationContext: ['groups' => ['read-rank']], security: 'is_granted("ROLE_ADMIN")', securityMessage: 'Only admins can see all users.')
+        // new GetCollection(normalizationContext: ['groups' => ['read-rank']], security: 'is_granted("ROLE_ADMIN")', securityMessage: 'Only admins can see all users.')
     ],
     normalizationContext: ['groups' => ['read-rank']],
 )]
@@ -59,7 +59,7 @@ class Rank
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $filePath = null;
 
-    #[Groups(['read-game', 'read-rank'])]
+    #[Groups(['read-game'])]
     private ?string $fileUrl = null;
 
     #[Vich\UploadableField(mapping: 'rank_image', fileNameProperty: 'filePath')]
@@ -119,6 +119,7 @@ class Rank
 
     public function getFileUrl(): ?string
     {
+        $this->fileUrl = $this->fileUrl ?? $this->getFilePath();
         return $this->fileUrl;
     }
 

@@ -108,15 +108,12 @@ class Game
 
         return $this;
     }
-    #[Groups(['read-game'])]
+
+    /**
+     * @return Collection<int, Rank>
+     */
     public function getRanks(): Collection
     {
-        // Ensure that fileUrl property is included in the serialization context
-        // for each rank in the collection
-        foreach ($this->ranks as $rank) {
-            $rank->setFileUrl($this->getFileUrl());
-        }
-
         return $this->ranks;
     }
 
@@ -172,6 +169,7 @@ class Game
 
     public function setFileUrl(?string $fileUrl): static
     {
+
         $this->fileUrl = $fileUrl;
 
         return $this;
