@@ -1,8 +1,9 @@
-import { Card, Typography, Box, Tabs, Tab } from '@mui/material';
-import React from 'react'
-import TeamView from '@/pages/manager/TeamView';
-import MembersView from '@/pages/manager/MembersView';
+import { Card, Typography, Box, Tabs, Tab } from "@mui/material";
+import React from "react";
+import TeamView from "@/pages/manager/TeamView";
+import MembersView from "@/pages/manager/MembersView";
 import WithdrawView from "@/pages/manager/WithdrawView";
+// import handleActionType from '@/pages/manager/hooks/useMembersView';
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -24,9 +25,7 @@ function CustomTabPanel(props) {
   );
 }
 
-
 function ManagerTeamView({ team, games }) {
-
   const [value, setValue] = React.useState(0);
 
   const handleChange = (event, newValue) => {

@@ -1,12 +1,16 @@
 import ManagerPlayerCreateForm from "@/pages/manager/forms/ManagerPlayerCreateForm";
 import { useMembersView } from "@/pages/manager/hooks/useMembersView";
 import { Button, Dialog, Stack, Typography } from "@mui/material";
+import InputFileUpload from "@/components/commons/InputFileUpload";
 import ManagerPlayerList from "@/pages/manager/ManagerPlayerList";
 import ManagerPlayerUpdateForm from "@/pages/manager/forms/ManagerPlayerUpdateForm";
 import useFetch from "@/hooks/useFetch";
 import ENDPOINTS from "@/services/endpoints";
+import { httpPostMultiPart } from "@/services/api";
+import { useQueryClient } from "react-query";
 
 function MembersView({ team, games }) {
+  const queryClient = useQueryClient();
   const {
     ACTION_TYPES,
     selectedUser,
@@ -17,6 +21,28 @@ function MembersView({ team, games }) {
     handleActionType,
   } = useMembersView();
 
+  const handleImageUpload = async (
+    data,
+    setFile,
+    ressource,
+    handleDialogClose,
+    type
+  ) => {
+    try {
+      let response = null;
+      if (type == "player_img") {
+        response = await httpPostMultiPart(
+          ENDPOINTS.users.userImg(ressource.id),
+          data
+        );
+      }
+      setFile(null);
+      handleDialogClose();
+      await queryClient.invalidateQueries("team");
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <div>
       <Stack direction="row" spacing={2} sx={{ mb: 3 }}>
@@ -51,6 +77,14 @@ function MembersView({ team, games }) {
             selectedUser={selectedUser}
             handleDialogClose={handleDialogClose}
             games={games}
+          />
+        )}
+        {actionType === ACTION_TYPES.EDIT_PLAYER_IMAGE && (
+          <InputFileUpload
+            handleDialogClose={handleDialogClose}
+            ressource={selectedUser}
+            handleImageUpload={handleImageUpload}
+            type={"player_img"}
           />
         )}
       </Dialog>
