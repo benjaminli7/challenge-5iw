@@ -10,16 +10,28 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { Link as RouterLink } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { httpPatch } from "@/services/api";
 import ENDPOINTS from "@/services/endpoints";
+import { useCustomMutation } from "@/hooks/useCustomMutation";
 
 export default function ChangePassword() {
 
   const { register, handleSubmit, formState: { errors, isSubmitting }, reset, getValues } = useForm();
-
+  function getParams(url) {
+    const params = {};
+    const urlSearchParams = new URLSearchParams(url.split('?')[1]);
+    for (const [key, value] of urlSearchParams) {
+        params[key] = value;
+    }
+    return params;
+  }
+  const params = getParams(window.location.search);
+  const changePassword = useCustomMutation(ENDPOINTS.users.changePassword(params['token']),"post", "data") // Adjust the endpoint
   const onSubmit = async (data) => {
     try {
-      const response = await httpPatch(`${ENDPOINTS.users.updateUser }`, data) // Adjust the endpoint
+      let dataPassword = {
+        'password' : data.newPassword,
+      }
+      await changePassword.mutateAsync(dataPassword);
       console.log(response)
       reset();
     } catch (error) {

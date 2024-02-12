@@ -8,21 +8,17 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
-
 use Symfony\Component\Serializer\Annotation\Groups;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
-
 use App\Controller\AddPlayerTeamController;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-
 
 #[ORM\Entity(repositoryClass: TeamRepository::class)]
 #[ApiResource(
     operations: [
-
         new Post(
             // securityPostDenormalize: 'is_granted("TEAM_CREATE", object)',
             // securityPostDenormalizeMessage: 'Only managers or admins can create teams.',
@@ -58,10 +54,8 @@ class Team
     #[Groups(['read-team', 'read-user', 'read-player'])]
     private ?int $id = null;
 
-
     #[ORM\Column(length: 255, unique: true)]
     #[Groups(['read-team', 'create-team', 'update-team', 'read-user', 'read-player'])]
-
     private ?string $name = null;
 
     #[ORM\Column(
@@ -78,11 +72,9 @@ class Team
     #[Groups(['read-team'])]
     private ?bool $isApproved = null;
 
-
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(['read-team', 'create-team', 'update-team'])]
     private ?string $iban = null;
-
 
 
     #[ORM\OneToOne(inversedBy: 'ownedTeam', cascade: ['persist', 'remove'])]
@@ -92,10 +84,6 @@ class Team
     #[ORM\OneToMany(mappedBy: 'team', targetEntity: User::class, cascade: ['persist', 'remove'])]
     #[Groups(['read-team'])]
     private Collection $boosters;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['read-team', 'create-team', 'update-team'])]
-    private ?string $iban = null;
 
     public function __construct()
     {
@@ -207,18 +195,6 @@ class Team
                 $booster->setTeam(null);
             }
         }
-
-        return $this;
-    }
-
-    public function getIban(): ?string
-    {
-        return $this->iban;
-    }
-
-    public function setIban(?string $iban): static
-    {
-        $this->iban = $iban;
 
         return $this;
     }

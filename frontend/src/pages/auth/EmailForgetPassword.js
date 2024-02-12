@@ -7,7 +7,7 @@ import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import Box from "@mui/material/Box";
 import { useForm } from "react-hook-form";
-import { httpPost } from "@/services/api";
+import { useCustomMutation } from "@/hooks/useCustomMutation";
 import ENDPOINTS from "@/services/endpoints";
 
 export default function ForgotPassword() {
@@ -16,9 +16,11 @@ export default function ForgotPassword() {
   const [emailSent, setEmailSent] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
 
+  const sendEmail = useCustomMutation(ENDPOINTS.users.resetPassword,"post", "data") // Adjust the endpoint
   const onSubmit = async (data) => {
     try {
-      const response = await httpPost(`${ENDPOINTS.users.resetPassword}`, data) // Adjust the endpoint
+      console.log("data",data)
+      await sendEmail.mutateAsync(data);
       console.log(response)
       console.log("click")
       setSnackbarOpen(true);

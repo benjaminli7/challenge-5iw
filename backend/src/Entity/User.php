@@ -38,6 +38,7 @@ use App\Controller\GetManagerTeamController;
             security: 'is_granted("ROLE_ADMIN") or (object == user)',
             securityMessage: 'You can only see your own team.'
         ),
+        
         // can only delete if you're the manager of the team which contains the user
         new Delete(security: 'is_granted("ROLE_ADMIN") or (object.ownedTeam.manager == user)', securityMessage: 'You can only delete your own user.'),
     ],

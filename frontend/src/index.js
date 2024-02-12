@@ -10,6 +10,8 @@ import Home from "@/pages/home/Home";
 import ProfileView from "@/pages/profile/ProfileView";
 import Login from "@/pages/auth/Login";
 import Signup from "@/pages/auth/Signup";
+import EmailForgetPassword from "@/pages/auth/EmailForgetPassword";
+import ChangePassword from "@/pages/auth/ChangePassword";
 import ClientBoostersList from "@/pages/client/ClientBoostersList";
 import ClientView from "@/pages/client/ClientView";
 import theme from "@/theme/theme";
@@ -20,11 +22,6 @@ import ReactDOM from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import "./index.css";
-<<<<<<< HEAD
-
-import FirstConnection from "./pages/first-connection/FirstConnection";
-const queryClient = new QueryClient();
-=======
 import ManagerView from "@/pages/manager/ManagerView";
 import ManagerCreateTeamForm from "@/pages/manager/ManagerCreateTeamForm";
 import { Box } from "@mui/material";
@@ -38,7 +35,6 @@ const queryClient = new QueryClient({
     },
   },
 });
->>>>>>> dev
 
 const router = createBrowserRouter([
   {
@@ -59,8 +55,12 @@ const router = createBrowserRouter([
         element: <Login />,
       },
       {
-        path: "first-connection",
-        element: <FirstConnection />
+        path: "emailForgetPassword",
+        element: <EmailForgetPassword />,
+      },
+      {
+        path: "changePassword",
+        element: <ChangePassword />,
       },
       {
         path: "profile",
