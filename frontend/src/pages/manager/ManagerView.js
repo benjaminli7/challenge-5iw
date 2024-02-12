@@ -2,6 +2,7 @@ import useFetch from "@/hooks/useFetch";
 import ManagerTeamView from "@/pages/manager/ManagerTeamView";
 import ENDPOINTS from "@/services/endpoints";
 import { useAuthUser } from "react-auth-kit";
+import { Link } from "react-router-dom";
 
 function ManagerView() {
   const auth = useAuthUser();

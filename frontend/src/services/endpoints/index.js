@@ -4,6 +4,7 @@ const ENDPOINTS = {
     login: "api/login",
     userId: (userId) => `api/users/${userId}`,
     schedules: (userId) => `api/player/${userId}/schedules`,
+    players: "api/players"
   },
   games: {
     root: "api/games",
@@ -19,6 +20,7 @@ const ENDPOINTS = {
     teamId: (teamId) => `api/teams/${teamId}`,
     manager: (managerId) => `api/users/${managerId}/team`,
     addPlayer: (teamId) => `api/teams/${teamId}/players`,
+    approveTeam: (teamId) => `api/teams/${teamId}/approve`
   },
   schedules: {
     root: "api/schedules",

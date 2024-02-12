@@ -18,9 +18,16 @@ export function useTeams(teamId) {
     ["team"]
   );
 
+  const approveTeamMutation = useCustomMutation(
+    ENDPOINTS.teams.approveTeam(teamId),
+    "post",
+    ["teams"]
+  )
+
   return {
     addTeamMutation,
     updateTeamMutation,
     addPlayerMutation,
+    approveTeamMutation,
   };
 }

@@ -5,7 +5,7 @@ import GroupIcon from "@mui/icons-material/Group";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
 import { Avatar } from "@mui/material";
-
+import DashboardIcon from "@mui/icons-material/Dashboard";
 export default function useNavbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const auth = useAuthUser();
@@ -37,8 +37,13 @@ export default function useNavbar() {
   ];
   const clientNavItems = [
     {
+      label: "Dashboard client",
+      path: "/client",
+      icon: <DashboardIcon />
+    },
+    {
       label: "Liste de joueurs",
-      path: "/players",
+      path: "/client/players",
       icon: <FormatListBulletedIcon />,
     }
   ]

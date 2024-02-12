@@ -8,7 +8,7 @@ import AdminGamesView from "@/pages/admin/games/AdminGamesView";
 import AdminUsersView from "@/pages/admin/users/AdminUsersView";
 import Login from "@/pages/auth/Login";
 import Signup from "@/pages/auth/Signup";
-import ClientBoostersList from "@/pages/client/ClientBoostersList";
+import ClientBoostersView from "@/pages/client/ClientBoostersView";
 import ClientView from "@/pages/client/ClientView";
 import Home from "@/pages/home/Home";
 import ManagerCreateTeamForm from "@/pages/manager/ManagerCreateTeamForm";
@@ -26,6 +26,7 @@ import ReactDOM from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import "./index.css";
+import AdminTeamsView from "@/pages/admin/teams/AdminTeamsView";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -76,10 +77,10 @@ const router = createBrowserRouter([
             ),
           },
           {
-            path: "boosters",
+            path: "players",
             element: (
               <ProtectedUserTypeRoute type="client">
-                <ClientBoostersList />
+                <ClientBoostersView />
               </ProtectedUserTypeRoute>
             ),
           },
@@ -142,6 +143,10 @@ const router = createBrowserRouter([
         path: "games",
         element: <AdminGamesView />,
       },
+      {
+        path: "teams",
+        element: <AdminTeamsView />
+      }
     ],
   },
 ]);
