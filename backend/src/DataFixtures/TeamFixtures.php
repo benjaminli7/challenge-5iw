@@ -46,6 +46,8 @@ class TeamFixtures extends Fixture implements DependentFixtureInterface
         $boosterUser->setType('player');
         $boosterUser->setCoins(25);
         $boosterUser->setDiscord('faker#1234');
+        $boosterUser->setPostal('75000');
+        $boosterUser->setAdress('Paris');
         $boosterUser->setAssignedGame($lol);
 
         $manager->persist($boosterUser);
@@ -66,7 +68,6 @@ class TeamFixtures extends Fixture implements DependentFixtureInterface
         $team2->setManager($boosterUser);
 
         $manager->persist($team2);
-        
     }
 
     public function getDependencies()

@@ -149,6 +149,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?File $file = null;
 
 
+    #[Groups(['read-user', 'read-player', 'update-user', 'create-player', 'update-player', 'read-team'])]
+    #[ORM\Column]
+    private ?int $postal = null;
+
+    #[Groups(['read-user', 'read-player', 'update-user', 'create-player', 'update-player', 'read-team'])]
+    #[ORM\Column(length: 255)]
+    private ?string $adress = null;
+
+
+
+
     public function getId(): ?int
     {
         return $this->id;
@@ -430,6 +441,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
 
         $this->fileUrl = $fileUrl;
+
+        return $this;
+    }
+
+    public function getPostal(): ?int
+    {
+        return $this->postal;
+    }
+
+    public function setPostal(int $postal): static
+    {
+        $this->postal = $postal;
+
+        return $this;
+    }
+
+    public function getAdress(): ?string
+    {
+        return $this->adress;
+    }
+
+    public function setAdress(string $adress): static
+    {
+        $this->adress = $adress;
 
         return $this;
     }
