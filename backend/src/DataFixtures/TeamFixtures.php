@@ -55,6 +55,18 @@ class TeamFixtures extends Fixture implements DependentFixtureInterface
         $benjamin->setOwnedTeam($team);
 
         $manager->flush();
+
+
+        // Create a team with a manager
+        $team2 = new Team();
+        $team2->setName('G2');
+        $team2->setCoins(100);
+        $team2->setIsApproved(true);
+        $team2->setIban('NL30RABO4789170233');
+        $team2->setManager($boosterUser);
+
+        $manager->persist($team2);
+        
     }
 
     public function getDependencies()

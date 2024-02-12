@@ -22,4 +22,5 @@ class PostImageRankController
         //dd($rank);
         return $rank;
     }
+    
 }

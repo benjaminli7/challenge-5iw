@@ -19,8 +19,12 @@ use ApiPlatform\Metadata\Delete;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
 use App\Controller\GetManagerTeamController;
+use App\Controller\PostImageUserController;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Symfony\Component\HttpFoundation\File\File;
 
 
+#[Vich\Uploadable]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
 #[ApiResource(
@@ -40,6 +44,15 @@ use App\Controller\GetManagerTeamController;
         ),
         // can only delete if you're the manager of the team which contains the user
         new Delete(security: 'is_granted("ROLE_ADMIN") or (object.ownedTeam.manager == user)', securityMessage: 'You can only delete your own user.'),
+        new Post(
+            uriTemplate: '/users/{id}/image',
+            controller: PostImageUserController::class,
+            denormalizationContext: ['groups' => ['user-img']],
+            normalizationContext: ['groups' => ['read-user']],
+            security: 'is_granted("ROLE_ADMIN") or (object == user)',
+            securityMessage: 'Only admins can create games images.',
+            deserialize: false
+        ),
     ],
     normalizationContext: ['groups' => ['read-user']],
 )]
@@ -124,6 +137,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['read-player'])]
     #[ORM\ManyToOne(inversedBy: 'boosters')]
     private ?Team $team = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $filePath = null;
+
+    #[Groups(['read-team', 'read-player', 'read-user'])]
+    private ?string $fileUrl = null;
+
+    #[Vich\UploadableField(mapping: 'user_image', fileNameProperty: 'filePath')]
+    #[Groups(['user-img', 'create-user'])]
+    private ?File $file = null;
 
 
     public function getId(): ?int
@@ -372,6 +395,41 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setUsername(string $username): static
     {
         $this->username = $username;
+
+        return $this;
+    }
+    public function getFilePath(): ?string
+    {
+        return $this->filePath;
+    }
+
+    public function setFilePath(?string $filePath): static
+    {
+        $this->filePath = $filePath;
+
+        return $this;
+    }
+
+    public function getFile(): ?File
+    {
+        return $this->file;
+    }
+
+    public function setFile(?File $file = null): static
+    {
+        $this->file = $file;
+        return $this;
+    }
+
+    public function getFileUrl(): ?string
+    {
+        return $this->fileUrl;
+    }
+
+    public function setFileUrl(?string $fileUrl): static
+    {
+
+        $this->fileUrl = $fileUrl;
 
         return $this;
     }

@@ -33,6 +33,12 @@ services:
   App\Controller\PostImageRankController:
     tags: ["controller.service_arguments"]
 
+  App\Controller\PostImageUserController:
+    tags: ["controller.service_arguments"]
+
+  App\Controller\PostImageTeamController:
+    tags: ["controller.service_arguments"]
+
   App\Controller\GetManagerTeamController:
     tags: ["controller.service_arguments"]
 

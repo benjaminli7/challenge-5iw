@@ -75,7 +75,7 @@ class Game
     private ?string $fileUrl = null;
 
     #[Vich\UploadableField(mapping: 'game_image', fileNameProperty: 'filePath')]
-    #[Groups(['test-img'])]
+    #[Groups(['test-img', 'create-game'])]
     private ?File $file = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -220,4 +220,6 @@ class Game
 
         return $this;
     }
+
+    
 }
