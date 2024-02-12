@@ -26,7 +26,6 @@ export default function useNavbar() {
       label: "Profile",
       path: "/profile",
       icon: <Avatar />,
-
     },
   ];
   const managerNavItems = [
@@ -43,6 +42,13 @@ export default function useNavbar() {
       icon: <FormatListBulletedIcon />,
     }
   ]
+  const playerNavItems = [
+    {
+      label: "Espace joueur",
+      path: "/player-dashboard",
+      icon: <AccountCircleIcon />,
+    }
+  ]
   const getNavItems = () => {
     let navItems = globalNavItems;
     if (isAuthenticated()) {
@@ -51,6 +57,9 @@ export default function useNavbar() {
       }
       if (user.type === "client") {
         navItems = navItems.concat(clientNavItems);
+      }
+      if (user.type === "player") {
+        navItems = navItems.concat(playerNavItems);
       }
     }
     return navItems;

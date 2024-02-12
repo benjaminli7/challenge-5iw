@@ -4,15 +4,16 @@ import { Box, Stack, TextField, Typography } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 function TeamView({ team }) {
-  const { updateTeamMutation } = useTeams(team?.id);
+  if(!team) return null;
+  const { updateTeamMutation } = useTeams(team.id);
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm({
     defaultValues: {
-      name: team?.name,
-      iban: team?.iban,
+      name: team.name,
+      iban: team.iban,
     },
   });
   const onSubmit = async (data) => {
@@ -75,7 +76,7 @@ function TeamView({ team }) {
             color="blue"
             fullWidth
             variant="contained"
-            sx={{ mt: 3, mb: 2, color: "#fff"}}
+            sx={{ mt: 3, mb: 2, color: "#fff" }}
           >
             Save
           </CustomButton>

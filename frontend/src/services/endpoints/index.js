@@ -3,6 +3,7 @@ const ENDPOINTS = {
     root: "api/users",
     login: "api/login",
     userId: (userId) => `api/users/${userId}`,
+    schedules: (userId) => `api/player/${userId}/schedules`,
   },
   games: {
     root: "api/games",
@@ -18,6 +19,10 @@ const ENDPOINTS = {
     teamId: (teamId) => `api/teams/${teamId}`,
     manager: (managerId) => `api/users/${managerId}/team`,
     addPlayer: (teamId) => `api/teams/${teamId}/players`,
+  },
+  schedules: {
+    root: "api/schedules",
+    scheduleId: (scheduleId) => `api/schedules/${scheduleId}`,
   }
 };
 

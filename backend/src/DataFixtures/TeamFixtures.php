@@ -38,7 +38,7 @@ class TeamFixtures extends Fixture implements DependentFixtureInterface
         $boosterUser->setEmail('faker@faker.fr');
         $boosterUser->setUsername('Faker');
         $boosterUser->setRoles(['ROLE_USER']);
-        $boosterUser->setPassword($this->hasher->hashPassword($boosterUser, "booster"));
+        $boosterUser->setPassword($this->hasher->hashPassword($boosterUser, "faker"));
         $boosterUser->setFirstName('Lee');
         $boosterUser->setLastName('Sang-hyeok');
         $boosterUser->setIsVerified(true);
