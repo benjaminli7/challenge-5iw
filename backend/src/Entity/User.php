@@ -61,11 +61,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 180, unique: true)]
     private ?string $email = null;
 
-    #[Assert\Length(min: 3, max: 50)]
+    #[Assert\Length(min: 3, max: 32)]
     #[ORM\Column(length: 50, unique: true)]
-    #[Groups(['create-user', 'read-user', 'read-player', 'read-team'])]
+    #[Groups(['create-user', 'read-user', 'read-player', 'read-team', 'update-user'])]
     private ?string $username = null;
-
     #[ORM\Column]
     #[Groups(['read-user'])]
     private array $roles = [];
@@ -105,8 +104,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 16, nullable: true)]
     private ?string $phone = null;
 
-    #[Groups(['create-user', 'read-user', 'update-user', 'read-player'])]
     #[ORM\Column(nullable: true)]
+    #[Groups(['create-user', 'read-user', 'read-player'])]
+    #[Assert\Choice(choices: ['client', 'manager', 'player'], message: 'The type must be either client, manager, or player.')]
     private ?string $type = null;
 
     #[ORM\Column(nullable: true)]
@@ -115,6 +115,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[Groups(['read-user', 'create-user', 'update-user', 'read-team', 'read-player'])]
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Regex(
+        pattern: '/^[^#]{1,32}#\d{4}$/',
+        message: 'The discord must be in the format "username#1234" with a maximum length of 32 characters for the username.'
+    )]
     private ?string $discord = null;
 
     #[ORM\ManyToOne(inversedBy: 'users')]

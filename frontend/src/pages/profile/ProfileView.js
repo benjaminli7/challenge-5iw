@@ -1,55 +1,33 @@
 import React, { useEffect, useState } from 'react';
 import { useAuthUser } from 'react-auth-kit';
-import { Card, CardContent, Typography, TextField, Button, Container, Box, Snackbar, Alert as MuiAlert, Stepper, Step, StepButton, CardHeader, Grid, useMediaQuery, useTheme } from '@mui/material';
-import { LocalizationProvider, DateCalendar } from '@mui/x-date-pickers';
+import { Box, Button, Card, CardContent, CircularProgress, Container, Snackbar, Alert as MuiAlert, Stepper, Step, StepButton, Grid, Typography, TextField, useMediaQuery, useTheme } from '@mui/material';
+import { useForm } from 'react-hook-form';
+import useFetch from "@/hooks/useFetch";
+import { useUsers } from "@/hooks/models/useUsers";
+import ENDPOINTS from '@/services/endpoints';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { httpPatch } from '@/services/api';
-import Cookies from 'js-cookie';
-import ENDPOINTS from '@/services/endpoints';
+
 
 dayjs.extend(customParseFormat);
 
 function ProfileView() {
-    const [errors, setErrors] = useState({});
     const auth = useAuthUser();
-    const [formState, setFormState] = useState(auth().user);
+    const { data: user, isLoading: isLoadingUser } = useFetch("user", ENDPOINTS.users.userId(auth().user.id));
+    const { updateUserMutation } = useUsers(auth().user.id);
+    const isEditable = user?.type === 'client' || user?.type === 'manager';
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+    const { register, handleSubmit, setValue, setError,  formState: { errors } } = useForm();
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [alertSeverity, setAlertSeverity] = useState('success');
     const [activeStep, setActiveStep] = useState(0);
-    const steps = ['Profile', 'Stats', 'Schedule'];
-    const theme = useTheme();
-    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-    const [selectedDate, setSelectedDate] = useState(dayjs());
-    const [events, setEvents] = useState({
-        '2023-01-01': [{ title: 'Nouvel An', description: 'Célébration du Nouvel An', date: '2023-01-01' }],
-        '2024-01-01': [{ title: 'Nouvel An', description: 'Célébration du Nouvel An', date: '2024-01-01' }],
-        '2025-01-02': [{ title: 'Nouvel An', description: 'Célébration du Nouvel An', date: '2025-01-01' }],
-        '2025-01-03': [{ title: 'Nouvel An', description: 'Célébration du Nouvel An', date: '2025-01-01' }],
-        '2025-01-04': [{ title: 'Nouvel An', description: 'Célébration du Nouvel An', date: '2025-01-01' }],
-        '2025-01-05': [{ title: 'Nouvel An', description: 'Célébration du Nouvel An', date: '2025-01-01' }],
-        '2025-01-06': [{ title: 'Nouvel An', description: 'Célébration du Nouvel An', date: '2025-01-01' }],
-        '2025-01-07': [{ title: 'Nouvel An', description: 'Célébration du Nouvel An', date: '2025-01-01' }],
-        '2025-01-08': [{ title: 'Nouvel An', description: 'Célébration du Nouvel An', date: '2025-01-01' }],
-        '2025-01-09': [{ title: 'Nouvel An', description: 'Célébration du Nouvel An', date: '2025-01-01' }],
-
-    });
-
-    const handleDateChange = (newDate) => {
-        setSelectedDate(newDate);
-    };
-
-    const upcomingEvents = Object.keys(events).reduce((acc, date) => {
-        if (dayjs(date).isAfter(dayjs(), 'day')) {
-            acc[date] = events[date];
-        }
-        return acc;
-    }, {});
-
+    const steps = ['Profile', 'Stats'];
     const [lastScrollTime, setLastScrollTime] = useState(0);
-    const scrollThreshold = 1000
+    const scrollThreshold = 1000;
+
+
     const disableScroll = () => {
         document.body.style.overflow = 'hidden';
     };
@@ -57,17 +35,13 @@ function ProfileView() {
     const enableScroll = () => {
         document.body.style.overflow = '';
     };
-    const handleEventScrollCards = (e) => {
-        e.stopPropagation();
-    };
-
     useEffect(() => {
-        const authCookie = Cookies.get('_auth_state');
-        if (authCookie) {
-            const parsedCookie = JSON.parse(authCookie);
-            setFormState(parsedCookie.user);
+        if (user) {
+            Object.keys(user).forEach(key => {
+                setValue(key, user[key]);
+            });
         }
-    }, []);
+    }, [user, setValue]);
 
     const handleScroll = (e) => {
         const now = Date.now();
@@ -83,6 +57,15 @@ function ProfileView() {
             newStep = activeStep + 1;
         }
         if (newStep !== activeStep) {
+            const handleStepChange = (step) => {
+            setActiveStep(step);
+        };
+            const handleChange = (e) => {
+                setFormState({ ...formState, [e.target.name]: e.target.value });
+                if (errors[e.target.name]) {
+                    setErrors({ ...errors, [e.target.name]: null });
+                }
+            };
             setActiveStep(newStep);
             window.scrollTo(0, 0);
         }
@@ -90,68 +73,45 @@ function ProfileView() {
         setLastScrollTime(now);
     };
 
-    const handleStepChange = (step) => {
-        setActiveStep(step);
-    };
-    const handleChange = (e) => {
-        setFormState({ ...formState, [e.target.name]: e.target.value });
-        if (errors[e.target.name]) {
-            setErrors({ ...errors, [e.target.name]: null });
-        }
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        const userId = formState.id;
-
-        if (userId) {
-            try {
-                const response = await httpPatch(
-                    ENDPOINTS.users.userId(userId),
-                    formState,
-                    { headers: { 'Content-Type': 'application/merge-patch+json' } }
-                );
-
-                const updatedUserData = response.data;
-                let authCookie = Cookies.get('_auth_state');
-                if (authCookie) {
-                    authCookie = JSON.parse(authCookie);
-                    authCookie.user = { ...authCookie.user, ...updatedUserData };
-                     Cookies.set('_auth_state', JSON.stringify(authCookie));
-                }
-                setFormState(updatedUserData);
-                setSnackbarMessage('profile updated successfully!');
-                setAlertSeverity('success');
-                setOpenSnackbar(true);
-            } catch (error) {
-                if (error.response && error.response.data && error.response.data.violations) {
-                    const newErrors = {};
-                    error.response.data.violations.forEach(violation => {
-                        newErrors[violation.propertyPath] = violation.message;
+    const onSubmit = async (data) => {
+        try {
+            await updateUserMutation.mutateAsync(data);
+            setOpenSnackbar(true);
+            setSnackbarMessage("Profile updated successfully!");
+            setAlertSeverity("success");
+        } catch (error) {
+            if (error.response && error.response.data && error.response.data.violations) {
+                error.response.data.violations.forEach((violation) => {
+                    setError(violation.propertyPath, {
+                        type: "manual",
+                        message: violation.message,
                     });
-                    setErrors(newErrors);
-                }
-                setSnackbarMessage('Failed to update profile.');
-                setAlertSeverity('error');
-                setOpenSnackbar(true);
+                });
             }
+            console.error('Error updating profile:', error);
+            setOpenSnackbar(true);
+            setSnackbarMessage("Failed to update profile.");
+            setAlertSeverity("error");
         }
     };
+
 
     const handleCloseSnackbar = () => {
         setOpenSnackbar(false);
     };
 
+    if (isLoadingUser) {
+        return <CircularProgress />;
+    }
+
     return (
-        <Box sx={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', p: 3, alignItems: 'center'}} onWheel={handleScroll} onMouseEnter={disableScroll} onMouseLeave={enableScroll}>
+        <Box sx={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', p: 3, alignItems: 'center' }} onWheel={handleScroll} onMouseEnter={disableScroll} onMouseLeave={enableScroll}>
             {!isMobile && (
                 <Box sx={{ width: '15%', mr: 2 }}>
                     <Stepper orientation="vertical" nonLinear activeStep={activeStep}>
                         {steps.map((label, index) => (
                             <Step key={label}>
-                                <StepButton onClick={() => handleStepChange(index)}>
-                                    {label}
-                                </StepButton>
+                                <StepButton onClick={() => setActiveStep(index)}>{label}</StepButton>
                             </Step>
                         ))}
                     </Stepper>
@@ -161,84 +121,77 @@ function ProfileView() {
             <Container component="main" maxWidth="sm">
                 <Box sx={{ width: isMobile ? '100%' : '80%' }}>
                     {activeStep === 0 && (
-                        <form onSubmit={handleSubmit}>
-                            <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 6}}>
-                                <Card sx={{width: '100%', boxShadow: 3}}>
+                        <form onSubmit={handleSubmit(onSubmit)}>
+                            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 6 }}>
+                                <Card sx={{ width: '100%', boxShadow: 6, borderRadius: 2 }}>
                                     <CardContent>
-                                        <Typography gutterBottom variant="h5" component="div" align="center">
-                                            Profile
+                                        <Typography gutterBottom variant="h4" component="div" align="center" color="primary">
+                                            Profile Information
                                         </Typography>
-                                        <TextField label="Email" name="email" value={formState.email}
-                                                   onChange={handleChange} margin="normal" fullWidth disabled/>
-                                        <TextField error={!!errors.firstName} helperText={errors.firstName}
-                                                   label="First Name" name="firstName" value={formState.firstName}
-                                                   onChange={handleChange} margin="normal" fullWidth/>
-                                        <TextField error={!!errors.lastName} helperText={errors.lastName}
-                                                   label="Last Name" name="lastName" value={formState.lastName}
-                                                   onChange={handleChange} margin="normal" fullWidth/>
-                                        <TextField error={!!errors.phone} helperText={errors.phone || ''} label="Phone"
-                                                   name="phone" value={formState.phone || ''} onChange={handleChange}
-                                                   margin="normal" fullWidth/>
+                                        <Box sx={{ my: 2 }}>
+                                            <TextField
+                                                label="Email"
+                                                {...register("email", { required: "Email is required" })}
+                                                margin="normal"
+                                                fullWidth
+                                                error={!!errors.email}
+                                                helperText={errors.email?.message}
+                                                disabled
+                                            />
+                                        </Box>
+                                        <Box sx={{ my: 2 }}>
+                                            <TextField
+                                                label="Username"
+                                                {...register("username", { required: "Username is required" })}
+                                                margin="normal"
+                                                fullWidth
+                                                error={!!errors.username}
+                                                helperText={errors.username?.message}
+                                                disabled={!isEditable}
+                                            />
+                                        </Box>
+                                        <Box sx={{ my: 2 }}>
+                                            <TextField
+                                                label="Discord"
+                                                {...register("discord", { required: "Discord is required" })}
+                                                margin="normal"
+                                                fullWidth
+                                                error={!!errors.discord}
+                                                helperText={errors.discord?.message}
+                                                disabled={!isEditable}
+                                            />
+                                        </Box>
+                                        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+                                            {isEditable && (
+                                                <Button
+                                                    type="submit"
+                                                    variant="contained"
+                                                    color="secondary"
+                                                    disabled={!isEditable}
+                                                    size="large"
+                                                >
+                                                    Save Changes
+                                                </Button>
+                                            )}
+                                        </Box>
                                     </CardContent>
-                                    <Box sx={{display: 'flex', justifyContent: 'center', pb: 2}}>
-                                        <Button type="submit" variant="contained" size="small">Save Changes</Button>
-                                    </Box>
                                 </Card>
                             </Box>
                         </form>
                     )}
 
-                    {activeStep === 1 && (
 
+                    {activeStep === 1 && (
                         <Card sx={{ mt: 8, p: 3 }}>
                             <Typography gutterBottom variant="h5" align="center">
                                 Stats
                             </Typography>
                             <Grid container spacing={2} alignItems="center" sx={{ flexWrap: 'wrap' }}>
-                                <Grid item xs sx={{ display: 'inline-flex', flexWrap: 'wrap' }}>
-                                    <Card sx={{ mb: 2, flexGrow: 1, minWidth: '150px' }}>
-                                        <CardHeader title="Email" subheader={formState.email} />
-                                    </Card>
-                                </Grid>
-                                <Grid item xs sx={{ display: 'inline-flex', flexWrap: 'wrap' }}>
-                                    <Card sx={{ mb: 2, flexGrow: 1, minWidth: '150px' }}>
-                                        <CardHeader title="First Name" subheader={formState.firstName} />
-                                    </Card>
-                                </Grid>
-                                <Grid item xs sx={{ display: 'inline-flex', flexWrap: 'wrap' }}>
-                                    <Card sx={{ mb: 2, flexGrow: 1, minWidth: '150px' }}>
-                                        <CardHeader title="Last Name" subheader={formState.lastName} />
-                                    </Card>
-                                </Grid>
-                                <Grid item xs sx={{ display: 'inline-flex', flexWrap: 'wrap' }}>
-                                    <Card sx={{ mb: 2, flexGrow: 1, minWidth: '150px' }}>
-                                        <CardHeader title="Phone" subheader={formState.phone} />
-                                    </Card>
+                                <Grid item xs={12}>
+                                    <Typography variant="subtitle1">Coins: {user?.coins}</Typography>
                                 </Grid>
                             </Grid>
                         </Card>
-
-                    )}
-
-                    {activeStep === 2 && (
-                        <Box sx={{ display: 'flex', flexDirection: 'row', width: '100%', mt: 2 }}>
-                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                {!isMobile && (
-                                    <Box sx={{ flex: 1, pr: 4, alignSelf: 'center',  ml: '-100px'}}>
-                                        <DateCalendar value={selectedDate} onChange={handleDateChange} />
-                                    </Box>
-                                )}
-                                <Box sx={{ flex: 2, overflowY: 'auto', maxHeight: '400px', minWidth: '300px' }} onWheel={handleEventScrollCards}>
-                                    {Object.entries(upcomingEvents).map(([date, events], index) => (
-                                        events.map((event, eventIndex) => (
-                                            <Card key={`${index}-${eventIndex}`} sx={{ mb: 2, minWidth: '300px' }}>
-                                                <CardHeader title={event.title} subheader={event.description} />
-                                            </Card>
-                                        ))
-                                    ))}
-                                </Box>
-                            </LocalizationProvider>
-                        </Box>
                     )}
                 </Box>
 

@@ -4,12 +4,11 @@ import GameSidebar from "./GameSidebar";
 import MainContent from "./GameMainContent";
 
 const GameView = () => {
-  const sidebarWidth = 200; // Set your desired sidebar width
+  const sidebarWidth = 200;
 
   const containerStyle = {
     display: "flex",
-    height: "100vh", // Adjust the height based on your design
-    // "background-color": "black",
+    height: "100vh",
   };
 
   const sidebarStyle = {
@@ -19,7 +18,7 @@ const GameView = () => {
 
   const mainContentStyle = {
     flex: 1,
-    padding: "20px", // Adjust padding based on your design
+    padding: "20px",
   };
 
   return (

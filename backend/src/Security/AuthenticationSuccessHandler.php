@@ -23,6 +23,10 @@ class AuthenticationSuccessHandler
             'email' => $user->getEmail(),
             'type' => $user->getType(),
             'roles' => $user->getRoles(),
+            'username' => $user->getUsername(),
+            'discord' => $user->getDiscord(),
+            'coins' => $user->getCoins(),
+
         ];
 
         $event->setData($data);

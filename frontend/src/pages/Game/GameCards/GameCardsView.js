@@ -34,12 +34,9 @@ const GameCardsView = () => {
             <Grid
               item
               key={game.id}
-              // sx={{ display: "flex", justify: "" }}
               xs={12}
               sm={6}
               md={4}
-              // justifyContent="center"
-              // alignItems="center"
             >
               <GameCard game={game} />
             </Grid>
