@@ -149,6 +149,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?File $file = null;
 
 
+    #[Groups(['create-user', 'read-user', 'update-user', 'read-player', 'read-team'])]
+    #[ORM\Column]
+    private ?string $postal = null;
+
+    #[Groups(['create-user', 'read-user', 'update-user', 'read-player', 'read-team'])]
+    #[ORM\Column(length: 255)]
+    private ?string $address = null;
+
+    #[Groups(['create-user', 'read-user', 'update-user', 'read-player', 'read-team'])]
+    #[ORM\Column(nullable: true)]
+    private ?float $taux_horaire = null;
+
+
+
+
     public function getId(): ?int
     {
         return $this->id;
@@ -430,6 +445,42 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
 
         $this->fileUrl = $fileUrl;
+
+        return $this;
+    }
+
+    public function getPostal(): ?int
+    {
+        return $this->postal;
+    }
+
+    public function setPostal(int $postal): static
+    {
+        $this->postal = $postal;
+
+        return $this;
+    }
+
+    public function getaddress(): ?string
+    {
+        return $this->address;
+    }
+
+    public function setaddress(string $address): static
+    {
+        $this->address = $address;
+
+        return $this;
+    }
+
+    public function getTauxHoraire(): ?float
+    {
+        return $this->taux_horaire;
+    }
+
+    public function setTauxHoraire(?float $taux_horaire): static
+    {
+        $this->taux_horaire = $taux_horaire;
 
         return $this;
     }
