@@ -19,7 +19,8 @@ use ApiPlatform\Metadata\Delete;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
 use App\Controller\GetManagerTeamController;
-
+use App\Controller\GetPlayerScheduleController;
+use App\Controller\GetPlayersListController;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
@@ -38,8 +39,9 @@ use App\Controller\GetManagerTeamController;
             security: 'is_granted("ROLE_ADMIN") or (object == user)',
             securityMessage: 'You can only see your own team.'
         ),
-        // can only delete if you're the manager of the team which contains the user
         new Delete(security: 'is_granted("ROLE_ADMIN") or (object.ownedTeam.manager == user)', securityMessage: 'You can only delete your own user.'),
+        new Get(uriTemplate: '/player/{id}/schedules', normalizationContext: ['groups' => ['read-player-schedule']], controller: GetPlayerScheduleController::class, security: 'is_granted("ROLE_ADMIN") or (object == user) or (object.booster.ownTeam.manager == user)', securityMessage: 'You can only see your own schedules.'),
+        new GetCollection(uriTemplate: '/players', controller: GetPlayersListController::class, normalizationContext: ['groups' => ['read-player']])
     ],
     normalizationContext: ['groups' => ['read-user']],
 )]
@@ -62,7 +64,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[Assert\Length(min: 3, max: 50)]
     #[ORM\Column(length: 50, unique: true)]
-    #[Groups(['create-user', 'read-user', 'read-player', 'read-team'])]
+    #[Groups(['create-user', 'read-user', 'read-player', 'read-team', 'read-schedule', 'read-player-schedule'])]
     private ?string $username = null;
 
     #[ORM\Column]
@@ -124,6 +126,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['read-player'])]
     #[ORM\ManyToOne(inversedBy: 'boosters')]
     private ?Team $team = null;
+
+    // les réservations du client
+    #[ORM\OneToMany(mappedBy: 'client', targetEntity: Booking::class)]
+    private Collection $bookings;
+
+    // les disponibilités du booster
+    #[Groups(['read-schedule'])]
+    #[ORM\OneToMany(mappedBy: 'booster', targetEntity: Schedule::class)]
+    private Collection $schedules;
+
+    public function __construct()
+    {
+        $this->bookings = new ArrayCollection();
+        $this->schedules = new ArrayCollection();
+    }
 
 
     public function getId(): ?int
@@ -372,6 +389,66 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setUsername(string $username): static
     {
         $this->username = $username;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Booking>
+     */
+    public function getBookings(): Collection
+    {
+        return $this->bookings;
+    }
+
+    public function addBooking(Booking $booking): static
+    {
+        if (!$this->bookings->contains($booking)) {
+            $this->bookings->add($booking);
+            $booking->setClient($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBooking(Booking $booking): static
+    {
+        if ($this->bookings->removeElement($booking)) {
+            // set the owning side to null (unless already changed)
+            if ($booking->getClient() === $this) {
+                $booking->setClient(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Schedule>
+     */
+    public function getSchedules(): Collection
+    {
+        return $this->schedules;
+    }
+
+    public function addSchedule(Schedule $schedule): static
+    {
+        if (!$this->schedules->contains($schedule)) {
+            $this->schedules->add($schedule);
+            $schedule->setBooster($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSchedule(Schedule $schedule): static
+    {
+        if ($this->schedules->removeElement($schedule)) {
+            // set the owning side to null (unless already changed)
+            if ($schedule->getBooster() === $this) {
+                $schedule->setBooster(null);
+            }
+        }
 
         return $this;
     }

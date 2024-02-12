@@ -14,7 +14,7 @@ function AdminUsersView() {
       <Typography variant="h4" gutterBottom>
         Liste des utilisateurs
       </Typography>
-      <AdminUsersTable error={error} users={users} />
+    <AdminUsersTable error={error} users={users} />
     </>
   );
 }
