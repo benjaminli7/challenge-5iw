@@ -36,6 +36,9 @@ class AddPlayerTeamController
         $player->setPassword($hashedPassword);
         $player->setTeam($data);
         $player->setType("player");
+        $player->setTauxHoraire($values["tauxHoraire"]);
+        $player->setaddress($values["address"]);
+        $player->setPostal($values["postal"]);
 
         $entityManager->persist($player);
         $entityManager->flush();

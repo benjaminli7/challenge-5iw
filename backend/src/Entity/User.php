@@ -149,13 +149,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?File $file = null;
 
 
-    #[Groups(['read-user', 'read-player', 'update-user', 'create-player', 'update-player', 'read-team'])]
+    #[Groups(['create-user', 'read-user', 'update-user', 'read-player', 'read-team'])]
     #[ORM\Column]
-    private ?int $postal = null;
+    private ?string $postal = null;
 
-    #[Groups(['read-user', 'read-player', 'update-user', 'create-player', 'update-player', 'read-team'])]
+    #[Groups(['create-user', 'read-user', 'update-user', 'read-player', 'read-team'])]
     #[ORM\Column(length: 255)]
-    private ?string $adress = null;
+    private ?string $address = null;
+
+    #[Groups(['create-user', 'read-user', 'update-user', 'read-player', 'read-team'])]
+    #[ORM\Column(nullable: true)]
+    private ?float $taux_horaire = null;
 
 
 
@@ -457,14 +461,26 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getAdress(): ?string
+    public function getaddress(): ?string
     {
-        return $this->adress;
+        return $this->address;
     }
 
-    public function setAdress(string $adress): static
+    public function setaddress(string $address): static
     {
-        $this->adress = $adress;
+        $this->address = $address;
+
+        return $this;
+    }
+
+    public function getTauxHoraire(): ?float
+    {
+        return $this->taux_horaire;
+    }
+
+    public function setTauxHoraire(?float $taux_horaire): static
+    {
+        $this->taux_horaire = $taux_horaire;
 
         return $this;
     }

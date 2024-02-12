@@ -12,7 +12,7 @@ import { useForm } from "react-hook-form";
 import { MenuItem } from "@mui/material";
 import CustomSelectForm from "@/components/commons/CustomSelectForm";
 import CustomButton from "@/components/commons/CustomButton";
-import { toast } from "sonner"
+import { toast } from "sonner";
 import { useUsers } from "@/hooks/models/useUsers";
 
 export default function Signup() {
@@ -29,6 +29,7 @@ export default function Signup() {
 
   const onSubmit = async (data) => {
     try {
+      console.log(data);
       await registerMutation.mutateAsync(data);
       toast.success("Signed up successfully");
       reset();
@@ -36,8 +37,7 @@ export default function Signup() {
       console.log(error);
       toast.error("Error signing up");
     }
-  }
-
+  };
 
   return (
     <Container component="main" maxWidth="xs">
@@ -129,6 +129,42 @@ export default function Signup() {
                 placeholder="johndoe@gmail.com"
                 error={errors.email ? true : false}
                 helperText={errors.email && errors.email.message}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                {...register("postal", {
+                  required: "Postal is required",
+                  pattern: {
+                    value: /^[0-9]{5}$/i,
+                    message: "Invalid postal code",
+                  },
+                })}
+                required
+                fullWidth
+                id="postal"
+                label="Postal"
+                name="postal"
+                autoComplete="postal"
+                placeholder="12345"
+                error={errors.postal ? true : false}
+                helperText={errors.postal && errors.postal.message}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                {...register("address", {
+                  required: "Address is required",
+                })}
+                required
+                fullWidth
+                id="address"
+                label="Address"
+                name="address"
+                autoComplete="address"
+                placeholder="1234 Main St"
+                error={errors.address ? true : false}
+                helperText={errors.address && errors.address.message}
               />
             </Grid>
             <Grid item xs={12}>

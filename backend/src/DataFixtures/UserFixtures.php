@@ -31,7 +31,7 @@ class UserFixtures extends Fixture
         $admin->setCoins(0);
         $admin->setDiscord('admin_user#5678');
         $admin->setPostal('75000');
-        $admin->setAdress('Paris');
+        $admin->setaddress('Paris');
 
 
 
@@ -51,7 +51,7 @@ class UserFixtures extends Fixture
         $managerUser->setCoins(50);
         $managerUser->setDiscord('manager_user#1234');
         $managerUser->setPostal('75000');
-        $managerUser->setAdress('Paris');
+        $managerUser->setaddress('Paris');
 
 
         $manager->persist($managerUser);
@@ -70,7 +70,7 @@ class UserFixtures extends Fixture
         $benjamin->setCoins(0);
         $benjamin->setDiscord('benjaminli#1234');
         $benjamin->setPostal('75000');
-        $benjamin->setAdress('Paris');
+        $benjamin->setaddress('Paris');
 
 
 
