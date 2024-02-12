@@ -1,7 +1,16 @@
 import * as React from "react";
+import { useState } from "react";
 import { styled } from "@mui/material/styles";
 import Button from "@mui/material/Button";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import {
+  Box,
+  Typography,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  TextField,
+} from "@mui/material";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -15,16 +24,61 @@ const VisuallyHiddenInput = styled("input")({
   width: "100%",
 });
 
-export default function InputFileUpload() {
+const InputFileUpload = ({
+  ressource,
+  handleImageUpload,
+  handleDialogClose,
+  type,
+}) => {
+  const [file, setFile] = useState(null);
+
+  // console.log(ressource);
   return (
-    <Button
-      component="label"
-      variant="contained"
-      startIcon={<CloudUploadIcon />}
-      sx={{ width: "100%" }}
+    <Box
+      sx={{
+        width: 400,
+        bgcolor: "background.paper",
+        boxShadow: 24,
+        p: 4,
+      }}
     >
-      Upload Image
-      <VisuallyHiddenInput type="file" />
-    </Button>
+      <DialogTitle>Ajouter une image</DialogTitle>
+      <DialogContent>
+        <Button
+          component="label"
+          variant="contained"
+          startIcon={<CloudUploadIcon />}
+          sx={{ width: "100%" }}
+        >
+          Ajouter une image
+          <VisuallyHiddenInput
+            type="file"
+            accept="image/*"
+            onChange={(e) => {
+              e.target.files[0] && setFile(e.target.files[0]);
+            }}
+          />
+        </Button>
+      </DialogContent>
+      <DialogActions>
+        <Button
+          component="label"
+          variant="contained"
+          onClick={() => {
+            handleImageUpload(
+              file,
+              setFile,
+              ressource,
+              handleDialogClose,
+              type
+            );
+          }}
+        >
+          Confirmer
+        </Button>
+      </DialogActions>
+    </Box>
   );
-}
+};
+
+export default InputFileUpload;

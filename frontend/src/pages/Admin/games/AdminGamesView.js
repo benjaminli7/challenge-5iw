@@ -6,8 +6,14 @@ import AdminRankCreateForm from "@/pages/admin/games/forms/AdminRankCreateForm";
 import AdminGameUpdateForm from "@/pages/admin/games/forms/AdminGameUpdateForm";
 import AdminRankUpdateForm from "@/pages/admin/games/forms/AdminRankUpdateForm";
 import { useAdminGamesView } from "@/pages/admin/games/hooks/useAdminGamesView";
+import InputFileUpload from "@/components/commons/InputFileUpload";
+import { httpPostMultiPart } from "@/services/api";
+import ENDPOINTS from "@/services/endpoints";
+import { useQueryClient } from "react-query";
 
 function AdminGamesView() {
+  const queryClient = useQueryClient();
+
   const {
     ACTION_TYPES,
     games,
@@ -29,6 +35,35 @@ function AdminGamesView() {
   }
 
   if (isLoading) return <CircularProgress />;
+
+  const handleImageUpload = async (
+    data,
+    setFile,
+    ressource,
+    handleDialogClose,
+    type
+  ) => {
+    try {
+      let response = null;
+      switch (type) {
+        case "game_img":
+          response = await httpPostMultiPart(
+            ENDPOINTS.games.gameImg(ressource.id),
+            data
+          );
+        case "rank_img":
+          response = await httpPostMultiPart(
+            ENDPOINTS.ranks.rankImg(ressource.id),
+            data
+          );
+      }
+      setFile(null);
+      handleDialogClose();
+      await queryClient.invalidateQueries("games");
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <>
@@ -63,10 +98,26 @@ function AdminGamesView() {
             selectedGame={selectedGame}
           />
         )}
+        {actionType === ACTION_TYPES.EDIT_RANK_IMAGE && (
+          <InputFileUpload
+            handleDialogClose={handleDialogClose}
+            ressource={selectedRank}
+            handleImageUpload={handleImageUpload}
+            type={"rank_img"}
+          />
+        )}
         {actionType === ACTION_TYPES.EDIT_RANK && (
           <AdminRankUpdateForm
             handleDialogClose={handleDialogClose}
             selectedRank={selectedRank}
+          />
+        )}
+        {actionType === ACTION_TYPES.EDIT_IMAGE && (
+          <InputFileUpload
+            handleDialogClose={handleDialogClose}
+            ressource={selectedGame}
+            handleImageUpload={handleImageUpload}
+            type={"game_img"}
           />
         )}
       </Dialog>

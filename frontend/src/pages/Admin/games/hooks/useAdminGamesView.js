@@ -14,6 +14,7 @@ export function useAdminGamesView() {
     CREATE_RANK: "CREATE_RANK",
     EDIT_RANK: "EDIT_RANK",
     EDIT_IMAGE: "EDIT_IMAGE",
+    EDIT_RANK_IMAGE: "RANK_IMAGE",
   };
   return {
     ACTION_TYPES,

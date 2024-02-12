@@ -2,7 +2,7 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import { act } from "react-dom/test-utils";
 
-import CustomButton from "../../src/components/commons/CustomButton";
+import CustomButton from "@/components/commons/CustomButton";
 
 let container = null;
 

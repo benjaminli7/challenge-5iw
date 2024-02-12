@@ -1,9 +1,8 @@
 import React from "react";
-import { Box, Card, Typography, IconButton, Avatar } from "@mui/material";
+import { Box, Card, Typography, IconButton, Avatar, Icon } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
-import AdminRankImageUploader from "./forms/AdminRankImageUploader";
-import { httpPostMultiPart } from "@/services/api";
-import ENDPOINTS from "@/services/endpoints";
+
+import ImageIcon from "@mui/icons-material/Image";
 
 function AdminRankItem({
   rank,
@@ -11,20 +10,6 @@ function AdminRankItem({
   setSelectedRank,
   ACTION_TYPES,
 }) {
-  const handleImageUpload = async (data, setFile, rankId) => {
-    try {
-      // console.log({ data, setFile, rankId });
-      const response = await httpPostMultiPart(
-        ENDPOINTS.ranks.rankImg(rankId),
-        data
-      );
-      // console.log(response);
-      setFile(null);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  // console.log(rank);
   return (
     <Card key={rank.id} variant="outlined" sx={{ p: 2 }}>
       <Box
@@ -38,7 +23,23 @@ function AdminRankItem({
         <Typography key={rank.id} variant="body1">
           {rank.name}
         </Typography>
-        <AdminRankImageUploader onUpload={handleImageUpload} rank={rank} />
+
+        <Avatar
+          src={rank.fileUrl && process.env.REACT_APP_API_URL + rank.fileUrl}
+          title={rank.name}
+        ></Avatar>
+
+        <IconButton
+          color="primary"
+          aria-label="edit rank"
+          onClick={() => {
+            handleActionType(ACTION_TYPES.EDIT_RANK_IMAGE);
+            setSelectedRank(rank);
+          }}
+        >
+          {" "}
+          <ImageIcon />
+        </IconButton>
         <IconButton
           color="primary"
           aria-label="edit rank"

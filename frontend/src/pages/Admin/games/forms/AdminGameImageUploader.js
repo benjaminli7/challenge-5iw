@@ -17,7 +17,7 @@ const VisuallyHiddenInput = styled("input")({
   width: "100%",
 });
 
-const AdminGameImageUploader = ({ onUpload, game }) => {
+const AdminGameImageUploader = ({ onUpload, ressource }) => {
   const form = useForm({});
   const { register } = form;
   const [file, setFile] = useState(null);
@@ -47,7 +47,7 @@ const AdminGameImageUploader = ({ onUpload, game }) => {
             variant="contained"
             sx={{ width: "100%", backgroundColor: "#4caf50" }}
             onClick={() => {
-              onUpload(file, setFile, game.id);
+              onUpload(file, setFile, ressource.id);
             }}
             color="success"
           >

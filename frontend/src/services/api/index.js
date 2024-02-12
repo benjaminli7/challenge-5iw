@@ -105,10 +105,6 @@ export function httpPatch(url, body) {
 export function httpPostMultiPart(url, body) {
   let formData = new FormData();
   formData.append("file", body);
-
-  console.log(makeConfig("multipart"));
-  console.log(makeUrl(url));
-  console.log(formData);
   return axios.post(makeUrl(url), formData, {
     ...makeConfig("multipart"),
   });

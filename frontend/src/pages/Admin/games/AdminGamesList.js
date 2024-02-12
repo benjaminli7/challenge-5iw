@@ -8,9 +8,6 @@ import {
   CardMedia,
 } from "@mui/material";
 import AdminRankItem from "@/pages/admin/games/AdminRankItem";
-import AdminGameImageUploader from "@/pages/admin/games/forms/AdminGameImageUploader";
-import { httpPostMultiPart } from "@/services/api";
-import ENDPOINTS from "@/services/endpoints";
 
 export default function AdminGamesList({
   games,
@@ -19,26 +16,6 @@ export default function AdminGamesList({
   handleActionType,
   ACTION_TYPES,
 }) {
-  const handleImageUpload = async (data, setFile, gameId) => {
-    try {
-      const response = await httpPostMultiPart(
-        ENDPOINTS.games.gameImg(gameId),
-        data
-      );
-      // updateGamesList((prev) =>
-      //   prev.map((game) => {
-      //     if (game.id === response.data.id) {
-      //       return response.data;
-      //     }
-      //     return game;
-      //   })
-      // );
-      setFile(null);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   return (
     <Grid container spacing={4}>
       {games?.map((game) => (
@@ -52,13 +29,7 @@ export default function AdminGamesList({
                 "/reptile.jpg"
               }
               title={game.title}
-            >
-              <AdminGameImageUploader
-                sx={{ backgroundColor: "white" }}
-                onUpload={handleImageUpload}
-                game={game}
-              />
-            </CardMedia>
+            ></CardMedia>
             <Stack spacing={2}>
               <Typography variant="h6">{game.name}</Typography>
               {game.ranks.map((rank) => (
@@ -90,6 +61,16 @@ export default function AdminGamesList({
                   }}
                 >
                   Add rank
+                </Button>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => {
+                    handleActionType(ACTION_TYPES.EDIT_IMAGE);
+                    setSelectedGame(game);
+                  }}
+                >
+                  Image
                 </Button>
               </Box>
             </Stack>
