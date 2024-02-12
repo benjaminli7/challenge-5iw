@@ -6,23 +6,28 @@ import Page404 from "@/components/layout/404";
 import AdminDashboardView from "@/pages/admin/AdminDashboardView";
 import AdminGamesView from "@/pages/admin/games/AdminGamesView";
 import AdminUsersView from "@/pages/admin/users/AdminUsersView";
-import Home from "@/pages/home/Home";
-import ProfileView from "@/pages/profile/ProfileView";
 import Login from "@/pages/auth/Login";
 import Signup from "@/pages/auth/Signup";
-import ClientBoostersList from "@/pages/client/ClientBoostersList";
+import ClientBoostersView from "@/pages/client/ClientBoostersView";
 import ClientView from "@/pages/client/ClientView";
+import Home from "@/pages/home/Home";
+import ManagerCreateTeamForm from "@/pages/manager/ManagerCreateTeamForm";
+import ManagerView from "@/pages/manager/ManagerView";
+import PlayerView from "@/pages/player/PlayerView";
+import ProfileView from "@/pages/profile/ProfileView";
 import theme from "@/theme/theme";
 import { ThemeProvider } from "@emotion/react";
+import { Box } from "@mui/material";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFnsV3";
 import React from "react";
 import { AuthProvider } from "react-auth-kit";
 import ReactDOM from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import "./index.css";
-import ManagerView from "@/pages/manager/ManagerView";
-import ManagerCreateTeamForm from "@/pages/manager/ManagerCreateTeamForm";
-import { Box } from "@mui/material";
+import AdminTeamsView from "@/pages/admin/teams/AdminTeamsView";
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -72,10 +77,10 @@ const router = createBrowserRouter([
             ),
           },
           {
-            path: "boosters",
+            path: "players",
             element: (
               <ProtectedUserTypeRoute type="client">
-                <ClientBoostersList />
+                <ClientBoostersView />
               </ProtectedUserTypeRoute>
             ),
           },
@@ -97,6 +102,19 @@ const router = createBrowserRouter([
             element: (
               <ProtectedUserTypeRoute type="manager">
                 <ManagerCreateTeamForm />
+              </ProtectedUserTypeRoute>
+            ),
+          },
+        ],
+      },
+      {
+        path: "player-dashboard",
+        children: [
+          {
+            path: "",
+            element: (
+              <ProtectedUserTypeRoute type="player">
+                <PlayerView />
               </ProtectedUserTypeRoute>
             ),
           },
@@ -125,6 +143,10 @@ const router = createBrowserRouter([
         path: "games",
         element: <AdminGamesView />,
       },
+      {
+        path: "teams",
+        element: <AdminTeamsView />
+      }
     ],
   },
 ]);
@@ -140,10 +162,11 @@ root.render(
         cookieSecure={false}
       >
         <ThemeProvider theme={theme}>
-          <Box sx={{height: "100vh", position: "relative"}}>
-
-          <RouterProvider router={router} />
-          </Box>
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <Box sx={{ height: "100vh", position: "relative" }}>
+              <RouterProvider router={router} />
+            </Box>
+          </LocalizationProvider>
         </ThemeProvider>
       </AuthProvider>
     </QueryClientProvider>

@@ -7,19 +7,19 @@ import { Link } from "react-router-dom";
 function ManagerView() {
   const auth = useAuthUser();
 
-  const userId = auth()?.user.id;
+  const userId = auth().user.id;
 
-  const { data: managerTeam, isLoading: isLoadingManagerTeam } = useFetch(
+  const { data: managerTeam, isLoading: isLoadingTeam } = useFetch(
     "team",
     ENDPOINTS.teams.manager(userId)
   );
 
-  const {
-    data: games,
-    isLoading: isLoadingGames,
-  } = useFetch("games", ENDPOINTS.games.root);
+  const { data: games, isLoading: isLoadingGames } = useFetch(
+    "games",
+    ENDPOINTS.games.root
+  );
 
-  if (isLoadingManagerTeam && isLoadingGames) {
+  if (isLoadingTeam && isLoadingGames) {
     return <div>Loading...</div>;
   }
 
