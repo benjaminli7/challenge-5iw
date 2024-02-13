@@ -33,25 +33,25 @@ class Schedule
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['read-schedule', 'read-player-schedule'])]
+    #[Groups(['read-schedule', 'read-player-schedule', 'read-team'])]
     private ?int $id = null;
 
-    #[Groups(['read-schedule', 'write-schedule', 'read-player-schedule'])]
+    #[Groups(['read-schedule', 'write-schedule', 'read-player-schedule', 'read-team'])]
     #[ORM\Column(type: Types::DATETIME_MUTABLE, unique: true)]
     private ?\DateTimeInterface $startingDate = null;
 
-    #[Groups(['read-schedule', 'write-schedule', 'read-player-schedule'])]
+    #[Groups(['read-schedule', 'write-schedule', 'read-player-schedule', 'read-team'])]
     #[ORM\Column(type: Types::DATETIME_MUTABLE, unique: true)]
     private ?\DateTimeInterface $endingDate = null;
 
     #[ORM\OneToOne(mappedBy: 'schedule', cascade: ['persist', 'remove'])]
     private ?Booking $booking = null;
 
-    #[Groups(['read-schedule', 'write-schedule', 'read-player-schedule'])]
+    #[Groups(['read-schedule', 'write-schedule', 'read-player-schedule', 'read-team'])]
     #[ORM\ManyToOne(inversedBy: 'schedules')]
     private ?User $booster = null;
 
-    #[Groups(['read-schedule', 'write-schedule', 'read-player-schedule'])]
+    #[Groups(['read-schedule', 'write-schedule', 'read-player-schedule', 'read-team'])]
     #[ORM\Column(length: 50)]
     private ?string $status = null;
 

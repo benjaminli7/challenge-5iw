@@ -172,7 +172,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $bookings;
 
     // les disponibilités du booster
-    #[Groups(['read-schedule'])]
+    #[Groups(['read-schedule', 'read-team'])]
     #[ORM\OneToMany(mappedBy: 'booster', targetEntity: Schedule::class)]
     private Collection $schedules;
 

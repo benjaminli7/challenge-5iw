@@ -48,9 +48,7 @@ function ManagerPlayerList({
               <Typography>{player.address}</Typography>
               <Typography>{player.postal}</Typography>
               <Typography>{player.taux_horaire}coins/h</Typography>
-              <Typography>
-                {player.coin_generated} coins
-              </Typography>
+              <Typography>{player.coin_generated} coins</Typography>
               <Box sx={{ display: "flex", gap: 2 }}>
                 <Button
                   variant="contained"
@@ -71,6 +69,16 @@ function ManagerPlayerList({
                   }}
                 >
                   Image
+                </Button>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => {
+                    handleActionType(ACTION_TYPES.ACCESS_PLAYER_CALENDAR);
+                    setSelectedUser(player);
+                  }}
+                >
+                  Calendar
                 </Button>
               </Box>
             </Stack>

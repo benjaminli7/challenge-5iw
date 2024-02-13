@@ -8,6 +8,7 @@ import useFetch from "@/hooks/useFetch";
 import ENDPOINTS from "@/services/endpoints";
 import { httpPostMultiPart } from "@/services/api";
 import { useQueryClient } from "react-query";
+import ManagerPlayerCalandar from "./components/ManagerPlayerCalandar";
 
 function MembersView({ team, games }) {
   const queryClient = useQueryClient();
@@ -85,6 +86,12 @@ function MembersView({ team, games }) {
             ressource={selectedUser}
             handleImageUpload={handleImageUpload}
             type={"player_img"}
+          />
+        )}
+        {actionType === ACTION_TYPES.ACCESS_PLAYER_CALENDAR && (
+          <ManagerPlayerCalandar
+            selectedUser={selectedUser}
+            handleDialogClose={handleDialogClose}
           />
         )}
       </Dialog>
