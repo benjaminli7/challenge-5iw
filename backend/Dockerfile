@@ -51,11 +51,9 @@ COPY ./symfony.lock /srv/app/
 
 RUN composer install --no-dev --no-scripts
 
-
 COPY . /srv/app/
 
-ENV COMPOSER_ALLOW_SUPERUSER=1
-RUN APP_ENV=prod composer run auto-scripts
+# RUN APP_ENV=prod composer run auto-scripts
 
 #<<<<<<<<<<End: PHP-FPM Image Target>>>>>>>>>>#
 
