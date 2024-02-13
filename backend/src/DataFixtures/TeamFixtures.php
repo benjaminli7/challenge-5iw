@@ -1,5 +1,5 @@
 <?php
-# src/DataFixtures/UserFixtures.php
+
 namespace App\DataFixtures;
 
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -7,52 +7,72 @@ use Doctrine\Persistence\ObjectManager;
 use App\Entity\User;
 use App\Entity\Team;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use App\DataFixtures\UserFixtures;
 use App\DataFixtures\GamesFixtures;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
+use Faker\Factory;
+use Faker\Provider\fr_FR\PhoneNumber as FrPhoneNumber;
 
 class TeamFixtures extends Fixture implements DependentFixtureInterface
 {
+    private $faker;
+
     public function __construct(
         protected UserPasswordHasherInterface $hasher,
     ) {
+        $this->faker = Factory::create();
+        $this->faker->addProvider(new FrPhoneNumber($this->faker));
     }
 
     public function load(ObjectManager $manager)
     {
-        $benjamin = $this->getReference(UserFixtures::ADMIN_USER_REFERENCE);
         $lol = $this->getReference(GamesFixtures::LOL_REFERENCE);
+        $rl = $this->getReference(GamesFixtures::RL_REFERENCE);
+        $vlr = $this->getReference(GamesFixtures::VLR_REFERENCE);
 
-        // Create a team with a manager
-        $team = new Team();
-        $team->setName('SKT T1');
-        $team->setCoins(100);
-        $team->setIsApproved(true);
-        $team->setIban('NL30RABO4789170233');
-        $team->setManager($benjamin);
+        $teams = ["Karmine Corp", "G2", "SK", "SKT T1", "Fnatic", "TSM", "Cloud9", "Rogue", "Vitality", "Misfits", "Excel", "MAD Lions"];
+        foreach ($teams as $team) {
+            $newTeam = new Team();
+            $newTeam->setName($team);
+            $newTeam->setIban($this->faker->iban());
+            $newTeam->setIsApproved($this->faker->boolean());
 
-        $manager->persist($team);
+            $user = new User();
+            $user->setEmail($this->faker->email());
+            $user->setUsername($this->faker->userName());
+            $user->setFirstName($this->faker->firstName());
+            $user->setLastName($this->faker->lastName());
+            $user->setDiscord($this->faker->userName() . '#' . $this->faker->randomNumber(4, true));
+            $user->setPhone($this->faker->phoneNumber());
+            $user->setIsVerified(true);
+            $user->setPassword($this->hasher->hashPassword($user, 'password'));
+            $user->setOwnedTeam($newTeam);
+            $user->setType("manager");
 
-        // Create a booster user
-        $boosterUser = new User();
-        $boosterUser->setEmail('faker@faker.fr');
-        $boosterUser->setUsername('Faker');
-        $boosterUser->setRoles(['ROLE_USER']);
-        $boosterUser->setPassword($this->hasher->hashPassword($boosterUser, "faker"));
-        $boosterUser->setFirstName('Lee');
-        $boosterUser->setLastName('Sang-hyeok');
-        $boosterUser->setIsVerified(true);
-        $boosterUser->setPhone('111111111');
-        $boosterUser->setType('player');
-        $boosterUser->setCoins(25);
-        $boosterUser->setDiscord('faker#1234');
-        $boosterUser->setAssignedGame($lol);
+            $newTeam->setManager($user);
 
-        $manager->persist($boosterUser);
+            $manager->persist($user);
 
-        $team->addBooster($boosterUser);
+            for($i = 0; $i < 5; $i++) {
+                $user = new User();
+                $user->setEmail($this->faker->email());
+                $user->setUsername($this->faker->userName());
+                $user->setFirstName($this->faker->firstName());
+                $user->setLastName($this->faker->lastName());
+                $user->setDiscord($this->faker->userName() . '#' . $this->faker->randomNumber(4, true));
+                $user->setPhone($this->faker->phoneNumber());
+                $user->setIsVerified(true);
+                $user->setPassword($this->hasher->hashPassword($user, 'password'));
+                $user->setTeam($newTeam);
+                $user->setType("player");
+                $user->setAssignedGame($this->faker->randomElement([$lol, $rl, $vlr]));
+                $user->setTauxHoraire($this->faker->numberBetween(100, 1000));
+                $newTeam->addBooster($user);
+                $manager->persist($user);
+            }
 
-        $benjamin->setOwnedTeam($team);
+
+            $manager->persist($newTeam);
+        }
 
         $manager->flush();
     }
@@ -60,8 +80,8 @@ class TeamFixtures extends Fixture implements DependentFixtureInterface
     public function getDependencies()
     {
         return [
+            GamesFixtures::class,
             UserFixtures::class,
-            GamesFixtures::class
         ];
     }
 }

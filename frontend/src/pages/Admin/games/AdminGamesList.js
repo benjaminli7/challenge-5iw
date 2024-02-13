@@ -1,4 +1,12 @@
-import { Box, Button, Card, Grid, Stack, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Card,
+  Grid,
+  Stack,
+  Typography,
+  CardMedia,
+} from "@mui/material";
 import AdminRankItem from "@/pages/admin/games/AdminRankItem";
 
 export default function AdminGamesList({
@@ -12,7 +20,16 @@ export default function AdminGamesList({
     <Grid container spacing={4}>
       {games?.map((game) => (
         <Grid item key={game.id} xs={12} md={6} lg={4}>
-          <Card variant="outlined" sx={{ p: 3, height: '100%' }}>
+          <Card variant="outlined" sx={{ p: 3, height: "100%" }}>
+            <CardMedia
+              sx={{ height: 300 }}
+              image={
+                (game.fileUrl &&
+                  process.env.REACT_APP_API_URL + game.fileUrl) ||
+                "/reptile.jpg"
+              }
+              title={game.title}
+            ></CardMedia>
             <Stack spacing={2}>
               <Typography variant="h6">{game.name}</Typography>
               {game.ranks.map((rank) => (
@@ -44,6 +61,16 @@ export default function AdminGamesList({
                   }}
                 >
                   Add rank
+                </Button>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => {
+                    handleActionType(ACTION_TYPES.EDIT_IMAGE);
+                    setSelectedGame(game);
+                  }}
+                >
+                  Image
                 </Button>
               </Box>
             </Stack>

@@ -25,18 +25,22 @@ class GameNormalizer implements ContextAwareNormalizerInterface, NormalizerAware
     {
     }
 
-    public function supportsNormalization($data, string $format = null, array $context = []):bool
+    public function supportsNormalization($data, string $format = null, array $context = []): bool
     {
-        return !isset($context[self::ALREADY_CALLED_NORMALIZER] ) && $data instanceof Game;
+        return !isset($context[self::ALREADY_CALLED_NORMALIZER]) && $data instanceof Game;
     }
 
-    public function normalize($object, string $format = null, array $context = []):Array
+    public function normalize($object, string $format = null, array $context = []): array
     {
         $object->setFileUrl($this->storage->resolveUri($object, 'file'));
         $context[self::ALREADY_CALLED_NORMALIZER] = true;
+
+        // also set the ranks file url
+        foreach ($object->getRanks() as $rank) {
+            $rank->setFileUrl($this->storage->resolveUri($rank, 'file'));
+        }
         // dd($this->normalizer->normalize($object, $format, $context));
 
         return $this->normalizer->normalize($object, $format, $context);
     }
 }
-

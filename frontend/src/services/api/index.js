@@ -97,19 +97,21 @@ export function httpPatch(url, body) {
       ...body,
     },
     {
+
       ...makeConfig("patch"),
     }
   );
 }
 
+
 export function httpPostMultiPart(url, body) {
   let formData = new FormData();
   formData.append("file", body);
-
   return axios.post(makeUrl(url), formData, {
     ...makeConfig("multipart"),
   });
 }
+
 
 export function httpDelete(url) {
   return axios.delete(makeUrl(url), {

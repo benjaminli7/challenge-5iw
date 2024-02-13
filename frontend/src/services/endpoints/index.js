@@ -3,8 +3,12 @@ const ENDPOINTS = {
     root: "api/users",
     login: "api/login",
     userId: (userId) => `api/users/${userId}`,
+    userImg: (userId) => `api/users/${userId}/image`,
     schedules: (userId) => `api/player/${userId}/schedules`,
-    players: "api/players"
+    players: "api/players",
+    resetPassword:  `api/users/reset-password`,
+    changePassword: (token) => `api/users/change-password/${token}`,
+    player: (playerId) => `api/players/${playerId}`,
   },
   games: {
     root: "api/games",
@@ -14,12 +18,14 @@ const ENDPOINTS = {
   ranks: {
     root: "api/ranks",
     rankId: (rankId) => `api/ranks/${rankId}`,
+    rankImg: (rankId) => `api/ranks/${rankId}/image`,
   },
   teams: {
     root: "api/teams",
     teamId: (teamId) => `api/teams/${teamId}`,
     manager: (managerId) => `api/users/${managerId}/team`,
     addPlayer: (teamId) => `api/teams/${teamId}/players`,
+    teamImg: (teamId) => `api/teams/${teamId}/image`,
     approveTeam: (teamId) => `api/teams/${teamId}/approve`
   },
   schedules: {

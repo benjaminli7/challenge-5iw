@@ -9,41 +9,49 @@ use App\Entity\Rank;
 
 class GamesFixtures extends Fixture
 {
-    public const LOL_REFERENCE = 'lol';
+    public const RL_REFERENCE = 'rl-reference';
+    public const VLR_REFERENCE = 'vlr-reference';
+    public const LOL_REFERENCE = 'lol-reference';
     public function load(ObjectManager $manager)
     {
-        // Create Valorant game
-        $valorant = new Game();
-        $valorant->setName('Valorant');
-        $valorant->setColor('#ff4500'); // You can choose a different color
-        $manager->persist($valorant);
+        $gamesData = [
+            [
+                'name' => 'Rocket League',
+                'ranks' => ['Bronze', 'Silver', 'Gold', 'Platinum', 'Diamond', 'Champion', 'Grand Champion', 'Supersonic Legend'],
+            ],
+            [
+                'name' => 'Valorant',
+                'ranks' => ['Platinum', 'Diamond', 'Ascendant', 'Immortal', 'Radiant'],
+            ],
+            [
+                'name' => 'League of Legends',
+                'ranks' => ['Platinum', 'Emerald', 'Diamond', 'Master', 'Grandmaster', 'Challenger'],
+            ],
+            // Add more games as needed
+        ];
 
-        // Create Valorant ranks
-        $valorantRanks = ['Platinum', 'Diamond', 'Ascendant', 'Immortal', 'Radiant'];
-        foreach ($valorantRanks as $rankName) {
-            $rank = new Rank();
-            $rank->setName($rankName);
-            $rank->setGame($valorant);
-            $manager->persist($rank);
-        }
+        foreach ($gamesData as $gameData) {
+            $game = new Game();
+            $game->setName($gameData['name']);
+            $manager->persist($game);
 
-        // Create League of Legends game
-        $lol = new Game();
-        $lol->setName('League of Legends');
-        $lol->setColor('#1e90ff'); // You can choose a different color
-        $manager->persist($lol);
-
-        // Create League of Legends ranks
-        $lolRanks = ['Platinum', 'Emerald', 'Diamond', 'Master', 'Grandmaster', 'Challenger'];
-        foreach ($lolRanks as $rankName) {
-            $rank = new Rank();
-            $rank->setName($rankName);
-            $rank->setGame($lol);
-            $manager->persist($rank);
+            foreach ($gameData['ranks'] as $rankName) {
+                $rank = new Rank();
+                $rank->setName($rankName);
+                $rank->setGame($game);
+                $manager->persist($rank);
+            }
         }
 
         $manager->flush();
 
-        $this->addReference(self::LOL_REFERENCE, $lol);
+        $rocketLeague = $manager->getRepository(Game::class)->findOneBy(['name' => 'Rocket League']);
+        $valorant = $manager->getRepository(Game::class)->findOneBy(['name' => 'Valorant']);
+        $leagueOfLegends = $manager->getRepository(Game::class)->findOneBy(['name' => 'League of Legends']);
+
+        $this->addReference(self::RL_REFERENCE, $rocketLeague);
+        $this->addReference(self::VLR_REFERENCE, $valorant);
+        $this->addReference(self::LOL_REFERENCE, $leagueOfLegends);
+
     }
 }

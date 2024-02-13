@@ -1,9 +1,8 @@
 // GameView.js
 import React from "react";
-import GameSidebar from "./GameSidebar";
-import MainContent from "./GameMainContent";
+import GameCardsView from "./GameCards/GameCardsView";
 
-const GameView = () => {
+const GamesView = () => {
   const sidebarWidth = 200; // Set your desired sidebar width
 
   const containerStyle = {
@@ -19,19 +18,16 @@ const GameView = () => {
 
   const mainContentStyle = {
     flex: 1,
-    padding: "20px", // Adjust padding based on your design
+    padding: "0px", // Adjust padding based on your design
   };
 
   return (
     <div style={containerStyle}>
-      <div style={sidebarStyle}>
-        <GameSidebar drawerWidth={sidebarWidth} />
-      </div>
       <div style={mainContentStyle}>
-        <MainContent />
+        <GameCardsView />
       </div>
     </div>
   );
 };
 
-export default GameView;
+export default GamesView;

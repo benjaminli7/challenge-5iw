@@ -15,7 +15,7 @@ use ApiPlatform\Metadata\Post;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
-use App\Controller\PostImageController;
+use App\Controller\PostImageGameController;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Validator\Constraints\Regex;
 
@@ -27,7 +27,7 @@ use ApiPlatform\Metadata\Delete;
 #[Vich\Uploadable]
 #[ORM\Entity(repositoryClass: GameRepository::class)]
 #[ApiResource(
-    operations:[
+    operations: [
         // 'image' => [
         //     'method' => 'POST',
         //     'path' => '/games/{id}/image',
@@ -35,7 +35,7 @@ use ApiPlatform\Metadata\Delete;
         // ],
         new Post(
             uriTemplate: '/games/{id}/image',
-            controller: PostImageController::class,
+            controller: PostImageGameController::class,
             denormalizationContext: ['groups' => ['test-img']],
             normalizationContext: ['groups' => ['read-game']],
             security: 'is_granted("ROLE_ADMIN")',
@@ -44,11 +44,11 @@ use ApiPlatform\Metadata\Delete;
         ),
         new GetCollection(normalizationContext: ['groups' => ['read-game']]),
         new Get(normalizationContext: ['groups' => ['read-game']]),
-        new Post(denormalizationContext: ['groups' => ['create-game']], security: 'is_granted("ROLE_ADMIN")' , securityMessage: 'Only admins can create games.'),
-        new Patch(denormalizationContext: ['groups' => ['update-game']], security: 'is_granted("ROLE_ADMIN")' , securityMessage: 'Only admins can update games.'),
-        new Delete(security: 'is_granted("ROLE_ADMIN")' , securityMessage: 'Only admins can delete games.'),
+        new Post(denormalizationContext: ['groups' => ['create-game']], security: 'is_granted("ROLE_ADMIN")', securityMessage: 'Only admins can create games.'),
+        new Patch(denormalizationContext: ['groups' => ['update-game']], security: 'is_granted("ROLE_ADMIN")', securityMessage: 'Only admins can update games.'),
+        new Delete(security: 'is_granted("ROLE_ADMIN")', securityMessage: 'Only admins can delete games.'),
     ],
-    normalizationContext: ['groups' => ['read-game', 'read-game-mutation','read-one-game']],
+    normalizationContext: ['groups' => ['read-game', 'read-game-mutation', 'read-one-game']],
 )]
 class Game
 {
@@ -61,7 +61,7 @@ class Game
     private ?int $id = null;
 
     #[ORM\Column(length: 255 , unique: true)]
-    #[Groups(['read-game', 'create-game', 'update-game', 'read-team'])]
+    #[Groups(['read-game', 'create-game', 'update-game', 'read-team', 'read-player'])]
     private ?string $name = null;
 
     #[ORM\OneToMany(mappedBy: 'game', targetEntity: Rank::class, cascade: ['persist', 'remove'])]
@@ -71,14 +71,14 @@ class Game
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $filePath = null;
 
-    #[Groups(['read-game' ])]
+    #[Groups(['read-game'])]
     private ?string $fileUrl = null;
 
     #[Vich\UploadableField(mapping: 'game_image', fileNameProperty: 'filePath')]
-    #[Groups(['test-img'])]
+    #[Groups(['test-img', 'create-game'])]
     private ?File $file = null;
 
-    #[ORM\Column(length: 255 , nullable: true)]
+    #[ORM\Column(length: 255, nullable: true)]
     #[Groups(['read-game', 'create-game', 'update-game'])]
     #[Assert\Regex(pattern: '/^#[a-f0-9]{6}$/i', message: 'The color must be a valid hex color')]
     private ?string $color = null;
@@ -173,6 +173,7 @@ class Game
 
     public function setFileUrl(?string $fileUrl): static
     {
+
         $this->fileUrl = $fileUrl;
 
         return $this;
@@ -220,4 +221,5 @@ class Game
         return $this;
     }
 
+    
 }

@@ -100,7 +100,6 @@ function ManagerPlayerForm({
               helperText={errors.firstName && errors.firstName.message}
             />
           </Grid>
-
           <Grid item xs={12} sm={6}>
             <TextField
               {...register("lastName", {
@@ -117,6 +116,62 @@ function ManagerPlayerForm({
               autoFocus
               error={errors.lastName ? true : false}
               helperText={errors.lastName && errors.lastName.message}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              {...register("address", {
+                required: "Address is required",
+              })}
+              required
+              fullWidth
+              id="address"
+              label="Address"
+              name="address"
+              autoComplete="address"
+              placeholder="1234 Main St"
+              error={errors.address ? true : false}
+              helperText={errors.address && errors.address.message}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              {...register("postal", {
+                required: "Postal is required",
+                pattern: {
+                  value: /^[0-9]{5}$/i,
+                  message: "Invalid postal code",
+                },
+              })}
+              required
+              fullWidth
+              id="postal"
+              label="Postal"
+              name="postal"
+              autoComplete="postal"
+              placeholder="12345"
+              error={errors.postal ? true : false}
+              helperText={errors.postal && errors.postal.message}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              {...register("tauxHoraire", {
+                required: "Taux Horaire is required",
+                pattern: {
+                  value: /^[0-9]+(\.[0-9]{1,2})?$/i,
+                  message: "Invalid taux horaire",
+                },
+              })}
+              required
+              fullWidth
+              id="tauxHoraire"
+              label="Taux Horaire"
+              name="tauxHoraire"
+              autoComplete="tauxHoraire"
+              placeholder="0.00"
+              error={errors.tauxHoraire ? true : false}
+              helperText={errors.tauxHoraire && errors.tauxHoraire.message}
             />
           </Grid>
           {actionType === "create" && (
@@ -187,7 +242,6 @@ function ManagerPlayerForm({
               ))}
             </CustomSelectForm>
           </Grid>
-
           <Grid item xs={12}>
             <TextField
               {...register("discord", {

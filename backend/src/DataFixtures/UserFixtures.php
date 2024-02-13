@@ -22,7 +22,7 @@ class UserFixtures extends Fixture
         $admin->setEmail('admin@admin.fr');
         $admin->setUsername('admin_user');
         $admin->setRoles(['ROLE_ADMIN']);
-        $admin->setPassword($this->hasher->hashPassword($admin, "admin"));
+        $admin->setPassword($this->hasher->hashPassword($admin, "admin321"));
         $admin->setFirstName('Admin');
         $admin->setLastName('User');
         $admin->setIsVerified(true);
@@ -30,15 +30,19 @@ class UserFixtures extends Fixture
         $admin->setType('manager');
         $admin->setCoins(0);
         $admin->setDiscord('admin_user#5678');
+        $admin->setPostal('75000');
+        $admin->setaddress('Paris');
+
+
 
         $manager->persist($admin);
 
         // Create a manager user
         $managerUser = new User();
-        $managerUser->setEmail('manager@example.com');
+        $managerUser->setEmail('manager@manager.fr');
         $managerUser->setUsername('manager_user');
         $managerUser->setRoles(['ROLE_USER']);
-        $managerUser->setPassword($this->hasher->hashPassword($managerUser, "manager"));
+        $managerUser->setPassword($this->hasher->hashPassword($managerUser, "manager321"));
         $managerUser->setFirstName('Manager');
         $managerUser->setLastName('User');
         $managerUser->setIsVerified(true);
@@ -46,6 +50,9 @@ class UserFixtures extends Fixture
         $managerUser->setType('manager');
         $managerUser->setCoins(50);
         $managerUser->setDiscord('manager_user#1234');
+        $managerUser->setPostal('75000');
+        $managerUser->setaddress('Paris');
+
 
         $manager->persist($managerUser);
 
@@ -62,6 +69,8 @@ class UserFixtures extends Fixture
         $benjamin->setType('manager');
         $benjamin->setCoins(0);
         $benjamin->setDiscord('benjaminli#1234');
+        $benjamin->setPostal('75000');
+        $benjamin->setaddress('Paris');
 
 
 
