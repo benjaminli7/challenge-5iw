@@ -1,76 +1,116 @@
 import useFetch from "@/hooks/useFetch";
+import MapWrapper from "@/pages/client/MapWrapper";
 import ENDPOINTS from "@/services/endpoints";
-import { Avatar, Grid, Stack, Typography } from "@mui/material";
-import { GoogleMap, useJsApiLoader } from "@react-google-maps/api";
-import { useCallback, useState } from "react";
-
-const containerStyle = {
-  width: "100%",
-  height: "80vh",
-};
-
-const center = {
-  lat: -3.745,
-  lng: -38.523,
-};
+import {
+  Avatar,
+  Box,
+  Divider,
+  FormControl,
+  Grid,
+  InputLabel,
+  MenuItem,
+  Select,
+  Stack,
+  Typography,
+} from "@mui/material";
+import { Fragment, useState, useEffect } from "react";
 
 function ClientBoostersView() {
-  const [map, setMap] = useState(null);
-  const { data: players, isLoading } = useFetch(
+  const [filters, setFilters] = useState({});
+
+  const { data: players, isLoading: isLoadingPlayers, refetch } = useFetch(
     "players",
-    ENDPOINTS.users.players
+    `${ENDPOINTS.users.players}?`
   );
-  if (isLoading) return <div>Loading...</div>;
-  const { isLoaded } = useJsApiLoader({
-    id: "google-map-script",
-    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
-  });
-  const onLoad = useCallback(function callback(map) {
-    // This is just an example of getting and using the map instance!!! don't just blindly copy!
-    const bounds = new window.google.maps.LatLngBounds(center);
-    map.fitBounds(bounds);
+  const { data: teams, isLoading: isLoadingTeams } = useFetch(
+    "teams",
+    `${ENDPOINTS.teams.root}?isApproved=true`
+  );
+  const { data: games, isLoading: isLoadingGames } = useFetch(
+    "games",
+    ENDPOINTS.games.root
+  );
+  useEffect(() => {
+    console.log(filters)
+    const newQueryParams = new URLSearchParams();
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value !== "") {
+        newQueryParams.append(key, value);
+      }
+    });
+    refetch()
+  }, [filters])
 
-    setMap(map);
-  }, []);
+  if (isLoadingPlayers || isLoadingTeams || isLoadingGames)
+    return <div>Loading...</div>;
 
-  const onUnmount = useCallback(function callback(map) {
-    setMap(null);
-  }, []);
+
 
   return (
     <div>
       <Typography variant="h4" sx={{ mb: 3 }}>
         Liste des filtres
       </Typography>
-      <Grid container>
-        <Grid item xs={12} sm={6}>
+      <Box
+        sx={{ display:"flex",flexDirection: { xs: "column", sm: "row" }, justifyContent: "center", alignItems: "center", gap: 1}}
+        mb={3}
+      >
+        <FormControl fullWidth>
+          <InputLabel id="team-label">Equipe</InputLabel>
+          <Select
+            labelId="team-label"
+            id="team"
+            value={filters.team || ""}
+            label="Equipe"
+            onChange={(e) => setFilters({ ...filters, team: e.target.value })}
+          >
+            <MenuItem value="">Toutes les équipes</MenuItem>
+            {teams.map((team, index) => (
+              <MenuItem key={index} value={team.id}>
+                {team.name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <FormControl fullWidth>
+          <InputLabel id="game-label">Jeu</InputLabel>
+          <Select
+            labelId="game-label"
+            id="game"
+            value={filters.game || ""}
+            label="Jeu"
+            onChange={(e) => setFilters({ ...filters, game: e.target.value })}
+          >
+            <MenuItem value="">Tous les jeux</MenuItem>
+            {games.map((game, index) => (
+              <MenuItem key={index} value={game.id}>
+                {game.name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </Box>
+      <Grid container spacing={1}>
+        <Grid item xs={12} sm={6} rowGap={3}>
           {players.map((player, index) => (
-            <Stack direction="row" spacing={3} alignItems="center" key={index}>
-              <Avatar />
-              <Stack>
-                <Typography sx={{fontWeight: 'bold'}}>{player.team.name}</Typography>
-                <Typography>
-                  {player.firstName} '{player.username}' {player.lastName}
-                </Typography>
+            <Fragment key={index}>
+              <Stack direction="row" spacing={3} alignItems="center" py={1}>
+                <Avatar />
+                <Stack>
+                  <Typography sx={{ fontWeight: "bold" }}>
+                    {player.team.name}
+                  </Typography>
+                  <Typography>
+                    {player.firstName} '{player.username}' {player.lastName}
+                  </Typography>
+                </Stack>
               </Stack>
-            </Stack>
+              <Divider />
+            </Fragment>
           ))}
         </Grid>
         <Grid item xs={12} sm={6}>
-          {isLoaded ? (
-            <GoogleMap
-              mapContainerStyle={containerStyle}
-              center={center}
-              zoom={3}
-              onLoad={onLoad}
-              onUnmount={onUnmount}
-            >
-              {/* Child components, such as markers, info windows, etc. */}
-              <></>
-            </GoogleMap>
-          ) : (
-            <></>
-          )}
+          <MapWrapper />
         </Grid>
       </Grid>
     </div>

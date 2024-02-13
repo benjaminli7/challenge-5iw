@@ -85,8 +85,8 @@ export default function Navbar({ window }) {
               variant="contained"
               fullWidth
               onClick={() => {
-                signOut();
                 queryClient.removeQueries();
+                signOut();
               }}
             >
               Logout
@@ -228,8 +228,8 @@ export default function Navbar({ window }) {
                   ))}
                   <Divider />
                   <MenuItem onClick={() => {
-                    signOut()
                     queryClient.removeQueries();
+                    signOut()
                   }}>
                     <ListItemIcon>
                       <Logout fontSize="small" />
