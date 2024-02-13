@@ -65,13 +65,15 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 //        ;
 //    }
 
-    public function changeUserType(User $user, string $type): array
+    public function findAllPlayersInApprovedTeam(): array
     {
         return $this->createQueryBuilder('u')
-            // ->andWhere('u.user_type = :type')
-            // ->setParameter('type', $type)
+            ->join('u.team', 't')
+            ->andWhere('u.type = :userType')
+            ->andWhere('t.isApproved = :isApproved')
+            ->setParameter('userType', 'player')
+            ->setParameter('isApproved', true)
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
     }
 }
