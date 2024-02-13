@@ -161,6 +161,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(nullable: true)]
     private ?float $taux_horaire = null;
 
+    #[ORM\Column]
+    #[Groups(['create-user', 'read-user', 'update-user', 'read-player', 'read-team'])]
+    private ?int $coin_generated = 0;
+
 
 
 
@@ -481,6 +485,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setTauxHoraire(?float $taux_horaire): static
     {
         $this->taux_horaire = $taux_horaire;
+
+        return $this;
+    }
+
+    public function getCoinGenerated(): ?int
+    {
+        return $this->coin_generated;
+    }
+
+    public function setCoinGenerated(int $coin_generated): static
+    {
+        $this->coin_generated += $coin_generated;
 
         return $this;
     }

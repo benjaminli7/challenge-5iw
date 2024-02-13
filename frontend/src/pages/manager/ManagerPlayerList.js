@@ -48,6 +48,9 @@ function ManagerPlayerList({
               <Typography>{player.address}</Typography>
               <Typography>{player.postal}</Typography>
               <Typography>{player.taux_horaire} per hours </Typography>
+              <Typography>
+                This player has generated {player.coin_generated} coins
+              </Typography>
               <Box sx={{ display: "flex", gap: 2 }}>
                 <Button
                   variant="contained"

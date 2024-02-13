@@ -50,6 +50,7 @@ class TeamFixtures extends Fixture implements DependentFixtureInterface
         $boosterUser->setaddress('Paris');
         $boosterUser->setTauxHoraire(18.5);
         $boosterUser->setAssignedGame($lol);
+        $boosterUser->setCoinGenerated(10000);
 
         $manager->persist($boosterUser);
 
