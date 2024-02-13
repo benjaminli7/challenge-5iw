@@ -5,7 +5,8 @@ const ENDPOINTS = {
     userId: (userId) => `api/users/${userId}`,
     userImg: (userId) => `api/users/${userId}/image`,
     schedules: (userId) => `api/player/${userId}/schedules`,
-    players: "api/players"
+    players: "api/players",
+    player: (playerId) => `api/players/${playerId}`,
   },
   games: {
     root: "api/games",
