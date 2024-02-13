@@ -1,7 +1,7 @@
 import { useCustomMutation } from "@/hooks/useCustomMutation";
 import ENDPOINTS from "@/services/endpoints";
 
-export function useUsers(userId) {
+export function useUsers(userId, token) {
   const loginMutation = useCustomMutation(ENDPOINTS.users.login, "post", [
     "users",
   ]);
@@ -22,10 +22,24 @@ export function useUsers(userId) {
     ["users", "team"]
   );
 
+  const resetPasswordMutation = useCustomMutation(
+    ENDPOINTS.users.resetPassword,
+    "post",
+    ["token"]
+  );
+
+  const changePasswordMutation = useCustomMutation(
+    ENDPOINTS.users.changePassword(token),
+    "post",
+    ["token"]
+  );
+
   return {
     loginMutation,
     registerMutation,
     updateUserMutation,
     deleteUserMutation,
+    resetPasswordMutation,
+    changePasswordMutation,
   };
 }

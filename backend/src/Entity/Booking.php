@@ -81,3 +81,4 @@ class Booking
         return $this;
     }
 }
+

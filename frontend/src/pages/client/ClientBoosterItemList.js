@@ -23,7 +23,6 @@ function ClientBoosterItemList({ player }) {
           </Button>
         </Stack>
       </Stack>
-      <Divider />{" "}
     </>
   );
 }

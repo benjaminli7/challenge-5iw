@@ -97,10 +97,12 @@ export function httpPatch(url, body) {
       ...body,
     },
     {
+
       ...makeConfig("patch"),
     }
   );
 }
+
 
 export function httpPostMultiPart(url, body) {
   let formData = new FormData();
@@ -109,6 +111,7 @@ export function httpPostMultiPart(url, body) {
     ...makeConfig("multipart"),
   });
 }
+
 
 export function httpDelete(url) {
   return axios.delete(makeUrl(url), {
