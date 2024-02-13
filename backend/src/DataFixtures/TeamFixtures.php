@@ -51,8 +51,7 @@ class TeamFixtures extends Fixture implements DependentFixtureInterface
             $newTeam->setManager($user);
 
             $manager->persist($user);
-
-            for($i = 0; $i < 5; $i++) {
+            for ($i = 0; $i < 5; $i++) {
                 $user = new User();
                 $user->setEmail($this->faker->email());
                 $user->setUsername($this->faker->userName());
@@ -69,8 +68,6 @@ class TeamFixtures extends Fixture implements DependentFixtureInterface
                 $newTeam->addBooster($user);
                 $manager->persist($user);
             }
-
-
             $manager->persist($newTeam);
         }
 

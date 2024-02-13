@@ -9,6 +9,28 @@ import { httpPostMultiPart } from "@/services/api";
 import { useQueryClient } from "react-query";
 import ManagerPlayerCalandar from "./components/ManagerPlayerCalandar";
 
+import { withStyles } from "@material-ui/core";
+const styles = theme => ({
+root: {
+    marginTop: 24,
+    padding: theme.spacing(2),
+    position: 'absolute',
+    zIndex: '7 !important', 
+    right: '0px',
+    bottom: '0px',
+    top: '0px',
+    left: '0px',
+},
+closeButton: {
+    position: "absolute",
+    right: theme.spacing(1),
+    top: theme.spacing(2),
+    color: theme.palette.grey[500]
+}
+}); 
+const CustomDialog = withStyles(styles)(Dialog);
+
+
 function MembersView({ team, games }) {
   const queryClient = useQueryClient();
   const {
@@ -64,7 +86,7 @@ function MembersView({ team, games }) {
         ACTION_TYPES={ACTION_TYPES}
         handleActionType={handleActionType}
       />
-      <Dialog open={openDialog} onClose={handleDialogClose}>
+      <CustomDialog open={openDialog} onClose={handleDialogClose}>
         {actionType === ACTION_TYPES.CREATE_PLAYER && (
           <ManagerPlayerCreateForm
             team={team}
@@ -93,7 +115,7 @@ function MembersView({ team, games }) {
             handleDialogClose={handleDialogClose}
           />
         )}
-      </Dialog>
+      </CustomDialog>
     </div>
   );
 }

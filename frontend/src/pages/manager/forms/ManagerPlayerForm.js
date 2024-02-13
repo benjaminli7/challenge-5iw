@@ -7,8 +7,11 @@ import {
   Grid,
   MenuItem,
   TextField,
+  Input,
 } from "@mui/material";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
+import Autocomplete, { usePlacesWidget } from "react-google-autocomplete";
 
 function ManagerPlayerForm({
   deleteUserMutation,
@@ -17,6 +20,8 @@ function ManagerPlayerForm({
   onSubmit,
   actionType,
   games,
+  setLatLng,
+  latLng,
 }) {
   const defaultValues = {
     email: selectedUser?.email || "",
@@ -34,6 +39,16 @@ function ManagerPlayerForm({
     getValues,
     formState: { errors, isSubmitting },
   } = useForm({ defaultValues });
+  const { ref: materialRef } = usePlacesWidget({
+    apiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
+    onPlaceSelected: (place) => {
+      // console.log(place);
+      setLatLng({
+        lat: place.geometry.location.lat(),
+        lng: place.geometry.location.lng(),
+      });
+    },
+  });
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -118,42 +133,19 @@ function ManagerPlayerForm({
               helperText={errors.lastName && errors.lastName.message}
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              {...register("address", {
-                required: "Address is required",
-              })}
-              required
-              fullWidth
-              id="address"
-              label="Address"
-              name="address"
-              autoComplete="address"
-              placeholder="1234 Main St"
-              error={errors.address ? true : false}
-              helperText={errors.address && errors.address.message}
-            />
+
+          <Grid item xs={12}>
+            <div>
+              <span>Ville </span>
+              <TextField
+                fullWidth
+                variant="outlined"
+                inputRef={materialRef}
+                {...register("address")}
+              />
+            </div>
           </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              {...register("postal", {
-                required: "Postal is required",
-                pattern: {
-                  value: /^[0-9]{5}$/i,
-                  message: "Invalid postal code",
-                },
-              })}
-              required
-              fullWidth
-              id="postal"
-              label="Postal"
-              name="postal"
-              autoComplete="postal"
-              placeholder="12345"
-              error={errors.postal ? true : false}
-              helperText={errors.postal && errors.postal.message}
-            />
-          </Grid>
+
           <Grid item xs={12}>
             <TextField
               {...register("tauxHoraire", {

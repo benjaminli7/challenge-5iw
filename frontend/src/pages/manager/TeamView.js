@@ -17,9 +17,21 @@ import { useForm } from "react-hook-form";
 import { useQueryClient } from "react-query";
 import { toast } from "sonner";
 
+const VisuallyHiddenInput = styled("input")({
+  clip: "rect(0 0 0 0)",
+  clipPath: "inset(50%)",
+  height: 1,
+  overflow: "hidden",
+  position: "absolute",
+  bottom: 0,
+  left: 0,
+  whiteSpace: "nowrap",
+  width: "100%",
+});
 function TeamView({ team }) {
-  const queryClient = useQueryClient();
   if (!team) return null;
+  const [file, setFile] = useState(null);
+  const queryClient = useQueryClient();
   const { updateTeamMutation } = useTeams(team.id);
   const {
     register,
@@ -40,18 +52,6 @@ function TeamView({ team }) {
       toast.error("Error updating team");
     }
   };
-  const VisuallyHiddenInput = styled("input")({
-    clip: "rect(0 0 0 0)",
-    clipPath: "inset(50%)",
-    height: 1,
-    overflow: "hidden",
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    whiteSpace: "nowrap",
-    width: "100%",
-  });
-  const [file, setFile] = useState(null);
   const handleImageUpload = async (data, team) => {
     try {
       setFile(data);

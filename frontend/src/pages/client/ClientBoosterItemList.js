@@ -1,4 +1,5 @@
-import { Avatar, Divider, Stack, Typography } from "@mui/material";
+import { Avatar, Divider, Stack, Typography, Button } from "@mui/material";
+import { Link } from "react-router-dom";
 
 function ClientBoosterItemList({ player }) {
   return (
@@ -15,6 +16,11 @@ function ClientBoosterItemList({ player }) {
           <Typography variant="subtitle2">
             {player.assignedGame.name}
           </Typography>
+          <Button variant="contained" color="primary">
+            <Link to={`/client/player/${player.id}`}>
+              Reserver avec ce joueur
+            </Link>
+          </Button>
         </Stack>
       </Stack>
       <Divider />{" "}

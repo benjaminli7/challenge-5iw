@@ -67,7 +67,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['read-user', 'update-user', 'read-team'])]
+    #[Groups(['read-user', 'update-user', 'read-team', 'read-player'])]
     private ?int $id = null;
 
     #[Assert\Email()]
@@ -151,9 +151,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?File $file = null;
 
 
-    #[Groups(['create-user', 'read-user', 'update-user', 'read-player', 'read-team'])]
-    #[ORM\Column(nullable: true)]
-    private ?string $postal = null;
 
     #[Groups(['create-user', 'read-user', 'update-user', 'read-player', 'read-team'])]
     #[ORM\Column(length: 255, nullable: true)]
@@ -175,6 +172,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['read-schedule', 'read-team'])]
     #[ORM\OneToMany(mappedBy: 'booster', targetEntity: Schedule::class)]
     private Collection $schedules;
+
+    #[Groups(['read-player', 'read-team'])]
+    #[ORM\Column(nullable: true)]
+    private ?float $lat = null;
+
+    #[Groups(['read-player', 'read-team'])]
+    #[ORM\Column(nullable: true)]
+    private ?float $lng = null;
 
     public function __construct()
     {
@@ -497,16 +502,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getPostal(): ?int
-    {
-        return $this->postal;
-    }
-
-    public function setPostal(int $postal): static
-    {
-        $this->postal = $postal;
-        return $this;
-    }
     /**
      * @return Collection<int, Schedule>
      */
@@ -567,6 +562,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $schedule->setBooster(null);
             }
         }
+        return $this;
+    }
+
+    public function getLat(): ?float
+    {
+        return $this->lat;
+    }
+
+    public function setLat(?float $lat): static
+    {
+        $this->lat = $lat;
+
+        return $this;
+    }
+
+    public function getLng(): ?float
+    {
+        return $this->lng;
+    }
+
+    public function setLng(?float $lng): static
+    {
+        $this->lng = $lng;
+
         return $this;
     }
 }

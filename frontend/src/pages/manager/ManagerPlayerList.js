@@ -16,6 +16,7 @@ function ManagerPlayerList({
 }) {
   return (
     <Grid container spacing={4}>
+      
       {players?.map((player) => (
         <Grid item key={player.id} xs={12} md={6} lg={4}>
           <Card variant="outlined" sx={{ p: 3, height: "100%" }}>
@@ -42,7 +43,6 @@ function ManagerPlayerList({
               <Typography>{player.assignedGame.name}</Typography>
               <Typography>{player.discord}</Typography>
               <Typography>{player.address}</Typography>
-              <Typography>{player.postal}</Typography>
               <Typography>{player.taux_horaire}coins/h</Typography>
               <Typography>{player.coin_generated} coins</Typography>
               <Box sx={{ display: "flex", gap: 2 }}>
