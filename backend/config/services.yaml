@@ -27,7 +27,16 @@ services:
           method: onAuthenticationSuccess,
         }
 
-  App\Controller\PostImageController:
+  App\Controller\PostImageGameController:
+    tags: ["controller.service_arguments"]
+
+  App\Controller\PostImageRankController:
+    tags: ["controller.service_arguments"]
+
+  App\Controller\PostImageUserController:
+    tags: ["controller.service_arguments"]
+
+  App\Controller\PostImageTeamController:
     tags: ["controller.service_arguments"]
 
   App\Controller\GetManagerTeamController:

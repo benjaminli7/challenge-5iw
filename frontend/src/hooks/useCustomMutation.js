@@ -15,6 +15,13 @@ export const useCustomMutation = (endpoint, method, resource) => {
             makeConfig()
           );
           return responsePost.data;
+        case "image":
+          const responseImage = await axios.post(
+            makeUrl(endpoint),
+            data.image,
+            makeConfig()
+          );
+          return responseImage.data;
         case "patch":
           const responsePatch = await axios.patch(
             makeUrl(endpoint),

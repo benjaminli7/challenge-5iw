@@ -1,8 +1,11 @@
-import React from 'react'
+import React from "react";
+import GamesView from "../game/GamesView";
 function Home() {
   return (
-    <div>Homepage</div>
-  )
+    <div>
+      <p> Home Page</p>
+    </div>
+  );
 }
 
-export default Home
+export default Home;

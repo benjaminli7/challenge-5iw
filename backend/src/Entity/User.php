@@ -19,9 +19,13 @@ use ApiPlatform\Metadata\Delete;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
 use App\Controller\GetManagerTeamController;
+use App\Controller\PostImageUserController;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Symfony\Component\HttpFoundation\File\File;
 use App\Controller\GetPlayerScheduleController;
 use App\Controller\GetPlayersListController;
 
+#[Vich\Uploadable]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
 #[ApiResource(
@@ -40,6 +44,15 @@ use App\Controller\GetPlayersListController;
             securityMessage: 'You can only see your own team.'
         ),
         new Delete(security: 'is_granted("ROLE_ADMIN") or (object.ownedTeam.manager == user)', securityMessage: 'You can only delete your own user.'),
+        new Post(
+            uriTemplate: '/users/{id}/image',
+            controller: PostImageUserController::class,
+            denormalizationContext: ['groups' => ['user-img']],
+            normalizationContext: ['groups' => ['read-user']],
+            security: 'is_granted("ROLE_ADMIN") or (object == user)',
+            securityMessage: 'Only admins can create games images.',
+            deserialize: false
+        ),
         new Get(uriTemplate: '/player/{id}/schedules', normalizationContext: ['groups' => ['read-player-schedule']], controller: GetPlayerScheduleController::class, security: 'is_granted("ROLE_ADMIN") or (object == user) or (object.booster.ownTeam.manager == user)', securityMessage: 'You can only see your own schedules.'),
         new GetCollection(uriTemplate: '/players', controller: GetPlayersListController::class, normalizationContext: ['groups' => ['read-player']])
     ],
@@ -127,6 +140,33 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToOne(inversedBy: 'boosters')]
     private ?Team $team = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $filePath = null;
+
+    #[Groups(['read-team', 'read-player', 'read-user'])]
+    private ?string $fileUrl = null;
+
+    #[Vich\UploadableField(mapping: 'user_image', fileNameProperty: 'filePath')]
+    #[Groups(['user-img', 'create-user'])]
+    private ?File $file = null;
+
+
+    #[Groups(['create-user', 'read-user', 'update-user', 'read-player', 'read-team'])]
+    #[ORM\Column]
+    private ?string $postal = null;
+
+    #[Groups(['create-user', 'read-user', 'update-user', 'read-player', 'read-team'])]
+    #[ORM\Column(length: 255)]
+    private ?string $address = null;
+
+    #[Groups(['create-user', 'read-user', 'update-user', 'read-player', 'read-team'])]
+    #[ORM\Column(nullable: true)]
+    private ?float $taux_horaire = null;
+
+    #[ORM\Column]
+    #[Groups(['create-user', 'read-user', 'update-user', 'read-player', 'read-team'])]
+    private ?int $coin_generated = 0;
+
     // les réservations du client
     #[ORM\OneToMany(mappedBy: 'client', targetEntity: Booking::class)]
     private Collection $bookings;
@@ -141,7 +181,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->bookings = new ArrayCollection();
         $this->schedules = new ArrayCollection();
     }
-
 
     public function getId(): ?int
     {
@@ -393,6 +432,41 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getFilePath(): ?string
+    {
+        return $this->filePath;
+    }
+
+    public function setFilePath(?string $filePath): static
+    {
+        $this->filePath = $filePath;
+
+        return $this;
+    }
+
+    public function getFile(): ?File
+    {
+        return $this->file;
+    }
+
+    public function setFile(?File $file = null): static
+    {
+        $this->file = $file;
+        return $this;
+    }
+
+    public function getFileUrl(): ?string
+    {
+        return $this->fileUrl;
+    }
+
+    public function setFileUrl(?string $fileUrl): static
+    {
+
+        $this->fileUrl = $fileUrl;
+        return $this;
+    }
+
     /**
      * @return Collection<int, Booking>
      */
@@ -419,10 +493,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $booking->setClient(null);
             }
         }
-
         return $this;
     }
 
+    public function getPostal(): ?int
+    {
+        return $this->postal;
+    }
+
+    public function setPostal(int $postal): static
+    {
+        $this->postal = $postal;
+        return $this;
+    }
     /**
      * @return Collection<int, Schedule>
      */
@@ -437,7 +520,41 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             $this->schedules->add($schedule);
             $schedule->setBooster($this);
         }
+        return $this;
+    }
 
+    public function getaddress(): ?string
+    {
+        return $this->address;
+    }
+
+    public function setaddress(string $address): static
+    {
+        $this->address = $address;
+
+        return $this;
+    }
+
+    public function getTauxHoraire(): ?float
+    {
+        return $this->taux_horaire;
+    }
+
+    public function setTauxHoraire(?float $taux_horaire): static
+    {
+        $this->taux_horaire = $taux_horaire;
+
+        return $this;
+    }
+
+    public function getCoinGenerated(): ?int
+    {
+        return $this->coin_generated;
+    }
+
+    public function setCoinGenerated(int $coin_generated): static
+    {
+        $this->coin_generated += $coin_generated;
         return $this;
     }
 
@@ -449,7 +566,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $schedule->setBooster(null);
             }
         }
-
         return $this;
     }
 }

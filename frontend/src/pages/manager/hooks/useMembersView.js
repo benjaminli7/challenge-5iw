@@ -8,6 +8,8 @@ export function useMembersView() {
   const ACTION_TYPES = {
     CREATE_PLAYER: "CREATE_PLAYER",
     EDIT_PLAYER: "EDIT_PLAYER",
+    EDIT_PLAYER_IMAGE: "EDIT_PLAYER_IMAGE",
+    EDIT_TEAM_IMAGE: "EDIT_TEAM_IMAGE",
   };
   return {
     ACTION_TYPES,

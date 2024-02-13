@@ -7,6 +7,7 @@ function AdminRankUpdateForm({ selectedRank, handleDialogClose }) {
   const onSubmit = async (data) => {
     try {
       await updateRankMutation.mutateAsync(data);
+
       await handleDialogClose();
     } catch (error) {
       console.error("Error updating rank:", error);
@@ -20,7 +21,7 @@ function AdminRankUpdateForm({ selectedRank, handleDialogClose }) {
     } catch (error) {
       console.error("Error deleting rank:", error);
     }
-  }
+  };
 
   return (
     <AdminRankForm
