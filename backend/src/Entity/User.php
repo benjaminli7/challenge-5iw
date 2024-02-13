@@ -33,7 +33,7 @@ use App\Controller\GetPlayersListController;
         new GetCollection(normalizationContext: ['groups' => ['read-user']], security: 'is_granted("ROLE_ADMIN")', securityMessage: 'Only admins can see all users.'),
         new Get(normalizationContext: ['groups' => ['read-user']], security: 'is_granted("ROLE_ADMIN") or object == user', securityMessage: 'You can only see your own user.'),
         //  new Get(uriTemplate: '/users/{id}/infos', normalizationContext: ['groups' => ['read-user', 'read-user-as-admin']], security: 'is_granted("ROLE_ADMIN")'),
-        // new Get(uriTemplate: '/players/{id}', normalizationContext: ['groups' => ['read-player']], security: 'is_granted("PLAYER_READ", object) or is_granted("ROLE_ADMIN")', securityMessage: 'Only players can see their own user.'),
+        new Get(uriTemplate: '/players/{id}', security: "object.getType() == 'player'", securityMessage: "it's not a player!",normalizationContext: ['groups' => ['read-player']]),
         new Post(denormalizationContext: ['groups' => ['create-user']]),
         new Patch(denormalizationContext: ['groups' => ['update-user']], securityPostDenormalize: 'is_granted("ROLE_ADMIN") or object == user', securityPostDenormalizeMessage: 'You can only edit your own user.'),
         new Get(
@@ -169,7 +169,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $bookings;
 
     // les disponibilités du booster
-    #[Groups(['read-schedule', 'read-team'])]
+    #[Groups(['read-schedule', 'read-team', 'read-player'])]
     #[ORM\OneToMany(mappedBy: 'booster', targetEntity: Schedule::class)]
     private Collection $schedules;
 

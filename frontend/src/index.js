@@ -5,9 +5,13 @@ import ProtectedUserTypeRoute from "@/components/ProtectedUserTypeRoute";
 import Page404 from "@/components/layout/404";
 import AdminDashboardView from "@/pages/admin/AdminDashboardView";
 import AdminGamesView from "@/pages/admin/games/AdminGamesView";
+import AdminTeamsView from "@/pages/admin/teams/AdminTeamsView";
 import AdminUsersView from "@/pages/admin/users/AdminUsersView";
+import ChangePassword from "@/pages/auth/ChangePassword";
+import EmailForgetPassword from "@/pages/auth/EmailForgetPassword";
 import Login from "@/pages/auth/Login";
 import Signup from "@/pages/auth/Signup";
+import ClientBoosterDetail from "@/pages/client/ClientBoosterDetail";
 import ClientBoostersView from "@/pages/client/ClientBoostersView";
 import ClientView from "@/pages/client/ClientView";
 import Home from "@/pages/home/Home";
@@ -26,7 +30,6 @@ import ReactDOM from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import "./index.css";
-import AdminTeamsView from "@/pages/admin/teams/AdminTeamsView";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -58,6 +61,14 @@ const router = createBrowserRouter([
         element: <Login />,
       },
       {
+        path: "forgot-password",
+        element: <EmailForgetPassword />,
+      },
+      {
+        path: "changePassword",
+        element: <ChangePassword />,
+      },
+      {
         path: "profile",
         element: (
           <ProtectedRoute>
@@ -81,6 +92,14 @@ const router = createBrowserRouter([
             element: (
               <ProtectedUserTypeRoute type="client">
                 <ClientBoostersView />
+              </ProtectedUserTypeRoute>
+            ),
+          },
+          {
+            path: "players/:id",
+            element: (
+              <ProtectedUserTypeRoute type="client">
+                <ClientBoosterDetail />
               </ProtectedUserTypeRoute>
             ),
           },
@@ -145,8 +164,8 @@ const router = createBrowserRouter([
       },
       {
         path: "teams",
-        element: <AdminTeamsView />
-      }
+        element: <AdminTeamsView />,
+      },
     ],
   },
 ]);

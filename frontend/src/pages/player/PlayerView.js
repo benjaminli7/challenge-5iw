@@ -58,6 +58,7 @@ function PlayerView() {
         }}
         eventStartEditable={false}
         selectOverlap={false}
+        weekends={false}
       />
       <Dialog open={openDialog} onClose={handleDialogClose}>
         {actionType === ACTION_TYPES.CREATE_EVENT && (
