@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useAuthUser } from 'react-auth-kit';
-import { Box, Button, Card, CardContent, CircularProgress, Container, Snackbar, Alert as MuiAlert, Stepper, Step, StepButton, Grid, Typography, TextField, useMediaQuery, useTheme } from '@mui/material';
+import { Box, Button, Card, CardContent, CircularProgress, Container, Snackbar,
+    Alert as MuiAlert, Stepper, Step, StepButton, Grid, Typography, TextField,
+    useMediaQuery, useTheme, Dialog, DialogTitle, DialogContent, FormControl,
+    InputLabel, Select, MenuItem, DialogActions} from '@mui/material';
 import { useForm } from 'react-hook-form';
 import useFetch from "@/hooks/useFetch";
 import { useUsers } from "@/hooks/models/useUsers";
@@ -14,19 +17,31 @@ dayjs.extend(customParseFormat);
 function ProfileView() {
     const auth = useAuthUser();
     const { data: user, isLoading: isLoadingUser } = useFetch("user", ENDPOINTS.users.userId(auth().user.id));
+    const { data: existingGames, isLoading: isLoadingGames } = useFetch("games", ENDPOINTS.games.root);
+    console.log(existingGames);
     const { updateUserMutation } = useUsers(auth().user.id);
+
     const isEditable = user?.type === 'client' || user?.type === 'manager';
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-    const { register, handleSubmit, setValue, setError,  formState: { errors } } = useForm();
+    const { register,
+        handleSubmit,
+        setValue,
+        setError,
+        formState: { errors } } = useForm();
+
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [alertSeverity, setAlertSeverity] = useState('success');
     const [activeStep, setActiveStep] = useState(0);
     const steps = ['Profile', 'Stats'];
+
+    const [openAddGameDialog, setOpenAddGameDialog] = useState(false);
+    const [selectedGame, setSelectedGame] = useState(null);
+    const [selectedRank, setSelectedRank] = useState(null);
+
     const [lastScrollTime, setLastScrollTime] = useState(0);
     const scrollThreshold = 1000;
-
 
     const disableScroll = () => {
         document.body.style.overflow = 'hidden';
@@ -99,6 +114,27 @@ function ProfileView() {
     const handleCloseSnackbar = () => {
         setOpenSnackbar(false);
     };
+
+    const handleOpenAddGameDialog = () => setOpenAddGameDialog(true);
+    const handleCloseAddGameDialog = () => setOpenAddGameDialog(false);
+
+    const handleGameChange = (event) => {
+        const gameId = event.target.value;
+        const game = existingGames.find((g) => g.id === gameId);
+        setSelectedGame(game);
+        setSelectedRank(null); // Reset selected rank when game changes
+    };
+
+    const handleRankChange = (event) => {
+        const rankId = event.target.value;
+        const rank = selectedGame.ranks.find((r) => r.id === rankId);
+        setSelectedRank(rank);
+    };
+
+    const submitGameRank = async () => {
+        // Implement submission logic here
+    };
+
 
     if (isLoadingUser) {
         return <CircularProgress />;
@@ -184,15 +220,59 @@ function ProfileView() {
                     {activeStep === 1 && (
                         <Card sx={{ mt: 8, p: 3 }}>
                             <Typography gutterBottom variant="h5" align="center">
-                                Stats
+                                Stats and Games
                             </Typography>
-                            <Grid container spacing={2} alignItems="center" sx={{ flexWrap: 'wrap' }}>
+                            <Grid container spacing={2}>
                                 <Grid item xs={12}>
                                     <Typography variant="subtitle1">Coins: {user?.coins}</Typography>
+                                </Grid>
+                                {user?.existingGames?.map((game) => (
+                                    <Grid item xs={12} key={game.id}>
+                                        <Typography>{game.name}: {game.rank.name}</Typography>
+                                    </Grid>
+                                ))}
+                                <Grid item xs={12}>
+                                    <Button variant="contained" onClick={handleOpenAddGameDialog}>Add Game Rank</Button>
                                 </Grid>
                             </Grid>
                         </Card>
                     )}
+
+                    <Dialog open={openAddGameDialog} onClose={handleCloseAddGameDialog}>
+                        <DialogTitle>Add Game Rank</DialogTitle>
+                        <DialogContent>
+                            <FormControl fullWidth>
+                                <InputLabel>Game</InputLabel>
+                                <Select
+                                    value={selectedGame?.id || ''}
+                                    label="Game"
+                                    onChange={handleGameChange}
+                                >
+                                    {existingGames.map((game) => (
+                                        <MenuItem key={game.id} value={game.id}>{game.name}</MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                            {selectedGame && (
+                                <FormControl fullWidth margin="normal">
+                                    <InputLabel>Rank</InputLabel>
+                                    <Select
+                                        value={selectedRank?.id || ''}
+                                        label="Rank"
+                                        onChange={handleRankChange}
+                                    >
+                                        {selectedGame.ranks.map((rank) => (
+                                            <MenuItem key={rank.id} value={rank.id}>{rank.name}</MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                            )}
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={handleCloseAddGameDialog}>Cancel</Button>
+                            <Button onClick={submitGameRank}>Add</Button>
+                        </DialogActions>
+                    </Dialog>
                 </Box>
 
                 <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
