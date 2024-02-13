@@ -4,7 +4,6 @@ import { Button, Dialog, Stack, Typography } from "@mui/material";
 import InputFileUpload from "@/components/commons/InputFileUpload";
 import ManagerPlayerList from "@/pages/manager/ManagerPlayerList";
 import ManagerPlayerUpdateForm from "@/pages/manager/forms/ManagerPlayerUpdateForm";
-import useFetch from "@/hooks/useFetch";
 import ENDPOINTS from "@/services/endpoints";
 import { httpPostMultiPart } from "@/services/api";
 import { useQueryClient } from "react-query";

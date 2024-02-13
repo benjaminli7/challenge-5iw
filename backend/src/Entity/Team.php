@@ -33,16 +33,16 @@ use App\Controller\ApproveTeamController;
             normalizationContext: ['groups' => ['read-team']],
             denormalizationContext: ['groups' => ['create-team']],
         ),
-        new Get(normalizationContext: ['groups' => ['read-team']], security: 'is_granted("ROLE_ADMIN") or (object.manager == user)', securityMessage: 'You can only see your own team.'),
+        new Get(normalizationContext: ['groups' => ['read-team']], security: 'is_granted("ROLE_ADMIN") or (object.getManager() == user)', securityMessage: 'You can only see your own team.'),
         new GetCollection(normalizationContext: ['groups' => ['read-team']]),
-        new Patch(denormalizationContext: ['groups' => ['update-team']], securityPostDenormalize: 'is_granted("ROLE_ADMIN") or (object.manager == user)', securityPostDenormalizeMessage: 'You can only edit your own team.'),
-        new Delete(security: 'is_granted("ROLE_ADMIN") or (object.manager == user)', securityMessage: 'You can only delete your own team.'),
+        new Patch(denormalizationContext: ['groups' => ['update-team']], securityPostDenormalize: 'is_granted("ROLE_ADMIN") or (object.getManager() == user)', securityPostDenormalizeMessage: 'You can only edit your own team.'),
+        new Delete(security: 'is_granted("ROLE_ADMIN") or (object.getManager() == user)', securityMessage: 'You can only delete your own team.'),
 
         new Post(
             uriTemplate: '/teams/{id}/players',
             controller: AddPlayerTeamController::class,
             denormalizationContext: ['groups' => ['create-player']],
-            securityPostDenormalize: 'is_granted("ROLE_ADMIN") or (object.manager == user)',
+            securityPostDenormalize: 'is_granted("ROLE_ADMIN") or (object.getManager() == user)',
             securityPostDenormalizeMessage: 'You can only add boosters to your own team.',
         ),
         new Post(
@@ -50,7 +50,7 @@ use App\Controller\ApproveTeamController;
             controller: PostImageTeamController::class,
             denormalizationContext: ['groups' => ['team-img']],
             normalizationContext: ['groups' => ['read-team']],
-            security: 'is_granted("ROLE_ADMIN") or (object.manager == user)',
+            security: 'is_granted("ROLE_ADMIN") or (object.getManager() == user)',
             securityMessage: 'Only admins can create teams images.',
             deserialize: false
         ),

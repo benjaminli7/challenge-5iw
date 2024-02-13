@@ -6,9 +6,7 @@ import {
   Stack,
   Typography,
   Avatar,
-  IconButton,
 } from "@mui/material";
-import ImageIcon from "@mui/icons-material/Image";
 
 function ManagerPlayerList({
   players,
@@ -16,7 +14,6 @@ function ManagerPlayerList({
   handleActionType,
   ACTION_TYPES,
 }) {
-  console.log(players);
   return (
     <Grid container spacing={4}>
       {players?.map((player) => (
@@ -26,7 +23,6 @@ function ManagerPlayerList({
               <Box
                 sx={{
                   display: "flex",
-                  // justifyContent: "flex-center",
                   flexDirection: "column",
                   alignItems: "center",
                 }}

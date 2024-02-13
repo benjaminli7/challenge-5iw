@@ -43,7 +43,7 @@ use App\Controller\GetPlayersListController;
             security: 'is_granted("ROLE_ADMIN") or (object == user)',
             securityMessage: 'You can only see your own team.'
         ),
-        new Delete(security: 'is_granted("ROLE_ADMIN") or (object.ownedTeam.manager == user)', securityMessage: 'You can only delete your own user.'),
+        new Delete(security: 'is_granted("ROLE_ADMIN") or (object.getOwnedTeam().manager == user)', securityMessage: 'You can only delete your own user.'),
         new Post(
             uriTemplate: '/users/{id}/image',
             controller: PostImageUserController::class,
@@ -113,7 +113,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $resetToken = null;
 
     #[Groups(['read-user', 'read-client', 'read-player'])]
-    #[ORM\Column(length: 16, nullable: true)]
+    #[ORM\Column(length: 25, nullable: true)]
     private ?string $phone = null;
 
     #[Groups(['create-user', 'read-user', 'update-user', 'read-player'])]
@@ -152,11 +152,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
 
     #[Groups(['create-user', 'read-user', 'update-user', 'read-player', 'read-team'])]
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?string $postal = null;
 
     #[Groups(['create-user', 'read-user', 'update-user', 'read-player', 'read-team'])]
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $address = null;
 
     #[Groups(['create-user', 'read-user', 'update-user', 'read-player', 'read-team'])]

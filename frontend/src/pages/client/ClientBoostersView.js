@@ -91,7 +91,7 @@ function ClientBoostersView() {
         </FormControl>
       </Box>
       <Grid container spacing={1}>
-        <Grid item xs={12} sm={6} rowGap={3}>
+        <Grid item xs={12} sm={6} rowGap={3} sx={{height: "70vh", overflowY: "scroll"}}>
           {players.map((player, index) => (
             <Fragment key={index}>
               <Stack direction="row" spacing={3} alignItems="center" py={1}>

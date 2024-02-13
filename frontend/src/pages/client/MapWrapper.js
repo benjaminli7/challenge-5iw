@@ -3,7 +3,7 @@ import React from "react";
 
 const containerStyle = {
   width: "100%",
-  height: "80vh",
+  height: "70vh",
 };
 
 const center = {
