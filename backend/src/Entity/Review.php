@@ -64,4 +64,6 @@ class Review
 
         return $this;
     }
+
 }
+

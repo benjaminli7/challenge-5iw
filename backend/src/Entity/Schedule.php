@@ -134,4 +134,6 @@ class Schedule
 
         return $this;
     }
+
 }
+

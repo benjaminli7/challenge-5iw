@@ -128,7 +128,7 @@ export default function Login() {
           </CustomButton>
           <Grid container>
             <Grid item xs>
-              <Link href="#" variant="body2">
+              <Link component={RouterLink} to="/emailForgetPassword" variant="body2">
                 Forgot password?
               </Link>
             </Grid>

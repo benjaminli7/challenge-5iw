@@ -9,6 +9,9 @@ import AdminUsersView from "@/pages/admin/users/AdminUsersView";
 import Login from "@/pages/auth/Login";
 import Signup from "@/pages/auth/Signup";
 import ClientBoostersView from "@/pages/client/ClientBoostersView";
+import EmailForgetPassword from "@/pages/auth/EmailForgetPassword";
+import ChangePassword from "@/pages/auth/ChangePassword";
+import ClientBoostersList from "@/pages/client/ClientBoostersList";
 import ClientView from "@/pages/client/ClientView";
 import Home from "@/pages/home/Home";
 import ManagerCreateTeamForm from "@/pages/manager/ManagerCreateTeamForm";
@@ -56,6 +59,14 @@ const router = createBrowserRouter([
       {
         path: "login",
         element: <Login />,
+      },
+      {
+        path: "emailForgetPassword",
+        element: <EmailForgetPassword />,
+      },
+      {
+        path: "changePassword",
+        element: <ChangePassword />,
       },
       {
         path: "profile",

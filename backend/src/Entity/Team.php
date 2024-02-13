@@ -234,6 +234,7 @@ class Team
 
         return $this;
     }
+<<<<<<< HEAD
 
     public function getFilePath(): ?string
     {
@@ -271,3 +272,6 @@ class Team
         return $this;
     }
 }
+=======
+}
+>>>>>>> feature/email2
