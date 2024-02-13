@@ -33,14 +33,14 @@ class Schedule
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['read-schedule', 'read-player-schedule', 'read-team'])]
+    #[Groups(['read-schedule', 'read-player-schedule', 'read-team', 'read-player'])]
     private ?int $id = null;
 
-    #[Groups(['read-schedule', 'write-schedule', 'read-player-schedule', 'read-team'])]
+    #[Groups(['read-schedule', 'write-schedule', 'read-player-schedule', 'read-team', 'read-player'])]
     #[ORM\Column(type: Types::DATETIME_MUTABLE, unique: true)]
     private ?\DateTimeInterface $startingDate = null;
 
-    #[Groups(['read-schedule', 'write-schedule', 'read-player-schedule', 'read-team'])]
+    #[Groups(['read-schedule', 'write-schedule', 'read-player-schedule', 'read-team', 'read-player'])]
     #[ORM\Column(type: Types::DATETIME_MUTABLE, unique: true)]
     private ?\DateTimeInterface $endingDate = null;
 
@@ -51,7 +51,7 @@ class Schedule
     #[ORM\ManyToOne(inversedBy: 'schedules')]
     private ?User $booster = null;
 
-    #[Groups(['read-schedule', 'write-schedule', 'read-player-schedule', 'read-team'])]
+    #[Groups(['read-schedule', 'write-schedule', 'read-player-schedule', 'read-team', 'read-player'])]
     #[ORM\Column(length: 50)]
     private ?string $status = null;
 

@@ -36,6 +36,7 @@ function ManagerPlayerCalandar({ selectedUser, open, handleClose }) {
         }}
         eventStartEditable={false}
         selectOverlap={false}
+        weekends={false}
       />
     </div>
   );

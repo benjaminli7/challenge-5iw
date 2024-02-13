@@ -67,7 +67,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['read-user', 'update-user', 'read-team'])]
+    #[Groups(['read-user', 'update-user', 'read-team', 'read-player'])]
     private ?int $id = null;
 
     #[Assert\Email()]
@@ -172,7 +172,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $bookings;
 
     // les disponibilités du booster
-    #[Groups(['read-schedule', 'read-team'])]
+    #[Groups(['read-schedule', 'read-team', 'read-player'])]
     #[ORM\OneToMany(mappedBy: 'booster', targetEntity: Schedule::class)]
     private Collection $schedules;
 
