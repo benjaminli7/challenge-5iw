@@ -3,14 +3,11 @@ const ENDPOINTS = {
     root: "api/users",
     login: "api/login",
     userId: (userId) => `api/users/${userId}`,
-<<<<<<< HEAD
     userImg: (userId) => `api/users/${userId}/image`,
     schedules: (userId) => `api/player/${userId}/schedules`,
-    players: "api/players"
-=======
+    players: "api/players",
     resetPassword:  `api/users/reset-password`,
     changePassword: (token) => `api/users/change-password/${token}`
->>>>>>> feature/email2
   },
   games: {
     root: "api/games",

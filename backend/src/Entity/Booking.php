@@ -57,7 +57,6 @@ class Booking
         return $this;
     }
 
-<<<<<<< HEAD
     public function getClient(): ?User
     {
         return $this->client;
@@ -81,7 +80,5 @@ class Booking
 
         return $this;
     }
-=======
->>>>>>> feature/email2
 }
 

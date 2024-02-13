@@ -11,7 +11,6 @@ import Signup from "@/pages/auth/Signup";
 import ClientBoostersView from "@/pages/client/ClientBoostersView";
 import EmailForgetPassword from "@/pages/auth/EmailForgetPassword";
 import ChangePassword from "@/pages/auth/ChangePassword";
-import ClientBoostersList from "@/pages/client/ClientBoostersList";
 import ClientView from "@/pages/client/ClientView";
 import Home from "@/pages/home/Home";
 import ManagerCreateTeamForm from "@/pages/manager/ManagerCreateTeamForm";

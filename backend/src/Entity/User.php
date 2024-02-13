@@ -43,7 +43,6 @@ use App\Controller\GetPlayersListController;
             security: 'is_granted("ROLE_ADMIN") or (object == user)',
             securityMessage: 'You can only see your own team.'
         ),
-<<<<<<< HEAD
         new Delete(security: 'is_granted("ROLE_ADMIN") or (object.getOwnedTeam().manager == user)', securityMessage: 'You can only delete your own user.'),
         new Post(
             uriTemplate: '/users/{id}/image',
@@ -56,11 +55,6 @@ use App\Controller\GetPlayersListController;
         ),
         new Get(uriTemplate: '/player/{id}/schedules', normalizationContext: ['groups' => ['read-player-schedule']], controller: GetPlayerScheduleController::class, security: 'is_granted("ROLE_ADMIN") or (object == user) or (object.getTeam().manager == user)', securityMessage: 'You can only see your own schedules.'),
         new GetCollection(uriTemplate: '/players', controller: GetPlayersListController::class, normalizationContext: ['groups' => ['read-player']])
-=======
-        
-        // can only delete if you're the manager of the team which contains the user
-        new Delete(security: 'is_granted("ROLE_ADMIN") or (object.ownedTeam.manager == user)', securityMessage: 'You can only delete your own user.'),
->>>>>>> feature/email2
     ],
     normalizationContext: ['groups' => ['read-user']],
 )]
@@ -438,7 +432,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
-<<<<<<< HEAD
 
     public function getFilePath(): ?string
     {
@@ -577,6 +570,3 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 }
-=======
-}
->>>>>>> feature/email2
