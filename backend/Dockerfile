@@ -53,7 +53,6 @@ RUN composer install --no-dev --no-scripts
 
 COPY . /srv/app/
 
-RUN APP_ENV=prod composer run auto-scripts
 
 #<<<<<<<<<<End: PHP-FPM Image Target>>>>>>>>>>#
 
@@ -75,3 +74,5 @@ COPY ./.docker/httpd/httpd.conf /usr/local/apache2/conf/httpd.conf
 
 COPY --from=php /srv/app/public /srv/app/public
 #<<<<<<<<<<End: Server Image Target>>>>>>>>>>#
+
+RUN APP_ENV=prod composer run auto-scripts
