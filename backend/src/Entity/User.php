@@ -50,7 +50,7 @@ use App\Controller\GetPlayersListController;
             denormalizationContext: ['groups' => ['user-img']],
             normalizationContext: ['groups' => ['read-user']],
             security: 'is_granted("ROLE_ADMIN") or (object == user)',
-            securityMessage: 'Only admins can create games images.',
+            securityMessage: 'Only admins can create users images.',
             deserialize: false
         ),
         new Get(uriTemplate: '/player/{id}/schedules', normalizationContext: ['groups' => ['read-player-schedule']], controller: GetPlayerScheduleController::class, security: 'is_granted("ROLE_ADMIN") or (object == user) or (object.booster.ownTeam.manager == user)', securityMessage: 'You can only see your own schedules.'),
