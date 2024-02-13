@@ -60,8 +60,8 @@ class Game
     #[Groups(['read-game', 'update-rank', 'read-team'])]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255, unique: true)]
-    #[Groups(['read-game', 'create-game', 'update-game', 'read-team'])]
+    #[ORM\Column(length: 255 , unique: true)]
+    #[Groups(['read-game', 'create-game', 'update-game', 'read-team', 'read-player'])]
     private ?string $name = null;
 
     #[ORM\OneToMany(mappedBy: 'game', targetEntity: Rank::class, cascade: ['persist', 'remove'])]

@@ -23,6 +23,7 @@ class AuthenticationSuccessHandler
             'email' => $user->getEmail(),
             'type' => $user->getType(),
             'roles' => $user->getRoles(),
+            'username' => $user->getUsername(),
         ];
 
         $event->setData($data);

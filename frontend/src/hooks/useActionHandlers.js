@@ -31,5 +31,6 @@ export default function useActionHandlers(selectedElementInitialValue = []) {
     handleSelectedElement,
     handleDialogClose,
     handleActionType,
+    handleOpenDialog,
   };
 }

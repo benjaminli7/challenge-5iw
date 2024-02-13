@@ -18,15 +18,16 @@ import { useQueryClient } from "react-query";
 
 function TeamView({ team }) {
   const queryClient = useQueryClient();
-  const { updateTeamMutation } = useTeams(team?.id);
+  if (!team) return null;
+  const { updateTeamMutation } = useTeams(team.id);
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm({
     defaultValues: {
-      name: team?.name,
-      iban: team?.iban,
+      name: team.name,
+      iban: team.iban,
     },
   });
   const onSubmit = async (data) => {
@@ -112,6 +113,9 @@ function TeamView({ team }) {
         sx={{ mt: 1 }}
       >
         <Stack spacing={4}>
+          <Typography variant="h4" component={"span"} className="titleBorder">
+            Team {team?.name}
+          </Typography>
           <div>
             <TextField
               key={"name"}

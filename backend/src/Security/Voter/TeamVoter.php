@@ -21,7 +21,7 @@ class TeamVoter extends Voter
 
     protected function supports($attribute, $subject): bool
     {
-        $supportsAttribute = in_array($attribute, ['TEAM_CREATE', 'TEAM_READ_ALL']);
+        $supportsAttribute = in_array($attribute, ['TEAM_CREATE']);
         $supportsSubject = $subject instanceof Team;
 
         return $supportsAttribute && $supportsSubject;
@@ -39,11 +39,6 @@ class TeamVoter extends Voter
         switch ($attribute) {
             case 'TEAM_CREATE':
                 if ($user->getType() === 'manager' || $this->security->isGranted('ROLE_ADMIN')) {
-                    return true;
-                }
-                break;
-            case 'TEAM_READ_ALL':
-                if ($user->getType() === 'client' || $this->security->isGranted('ROLE_ADMIN')) {
                     return true;
                 }
                 break;

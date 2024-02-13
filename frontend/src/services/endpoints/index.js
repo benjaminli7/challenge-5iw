@@ -4,6 +4,8 @@ const ENDPOINTS = {
     login: "api/login",
     userId: (userId) => `api/users/${userId}`,
     userImg: (userId) => `api/users/${userId}/image`,
+    schedules: (userId) => `api/player/${userId}/schedules`,
+    players: "api/players"
   },
   games: {
     root: "api/games",
@@ -21,7 +23,12 @@ const ENDPOINTS = {
     manager: (managerId) => `api/users/${managerId}/team`,
     addPlayer: (teamId) => `api/teams/${teamId}/players`,
     teamImg: (teamId) => `api/teams/${teamId}/image`,
+    approveTeam: (teamId) => `api/teams/${teamId}/approve`
   },
+  schedules: {
+    root: "api/schedules",
+    scheduleId: (scheduleId) => `api/schedules/${scheduleId}`,
+  }
 };
 
 export default ENDPOINTS;

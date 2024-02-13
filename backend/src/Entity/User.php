@@ -22,7 +22,8 @@ use App\Controller\GetManagerTeamController;
 use App\Controller\PostImageUserController;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Symfony\Component\HttpFoundation\File\File;
-
+use App\Controller\GetPlayerScheduleController;
+use App\Controller\GetPlayersListController;
 
 #[Vich\Uploadable]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
@@ -42,7 +43,6 @@ use Symfony\Component\HttpFoundation\File\File;
             security: 'is_granted("ROLE_ADMIN") or (object == user)',
             securityMessage: 'You can only see your own team.'
         ),
-        // can only delete if you're the manager of the team which contains the user
         new Delete(security: 'is_granted("ROLE_ADMIN") or (object.ownedTeam.manager == user)', securityMessage: 'You can only delete your own user.'),
         new Post(
             uriTemplate: '/users/{id}/image',
@@ -53,6 +53,8 @@ use Symfony\Component\HttpFoundation\File\File;
             securityMessage: 'Only admins can create games images.',
             deserialize: false
         ),
+        new Get(uriTemplate: '/player/{id}/schedules', normalizationContext: ['groups' => ['read-player-schedule']], controller: GetPlayerScheduleController::class, security: 'is_granted("ROLE_ADMIN") or (object == user) or (object.booster.ownTeam.manager == user)', securityMessage: 'You can only see your own schedules.'),
+        new GetCollection(uriTemplate: '/players', controller: GetPlayersListController::class, normalizationContext: ['groups' => ['read-player']])
     ],
     normalizationContext: ['groups' => ['read-user']],
 )]
@@ -75,7 +77,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[Assert\Length(min: 3, max: 50)]
     #[ORM\Column(length: 50, unique: true)]
-    #[Groups(['create-user', 'read-user', 'read-player', 'read-team'])]
+    #[Groups(['create-user', 'read-user', 'read-player', 'read-team', 'read-schedule', 'read-player-schedule'])]
     private ?string $username = null;
 
     #[ORM\Column]
@@ -165,8 +167,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['create-user', 'read-user', 'update-user', 'read-player', 'read-team'])]
     private ?int $coin_generated = 0;
 
+    // les réservations du client
+    #[ORM\OneToMany(mappedBy: 'client', targetEntity: Booking::class)]
+    private Collection $bookings;
 
+    // les disponibilités du booster
+    #[Groups(['read-schedule'])]
+    #[ORM\OneToMany(mappedBy: 'booster', targetEntity: Schedule::class)]
+    private Collection $schedules;
 
+    public function __construct()
+    {
+        $this->bookings = new ArrayCollection();
+        $this->schedules = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -417,6 +431,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
     public function getFilePath(): ?string
     {
         return $this->filePath;
@@ -449,7 +464,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
 
         $this->fileUrl = $fileUrl;
+        return $this;
+    }
 
+    /**
+     * @return Collection<int, Booking>
+     */
+    public function getBookings(): Collection
+    {
+        return $this->bookings;
+    }
+
+    public function addBooking(Booking $booking): static
+    {
+        if (!$this->bookings->contains($booking)) {
+            $this->bookings->add($booking);
+            $booking->setClient($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBooking(Booking $booking): static
+    {
+        if ($this->bookings->removeElement($booking)) {
+            // set the owning side to null (unless already changed)
+            if ($booking->getClient() === $this) {
+                $booking->setClient(null);
+            }
+        }
         return $this;
     }
 
@@ -461,7 +504,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPostal(int $postal): static
     {
         $this->postal = $postal;
+        return $this;
+    }
+    /**
+     * @return Collection<int, Schedule>
+     */
+    public function getSchedules(): Collection
+    {
+        return $this->schedules;
+    }
 
+    public function addSchedule(Schedule $schedule): static
+    {
+        if (!$this->schedules->contains($schedule)) {
+            $this->schedules->add($schedule);
+            $schedule->setBooster($this);
+        }
         return $this;
     }
 
@@ -497,7 +555,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setCoinGenerated(int $coin_generated): static
     {
         $this->coin_generated += $coin_generated;
+        return $this;
+    }
 
+    public function removeSchedule(Schedule $schedule): static
+    {
+        if ($this->schedules->removeElement($schedule)) {
+            // set the owning side to null (unless already changed)
+            if ($schedule->getBooster() === $this) {
+                $schedule->setBooster(null);
+            }
+        }
         return $this;
     }
 }
