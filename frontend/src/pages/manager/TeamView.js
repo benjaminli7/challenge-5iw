@@ -1,20 +1,20 @@
 import CustomButton from "@/components/commons/CustomButton";
 import { useTeams } from "@/hooks/models/useTeams";
+import { httpPostMultiPart } from "@/services/api";
+import ENDPOINTS from "@/services/endpoints";
 import {
+  Avatar,
   Box,
+  Button,
   Stack,
   TextField,
   Typography,
-  Avatar,
-  Button,
 } from "@mui/material";
-import { set, useForm } from "react-hook-form";
-import { toast } from "sonner";
 import styled from "@mui/material/styles/styled";
 import { useState } from "react";
-import { httpPostMultiPart } from "@/services/api";
-import ENDPOINTS from "@/services/endpoints";
+import { useForm } from "react-hook-form";
 import { useQueryClient } from "react-query";
+import { toast } from "sonner";
 
 function TeamView({ team }) {
   const queryClient = useQueryClient();
@@ -68,44 +68,6 @@ function TeamView({ team }) {
 
   return (
     <Box sx={{ mt: 1 }}>
-      <Stack spacing={4}>
-        <Typography variant="h4" component={"span"} className="titleBorder">
-          Team {team?.name}
-        </Typography>
-        <Typography
-          variant="h5"
-          component={"span"}
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            flexDirection: "column",
-          }}
-        >
-          Team's Logo
-          <Avatar
-            src={team?.fileUrl && process.env.REACT_APP_API_URL + team?.fileUrl}
-            title={team?.name}
-            sx={{ width: 100, height: 100 }}
-          ></Avatar>
-          <Button
-            component="label"
-            variant="contained"
-            // startIcon={<CloudUploadIcon />}
-            sx={{ mt: 2 }}
-          >
-            Ajouter une image
-            <VisuallyHiddenInput
-              type="file"
-              accept="image/*"
-              onChange={(e) => {
-                e.target.files[0] && handleImageUpload(e.target.files[0], team);
-              }}
-            />
-          </Button>
-        </Typography>
-      </Stack>
-
       <Box
         component="form"
         onSubmit={handleSubmit(onSubmit)}
@@ -116,6 +78,44 @@ function TeamView({ team }) {
           <Typography variant="h4" component={"span"} className="titleBorder">
             Team {team?.name}
           </Typography>
+          <Typography
+            variant="h5"
+            component={"span"}
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              flexDirection: "column",
+            }}
+          >
+            Team's Logo
+            <Avatar
+              src={
+                team?.fileUrl && process.env.REACT_APP_API_URL + team?.fileUrl
+              }
+              title={team?.name}
+              sx={{ width: 100, height: 100 }}
+            ></Avatar>
+            <Button
+              component="label"
+              variant="contained"
+              // startIcon={<CloudUploadIcon />}
+              sx={{ mt: 2 }}
+            >
+              Ajouter une image
+              <VisuallyHiddenInput
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  e.target.files[0] &&
+                    handleImageUpload(e.target.files[0], team);
+                }}
+              />
+            </Button>
+          </Typography>
+        </Stack>
+
+        <Stack spacing={4}>
           <div>
             <TextField
               key={"name"}
