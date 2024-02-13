@@ -16,7 +16,8 @@ dayjs.extend(customParseFormat);
 
 function ProfileView() {
     const auth = useAuthUser();
-    const { data: user, isLoading: isLoadingUser } = useFetch("user", ENDPOINTS.users.userId(auth().user.id));
+    const [shouldReload, setShouldReload] = useState(false);
+    const { data: user, isLoading: isLoadingUser, refetch: refetchUser } = useFetch("user", ENDPOINTS.users.userId(auth().user.id));
     const { data: existingGames, isLoading: isLoadingGames } = useFetch("games", ENDPOINTS.games.root);
     console.log(existingGames);
     const { updateUserMutation } = useUsers(auth().user.id);
@@ -50,13 +51,7 @@ function ProfileView() {
     const enableScroll = () => {
         document.body.style.overflow = '';
     };
-    useEffect(() => {
-        if (user) {
-            Object.keys(user).forEach(key => {
-                setValue(key, user[key]);
-            });
-        }
-    }, [user, setValue]);
+
 
     const handleScroll = (e) => {
         const now = Date.now();
@@ -87,6 +82,9 @@ function ProfileView() {
 
         setLastScrollTime(now);
     };
+
+
+
 
     const onSubmit = async (data) => {
         try {
@@ -122,7 +120,7 @@ function ProfileView() {
         const gameId = event.target.value;
         const game = existingGames.find((g) => g.id === gameId);
         setSelectedGame(game);
-        setSelectedRank(null); // Reset selected rank when game changes
+        setSelectedRank(null);
     };
 
     const handleRankChange = (event) => {
@@ -131,14 +129,78 @@ function ProfileView() {
         setSelectedRank(rank);
     };
 
+    useEffect(() => {
+        if (shouldReload) {
+            refetchUser();
+            setShouldReload(false);
+        }
+    }, [shouldReload, refetchUser]);
+
     const submitGameRank = async () => {
-        // Implement submission logic here
+        if (!selectedRank) {
+            console.error('No rank selected');
+            return;
+        }
+        const rankIRI = `${ENDPOINTS.ranks.root}/${selectedRank.id}`;
+
+        const currentRankIRIs = user.rankIRIs ? [...user.rankIRIs] : [];
+
+        if (!currentRankIRIs.includes(rankIRI)) {
+            currentRankIRIs.push(rankIRI);
+
+            try {
+                await updateUserMutation.mutateAsync({
+                    id: user.id,
+                    rankIRIs: currentRankIRIs,
+                });
+                setOpenSnackbar(true);
+                setSnackbarMessage("Game rank added successfully!");
+                setAlertSeverity("success");
+                handleCloseAddGameDialog();
+                setShouldReload(true);
+            } catch (error) {
+                console.error('Error updating game rank:', error);
+                setOpenSnackbar(true);
+                setSnackbarMessage("Failed to add game rank.");
+                setAlertSeverity("error");
+            }
+        } else {
+            console.log('Rank already added');
+        }
     };
 
 
-    if (isLoadingUser) {
+    useEffect(() => {
+        if (user) {
+            Object.keys(user).forEach(key => {
+                setValue(key, user[key]);
+            });
+        }
+    }, [user, setValue]);
+
+
+
+    if (isLoadingUser || !user) {
         return <CircularProgress />;
     }
+
+    const gameRanks = user?.rankIRIs?.reduce((acc, rankIRI) => {
+        const rankId = parseInt(rankIRI.split('/').pop());
+        existingGames.forEach(game => {
+            const foundRank = game.ranks.find(rank => rank.id === rankId);
+            if (foundRank) {
+                if (!acc[game.name]) {
+                    acc[game.name] = { gameName: game.name, ranks: [] };
+                }
+                acc[game.name].ranks.push(foundRank.name);
+            }
+        });
+        return acc;
+    }, {}) || {};
+
+
+    const gameRanksArray = Object.values(gameRanks);
+
 
     return (
         <Box sx={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', p: 3, alignItems: 'center' }} onWheel={handleScroll} onMouseEnter={disableScroll} onMouseLeave={enableScroll}>
@@ -222,21 +284,33 @@ function ProfileView() {
                             <Typography gutterBottom variant="h5" align="center">
                                 Stats and Games
                             </Typography>
+                            <Typography variant="h6" align="center" sx={{ mb: 2 }}>
+                                Coins: {user?.coins}
+                            </Typography>
                             <Grid container spacing={2}>
-                                <Grid item xs={12}>
-                                    <Typography variant="subtitle1">Coins: {user?.coins}</Typography>
-                                </Grid>
-                                {user?.existingGames?.map((game) => (
-                                    <Grid item xs={12} key={game.id}>
-                                        <Typography>{game.name}: {game.rank.name}</Typography>
+                                {gameRanksArray.map((game, index) => (
+                                    <Grid item xs={12} key={index}>
+                                        <Card sx={{ mb: 2 }}>
+                                            <CardContent>
+                                                <Typography variant="h6">{game.gameName}</Typography>
+                                                {game.ranks.map((rank, rankIndex) => (
+                                                    <Typography key={rankIndex} sx={{ ml: 2 }}>
+                                                        - Rank: {rank}
+                                                    </Typography>
+                                                ))}
+                                            </CardContent>
+                                        </Card>
                                     </Grid>
                                 ))}
-                                <Grid item xs={12}>
-                                    <Button variant="contained" onClick={handleOpenAddGameDialog}>Add Game Rank</Button>
+                                <Grid item xs={12} sx={{ mt: 2, display: 'flex', justifyContent: 'center' }}>
+                                    <Button variant="contained" color="primary" onClick={handleOpenAddGameDialog}>
+                                        Add Game Rank
+                                    </Button>
                                 </Grid>
                             </Grid>
                         </Card>
                     )}
+
 
                     <Dialog open={openAddGameDialog} onClose={handleCloseAddGameDialog}>
                         <DialogTitle>Add Game Rank</DialogTitle>

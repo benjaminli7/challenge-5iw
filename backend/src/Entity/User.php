@@ -27,8 +27,6 @@ use App\Controller\GetManagerTeamController;
     operations: [
         new GetCollection(normalizationContext: ['groups' => ['read-user']], security: 'is_granted("ROLE_ADMIN")', securityMessage: 'Only admins can see all users.'),
         new Get(normalizationContext: ['groups' => ['read-user']], security: 'is_granted("ROLE_ADMIN") or object == user', securityMessage: 'You can only see your own user.'),
-        //  new Get(uriTemplate: '/users/{id}/infos', normalizationContext: ['groups' => ['read-user', 'read-user-as-admin']], security: 'is_granted("ROLE_ADMIN")'),
-        // new Get(uriTemplate: '/players/{id}', normalizationContext: ['groups' => ['read-player']], security: 'is_granted("PLAYER_READ", object) or is_granted("ROLE_ADMIN")', securityMessage: 'Only players can see their own user.'),
         new Post(denormalizationContext: ['groups' => ['create-user']]),
         new Patch(denormalizationContext: ['groups' => ['update-user']], securityPostDenormalize: 'is_granted("ROLE_ADMIN") or object == user', securityPostDenormalizeMessage: 'You can only edit your own user.'),
         new Get(
@@ -52,7 +50,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-
     #[Groups(['read-user', 'update-user', 'read-team'])]
     private ?int $id = null;
 
@@ -89,7 +86,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $plainPassword = null;
 
 
-    #[ORM\Column(type: 'boolean', options: ['default' => false], nullable: true)]
+    #[ORM\Column(type: 'boolean', nullable: true, options: ['default' => false])]
     #[Groups(['update-user', 'read-client', 'read-user'])]
     private ?bool $isVerified = null;
 
@@ -133,6 +130,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToOne(inversedBy: 'boosters')]
     private ?Team $team = null;
 
+    #[ORM\ManyToOne(targetEntity: Rank::class)]
+    #[ORM\JoinColumn(nullable: true)]
+    #[Groups(['read-user', 'create-user', 'update-user'])]
+    private ?Rank $rankUserId = null;
+
+    #[ORM\Column(type: 'json', nullable: true)]
+    #[Groups(['read-user', 'create-user', 'update-user'])]
+    private array $rankIRIs = [];
 
     public function getId(): ?int
     {
@@ -383,4 +388,53 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    public function getRankUserId(): ?Rank
+    {
+        return $this->rankUserId;
+    }
+
+    public function setRankUserId(?Rank $rankUserId): self
+    {
+        $this->rankUserId = $rankUserId;
+
+        return $this;
+    }
+    public function getRankIRIs(): array
+    {
+        return $this->rankIRIs ?? [];
+    }
+
+    public function addRankIRI(string $rankIRI): self
+    {
+        if ($this->rankIRIs === null) {
+            $this->rankIRIs = [];
+        }
+
+        if (!in_array($rankIRI, $this->rankIRIs, true)) {
+            $this->rankIRIs[] = $rankIRI;
+        }
+
+        return $this;
+    }
+
+
+    public function removeRankIRI(string $rankIRI): self
+    {
+        if (false !== $key = array_search($rankIRI, $this->rankIRIs, true)) {
+            unset($this->rankIRIs[$key]);
+            $this->rankIRIs = array_values($this->rankIRIs); // Re-index array
+        }
+
+        return $this;
+    }
+
+    public function setRankIRIs(array $rankIRIs): self
+    {
+        $this->rankIRIs = $rankIRIs;
+
+        return $this;
+    }
+
+
 }
