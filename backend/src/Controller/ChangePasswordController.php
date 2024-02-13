@@ -35,7 +35,7 @@ class ChangePasswordController
 
         $hashedPassword = $this->hasher->hashPassword($user, $dto->getPassword());
         $user->setPassword($hashedPassword);
-
+        $user->setResetToken(NULL);
         $entityManager->persist($user);
         $entityManager->flush();
 
