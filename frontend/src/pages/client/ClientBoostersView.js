@@ -2,26 +2,27 @@ import useFetch from "@/hooks/useFetch";
 import MapWrapper from "@/pages/client/MapWrapper";
 import ENDPOINTS from "@/services/endpoints";
 import {
-  Avatar,
   Box,
-  Divider,
   FormControl,
   Grid,
   InputLabel,
   MenuItem,
   Select,
-  Stack,
   Typography,
 } from "@mui/material";
-import { Fragment, useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import ClientBoosterItemList from "@/pages/client/ClientBoosterItemList";
 
 function ClientBoostersView() {
   const [filters, setFilters] = useState({});
+  const [queryParams, setQueryParams] = useState(new URLSearchParams());
 
-  const { data: players, isLoading: isLoadingPlayers, refetch } = useFetch(
-    "players",
-    `${ENDPOINTS.users.players}?`
-  );
+  const {
+    data: players,
+    isLoading: isLoadingPlayers,
+    isFetching: isFetchingPlayers,
+    refetch,
+  } = useFetch("players", `${ENDPOINTS.users.players}?${queryParams}`);
   const { data: teams, isLoading: isLoadingTeams } = useFetch(
     "teams",
     `${ENDPOINTS.teams.root}?isApproved=true`
@@ -31,28 +32,35 @@ function ClientBoostersView() {
     ENDPOINTS.games.root
   );
   useEffect(() => {
-    console.log(filters)
     const newQueryParams = new URLSearchParams();
     Object.entries(filters).forEach(([key, value]) => {
       if (value !== "") {
         newQueryParams.append(key, value);
       }
     });
-    refetch()
-  }, [filters])
+    setQueryParams(newQueryParams);
+  }, [filters]);
+
+  useEffect(() => {
+    refetch();
+  }, [queryParams]);
 
   if (isLoadingPlayers || isLoadingTeams || isLoadingGames)
     return <div>Loading...</div>;
 
-
-
   return (
     <div>
-      <Typography variant="h4" sx={{ mb: 3 }}>
-        Liste des filtres
+      <Typography variant="h6" sx={{ mb: 3 }}>
+        Filters
       </Typography>
       <Box
-        sx={{ display:"flex",flexDirection: { xs: "column", sm: "row" }, justifyContent: "center", alignItems: "center", gap: 1}}
+        sx={{
+          display: "flex",
+          flexDirection: { xs: "column", sm: "row" },
+          justifyContent: "center",
+          alignItems: "center",
+          gap: 1,
+        }}
         mb={3}
       >
         <FormControl fullWidth>
@@ -91,23 +99,22 @@ function ClientBoostersView() {
         </FormControl>
       </Box>
       <Grid container spacing={1}>
-        <Grid item xs={12} sm={6} rowGap={3} sx={{height: "70vh", overflowY: "scroll"}}>
-          {players.map((player, index) => (
-            <Fragment key={index}>
-              <Stack direction="row" spacing={3} alignItems="center" py={1}>
-                <Avatar />
-                <Stack>
-                  <Typography sx={{ fontWeight: "bold" }}>
-                    {player.team.name}
-                  </Typography>
-                  <Typography>
-                    {player.firstName} '{player.username}' {player.lastName}
-                  </Typography>
-                </Stack>
-              </Stack>
-              <Divider />
-            </Fragment>
-          ))}
+        <Grid
+          item
+          xs={12}
+          sm={6}
+          rowGap={3}
+          sx={{ height: "70vh", overflowY: "scroll" }}
+        >
+          {isFetchingPlayers ? (
+            <Typography>Loading...</Typography>
+          ) : (
+            <>
+              {players.map((player, index) => (
+                <ClientBoosterItemList key={index} player={player} />
+              ))}
+            </>
+          )}
         </Grid>
         <Grid item xs={12} sm={6}>
           <MapWrapper />
