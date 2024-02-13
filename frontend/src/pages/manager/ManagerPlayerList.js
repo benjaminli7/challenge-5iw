@@ -47,9 +47,9 @@ function ManagerPlayerList({
               <Typography>{player.discord}</Typography>
               <Typography>{player.address}</Typography>
               <Typography>{player.postal}</Typography>
-              <Typography>{player.taux_horaire} per hours </Typography>
+              <Typography>{player.taux_horaire}coins/h</Typography>
               <Typography>
-                This player has generated {player.coin_generated} coins
+                {player.coin_generated} coins
               </Typography>
               <Box sx={{ display: "flex", gap: 2 }}>
                 <Button

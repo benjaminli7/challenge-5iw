@@ -1,5 +1,4 @@
 import React from "react";
-import GamesView from "../game/GamesView";
 function Home() {
   return (
     <div>

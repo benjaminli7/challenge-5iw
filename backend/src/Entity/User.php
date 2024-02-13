@@ -49,11 +49,11 @@ use App\Controller\GetPlayersListController;
             controller: PostImageUserController::class,
             denormalizationContext: ['groups' => ['user-img']],
             normalizationContext: ['groups' => ['read-user']],
-            security: 'is_granted("ROLE_ADMIN") or (object == user)',
-            securityMessage: 'Only admins can create users images.',
+            security: 'is_granted("ROLE_ADMIN") or (object.getTeam().manager == user)',
+            securityMessage: 'Only admins can create games images.',
             deserialize: false
         ),
-        new Get(uriTemplate: '/player/{id}/schedules', normalizationContext: ['groups' => ['read-player-schedule']], controller: GetPlayerScheduleController::class, security: 'is_granted("ROLE_ADMIN") or (object == user) or (object.booster.ownTeam.manager == user)', securityMessage: 'You can only see your own schedules.'),
+        new Get(uriTemplate: '/player/{id}/schedules', normalizationContext: ['groups' => ['read-player-schedule']], controller: GetPlayerScheduleController::class, security: 'is_granted("ROLE_ADMIN") or (object == user) or (object.getTeam().manager == user)', securityMessage: 'You can only see your own schedules.'),
         new GetCollection(uriTemplate: '/players', controller: GetPlayersListController::class, normalizationContext: ['groups' => ['read-player']])
     ],
     normalizationContext: ['groups' => ['read-user']],
@@ -161,7 +161,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[Groups(['create-user', 'read-user', 'update-user', 'read-player', 'read-team'])]
     #[ORM\Column(nullable: true)]
-    private ?float $taux_horaire = null;
+    private ?int $taux_horaire = null;
 
     #[ORM\Column]
     #[Groups(['create-user', 'read-user', 'update-user', 'read-player', 'read-team'])]
@@ -178,6 +178,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function __construct()
     {
+        $this->coins = 0;
         $this->bookings = new ArrayCollection();
         $this->schedules = new ArrayCollection();
     }
