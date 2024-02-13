@@ -147,24 +147,7 @@ export default function Signup() {
               />
             </Grid>
             <Grid item xs={12}>
-              <TextField
-                {...register("postal", {
-                  required: "Postal is required",
-                  pattern: {
-                    value: /^[0-9]{5}$/i,
-                    message: "Invalid postal code",
-                  },
-                })}
-                required
-                fullWidth
-                id="postal"
-                label="Zip / Postal code"
-                name="postal"
-                autoComplete="postal"
-                placeholder="12345"
-                error={errors.postal ? true : false}
-                helperText={errors.postal && errors.postal.message}
-              />
+            
             </Grid>
             <Grid item xs={12}>
               <TextField
