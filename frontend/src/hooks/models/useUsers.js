@@ -22,6 +22,8 @@ export function useUsers(userId) {
     ["users", "team"]
   );
 
+  
+
   return {
     loginMutation,
     registerMutation,

@@ -29,6 +29,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import "./index.css";
 import AdminTeamsView from "@/pages/admin/teams/AdminTeamsView";
+import ClientBoosterDetail from "@/pages/client/ClientBoosterDetail";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -94,6 +95,14 @@ const router = createBrowserRouter([
               </ProtectedUserTypeRoute>
             ),
           },
+          {
+            path: "players/:id",
+            element: (
+              <ProtectedUserTypeRoute type="client">
+                <ClientBoosterDetail />
+              </ProtectedUserTypeRoute>
+            ),
+          }
         ],
       },
       {

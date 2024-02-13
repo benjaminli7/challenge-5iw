@@ -8,6 +8,7 @@ const ENDPOINTS = {
     players: "api/players",
     resetPassword:  `api/users/reset-password`,
     changePassword: (token) => `api/users/change-password/${token}`
+    player: (playerId) => `api/players/${playerId}`,
   },
   games: {
     root: "api/games",
