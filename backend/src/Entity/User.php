@@ -26,13 +26,18 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Symfony\Component\HttpFoundation\File\File;
 use App\Controller\GetPlayerScheduleController;
 use App\Controller\GetPlayersListController;
+use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Doctrine\Orm\Filter\BooleanFilter;
+use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
+
+
 
 #[Vich\Uploadable]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
 #[ApiResource(
     operations: [
-        new GetCollection(normalizationContext: ['groups' => ['read-user']], security: 'is_granted("ROLE_ADMIN")', securityMessage: 'Only admins can see all users.'),
+        new GetCollection(normalizationContext: ['groups' => ['read-user', 'Timestampable']], security: 'is_granted("ROLE_ADMIN")', securityMessage: 'Only admins can see all users.'),
         new Get(normalizationContext: ['groups' => ['read-user']], security: 'is_granted("ROLE_ADMIN") or object == user', securityMessage: 'You can only see your own user.'),
         //  new Get(uriTemplate: '/users/{id}/infos', normalizationContext: ['groups' => ['read-user', 'read-user-as-admin']], security: 'is_granted("ROLE_ADMIN")'),
         new Get(uriTemplate: '/players/{id}', security: "object.getType() == 'player'", securityMessage: "it's not a player!", normalizationContext: ['groups' => ['read-player']]),
@@ -56,15 +61,24 @@ use App\Controller\GetPlayersListController;
             deserialize: false
         ),
         new Get(uriTemplate: '/player/{id}/schedules', normalizationContext: ['groups' => ['read-player-schedule']], controller: GetPlayerController::class, security: 'is_granted("ROLE_ADMIN") or (object == user) or (object.getTeam().manager == user)', securityMessage: 'You can only see your own schedules.'),
-        new GetCollection(uriTemplate: '/players', controller: GetPlayersListController::class, normalizationContext: ['groups' => ['read-player']])
+        new GetCollection(uriTemplate: '/players', controller: GetPlayersListController::class, normalizationContext: ['groups' => ['read-player', 'Timestampable']])
     ],
     normalizationContext: ['groups' => ['read-user']],
 )]
+#[ApiFilter(BooleanFilter::class, properties: ['isVerified'])]
+#[ApiFilter(DateFilter::class, properties: ['createdAt'])]
+
+
+
 #[UniqueEntity(['email'])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
 
     use TimestampableTrait;
+
+    // #[ORM\Column(type: 'timestamp')]
+    // #[Groups(["read-player"])]
+    // private $createdAt;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]

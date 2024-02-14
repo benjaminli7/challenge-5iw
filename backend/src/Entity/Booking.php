@@ -13,6 +13,10 @@ use ApiPlatform\Metadata\Post;
 use App\Controller\AddBookingController;
 use App\Controller\CancelBookingController;
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\Traits\TimestampableTrait;
+use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
+
 
 #[ORM\Entity(repositoryClass: BookingRepository::class)]
 #[ApiResource(
@@ -23,8 +27,12 @@ use Doctrine\ORM\Mapping as ORM;
         new Delete(controller: CancelBookingController::class, denormalizationContext: ['groups' => ['cancel-booking']], uriTemplate: "/bookings/{id}/cancel", security: 'is_granted("ROLE_ADMIN") or object.getClient() == user')
         ]
 )]
+#[ApiFilter(DateFilter::class, properties: ['createdAt'])]
+
 class Booking
 {
+    use TimestampableTrait;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
