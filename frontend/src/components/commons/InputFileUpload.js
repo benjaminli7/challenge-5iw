@@ -31,8 +31,6 @@ const InputFileUpload = ({
   type,
 }) => {
   const [file, setFile] = useState(null);
-
-  console.log(ressource);
   return (
     <Box
       sx={{

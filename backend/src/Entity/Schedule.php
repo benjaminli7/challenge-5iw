@@ -18,11 +18,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ORM\Entity(repositoryClass: ScheduleRepository::class)]
 #[ApiResource(
     operations: [
-        new GetCollection(),
+        new GetCollection(normalizationContext: ['groups' => ['read-schedule']]),
         new Post(denormalizationContext: ['groups' => ['write-schedule']], normalizationContext: ['groups' => ['read-schedule-created']]),
         new Delete(),
     ],
-    normalizationContext: ['groups' => ['read-schedule']],
 )]
 #[UniqueEntity(
     fields: ['startingDate', 'endingDate'],
@@ -56,7 +55,7 @@ class Schedule
     #[ORM\Column(length: 50)]
     private ?string $status = null;
 
-    #[Groups(['read-schedule', 'read-player-schedule', 'read-team', 'read-schedule-created', 'read-client'])]
+    #[Groups(['read-schedule', 'read-player-schedule', 'read-team', 'read-schedule-created', 'read-client','read-player'])]
     #[ORM\Column()]
     private ?int $coinsNeeded = null;
 

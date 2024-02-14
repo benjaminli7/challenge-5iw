@@ -23,6 +23,7 @@ export function useCalendar() {
         start: event.startingDate,
         end: event.endingDate,
         backgroundColor: setBackGroundColor(event),
+        coinsNeeded: event.coinsNeeded,
       };
     });
   };

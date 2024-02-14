@@ -6,13 +6,13 @@ export function useSchedule(scheduleId) {
   const addScheduleUserMutation = useCustomMutation(
     ENDPOINTS.schedules.root,
     "post",
-    ["schedules"]
+    ["player"]
   );
 
   const deleteScheduleMutation = useCustomMutation(
     ENDPOINTS.schedules.scheduleId(scheduleId),
     "delete",
-    ["schedules"]
+    ["player"]
   );
 
   return {

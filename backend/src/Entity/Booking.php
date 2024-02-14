@@ -6,29 +6,32 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use App\Repository\BookingRepository;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use App\Controller\AddBookingController;
+use App\Controller\CancelBookingController;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: BookingRepository::class)]
 #[ApiResource(
     operations: [
         new GetCollection(normalizationContext: ['groups' => ['read-booking']], security: 'is_granted("ROLE_ADMIN")'),
-        new Post(uriTemplate: "/bookings/new", controller: AddBookingController::class, denormalizationContext: ['groups' => ['create-booking']], securityPostDenormalize: 'is_granted("ROLE_ADMIN") or object.getClient() == user', securityPostDenormalizeMessage: 'You can only create bookings for yourself.'),
-        new Patch(denormalizationContext: ['groups' => ['update-booking']], security: 'is_granted("ROLE_ADMIN")')
-    ]
+        new Post(uriTemplate: "/bookings/new", controller: AddBookingController::class, denormalizationContext: ['groups' => ['create-booking']], securityPostDenormalize: 'is_granted("ROLE_ADMIN") or user.getType() == "client"', securityPostDenormalizeMessage: 'You can only create bookings for yourself.'),
+        new Patch(denormalizationContext: ['groups' => ['update-booking']], security: 'is_granted("ROLE_ADMIN")'),
+        new Delete(controller: CancelBookingController::class, denormalizationContext: ['groups' => ['cancel-booking']], uriTemplate: "/bookings/{id}/cancel", security: 'is_granted("ROLE_ADMIN") or object.getClient() == user')
+        ]
 )]
 class Booking
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['read-client'])]
+    #[Groups(['read-client', 'cancel-booking'])]
     private ?int $id = null;
 
-    #[Groups(['read-client'])]
+    #[Groups(['read-client', 'cancel-booking'])]
     #[ORM\Column(length: 50)]
     private ?string $status = null;
 
@@ -36,7 +39,7 @@ class Booking
     private ?User $client = null;
 
     #[Groups(['read-client'])]
-    #[ORM\OneToOne(inversedBy: 'booking', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(inversedBy: 'booking')]
     private ?Schedule $schedule = null;
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]

@@ -14,7 +14,6 @@ function ManagerPlayerCreateForm({ team, handleDialogClose, games }) {
         lat: latLng.lat,
         lng: latLng.lng,
       };
-      // console.log(dataToSend)
       await addPlayerMutation.mutateAsync(dataToSend);
       await handleDialogClose();
       toast.success("Player added to team!");
