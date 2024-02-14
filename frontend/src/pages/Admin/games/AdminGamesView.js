@@ -45,17 +45,28 @@ function AdminGamesView() {
   ) => {
     try {
       let response = null;
-      switch (type) {
-        case "game_img":
-          response = await httpPostMultiPart(
-            ENDPOINTS.games.gameImg(ressource.id),
-            data
-          );
-        case "rank_img":
+      // switch (type) {
+      //   case "game_img":
+      //     response = await httpPostMultiPart(
+      //       ENDPOINTS.games.gameImg(ressource.id),
+      //       data
+      //     );
+      //   case "rank_img":
+      //     response = await httpPostMultiPart(
+      //       ENDPOINTS.ranks.rankImg(ressource.id),
+      //       data
+      //     );
+      if (type === "game_img") {
+        response = await httpPostMultiPart(
+          ENDPOINTS.games.gameImg(ressource.id),
+          data
+        );
+        if (type === "rank_img") {
           response = await httpPostMultiPart(
             ENDPOINTS.ranks.rankImg(ressource.id),
             data
           );
+        }
       }
       setFile(null);
       handleDialogClose();
