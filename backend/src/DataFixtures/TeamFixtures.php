@@ -68,6 +68,7 @@ class TeamFixtures extends Fixture implements DependentFixtureInterface
                 $newTeam->addBooster($user);
                 $manager->persist($user);
             }
+            $newTeam->setCoins(1000);
             $manager->persist($newTeam);
         }
 
