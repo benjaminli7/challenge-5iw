@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20240214021746 extends AbstractMigration
+final class Version20240214213503 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -20,20 +20,10 @@ final class Version20240214021746 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('CREATE SEQUENCE booking_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE SEQUENCE game_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE SEQUENCE offer_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE SEQUENCE payment_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE SEQUENCE rank_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE SEQUENCE review_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE SEQUENCE review_type_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE SEQUENCE schedule_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE SEQUENCE team_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE SEQUENCE "user_id_seq" INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE TABLE booking (id INT NOT NULL, coins_used INT NOT NULL, status VARCHAR(50) NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE TABLE game (id INT NOT NULL, name VARCHAR(255) NOT NULL, file_path VARCHAR(255) DEFAULT NULL, color VARCHAR(255) DEFAULT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE UNIQUE INDEX UNIQ_232B318C5E237E06 ON game (name)');
-        $this->addSql('CREATE TABLE offer (id INT NOT NULL, name VARCHAR(255) NOT NULL, coins INT NOT NULL, price NUMERIC(10, 2) NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE offer (id INT NOT NULL, name VARCHAR(255) NOT NULL, coins INT NOT NULL, price INT NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE TABLE payment (id INT NOT NULL, user_id INT NOT NULL, offer_id INT NOT NULL, amount NUMERIC(10, 2) NOT NULL, status VARCHAR(255) NOT NULL, payment_date TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_6D28840DA76ED395 ON payment (user_id)');
         $this->addSql('CREATE INDEX IDX_6D28840D53C674EE ON payment (offer_id)');
@@ -64,16 +54,6 @@ final class Version20240214021746 extends AbstractMigration
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->addSql('CREATE SCHEMA public');
-        $this->addSql('DROP SEQUENCE booking_id_seq CASCADE');
-        $this->addSql('DROP SEQUENCE game_id_seq CASCADE');
-        $this->addSql('DROP SEQUENCE offer_id_seq CASCADE');
-        $this->addSql('DROP SEQUENCE payment_id_seq CASCADE');
-        $this->addSql('DROP SEQUENCE rank_id_seq CASCADE');
-        $this->addSql('DROP SEQUENCE review_id_seq CASCADE');
-        $this->addSql('DROP SEQUENCE review_type_id_seq CASCADE');
-        $this->addSql('DROP SEQUENCE schedule_id_seq CASCADE');
-        $this->addSql('DROP SEQUENCE team_id_seq CASCADE');
-        $this->addSql('DROP SEQUENCE "user_id_seq" CASCADE');
         $this->addSql('ALTER TABLE payment DROP CONSTRAINT FK_6D28840DA76ED395');
         $this->addSql('ALTER TABLE payment DROP CONSTRAINT FK_6D28840D53C674EE');
         $this->addSql('ALTER TABLE rank DROP CONSTRAINT FK_8879E8E5E48FD905');

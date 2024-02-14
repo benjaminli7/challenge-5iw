@@ -128,7 +128,7 @@ const router = createBrowserRouter([
         element: <AdminGamesView />,
       },
       {
-        path: "offers/create",
+        path: "offers",
         element: (
             <ProtectedRoute>
               <CreateOfferForm />

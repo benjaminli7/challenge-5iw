@@ -24,8 +24,8 @@ class Offer
     private int $coins;
 
     #[Assert\NotBlank]
-    #[ORM\Column(type: 'decimal', precision: 10, scale: 2)]
-    private float $price;
+    #[ORM\Column(type: 'integer')]
+    private int $price;
 
 
     public function getId(): ?int
@@ -55,12 +55,12 @@ class Offer
         return $this;
     }
 
-    public function getPrice(): float
+    public function getPrice(): int
     {
         return $this->price;
     }
 
-    public function setPrice(float $price): self
+    public function setPrice(int $price): self
     {
         $this->price = $price;
         return $this;

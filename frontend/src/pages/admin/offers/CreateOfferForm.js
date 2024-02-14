@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { useCustomMutation } from '@/hooks/useCustomMutation';
-import ENDPOINTS from '@/services/endpoints';
 import { TextField, Button } from '@mui/material';
+import { useOffers } from '@/hooks/models/userOffers';
 
 const CreateOfferForm = () => {
     const [offerData, setOfferData] = useState({
@@ -10,7 +9,7 @@ const CreateOfferForm = () => {
         price: '',
     });
 
-    const addOfferMutation = useCustomMutation(ENDPOINTS.offers.root, 'post', ['offers']);
+    const { addOfferMutation } = useOffers();
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
