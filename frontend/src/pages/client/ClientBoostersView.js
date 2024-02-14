@@ -23,6 +23,7 @@ function ClientBoostersView() {
     isFetching: isFetchingPlayers,
     refetch,
   } = useFetch("players", `${ENDPOINTS.users.players}?${queryParams}`);
+
   const { data: teams, isLoading: isLoadingTeams } = useFetch(
     "teams",
     `${ENDPOINTS.teams.root}?isApproved=true`
@@ -117,7 +118,7 @@ function ClientBoostersView() {
           )}
         </Grid>
         <Grid item xs={12} sm={6}>
-          <MapWrapper />
+          <MapWrapper players={players} />
         </Grid>
       </Grid>
     </div>

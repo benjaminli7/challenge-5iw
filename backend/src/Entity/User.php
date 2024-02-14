@@ -16,6 +16,7 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Delete;
+use App\Controller\GetClientController;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
 use App\Controller\GetManagerTeamController;
@@ -33,10 +34,10 @@ use App\Controller\GetPlayersListController;
         new GetCollection(normalizationContext: ['groups' => ['read-user']], security: 'is_granted("ROLE_ADMIN")', securityMessage: 'Only admins can see all users.'),
         new Get(normalizationContext: ['groups' => ['read-user']], security: 'is_granted("ROLE_ADMIN") or object == user', securityMessage: 'You can only see your own user.'),
         //  new Get(uriTemplate: '/users/{id}/infos', normalizationContext: ['groups' => ['read-user', 'read-user-as-admin']], security: 'is_granted("ROLE_ADMIN")'),
-        new Get(uriTemplate: '/players/{id}', security: "object.getType() == 'player'", securityMessage: "it's not a player!",normalizationContext: ['groups' => ['read-player']]),
+        new Get(uriTemplate: '/players/{id}', security: "object.getType() == 'player'", securityMessage: "it's not a player!", normalizationContext: ['groups' => ['read-player']]),
+        new Get(controller: GetClientController::class, uriTemplate: '/clients/{id}', security: "object == user or is_granted('ROLE_ADMIN')", securityMessage: "You can only see your own user.", normalizationContext: ['groups' => ['read-client']]),
         new Post(denormalizationContext: ['groups' => ['create-user']]),
-        new Patch(denormalizationContext: ['groups' => ['update-user']], securityPostDenormalize: 'is_granted("ROLE_ADMIN") or object == user', securityPostDenormalizeMessage: 'You can only edit your own user.'),
-        new Get(
+        new Patch(denormalizationContext: ['groups' => ['update-user']], securityPostDenormalize: 'is_granted("ROLE_ADMIN") or object.getTeam().manager == user', securityPostDenormalizeMessage: 'You can only edit your own user.'),        new Get(
             uriTemplate: '/users/{id}/team',
             controller: GetManagerTeamController::class,
             normalizationContext: ['groups' => ['read-team']],
@@ -67,11 +68,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['read-user', 'update-user', 'read-team', 'read-player'])]
+    #[Groups(['read-user', 'update-user', 'read-team', 'read-player', 'read-client'])]
     private ?int $id = null;
 
     #[Assert\Email()]
-    #[Groups(['create-user', 'read-user', 'read-player', 'read-team'])]
+    #[Groups(['create-user', 'read-user', 'read-player', 'read-team', 'read-client'])]
     #[ORM\Column(length: 180, unique: true)]
     private ?string $email = null;
 
@@ -103,7 +104,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $plainPassword = null;
 
     #[ORM\Column(type: 'boolean', options: ['default' => false], nullable: true)]
-    #[Groups(['update-user', 'read-client', 'read-user'])]
+    #[Groups(['update-user', 'read-user'])]
     private ?bool $isVerified = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -112,16 +113,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $resetToken = null;
 
-    #[Groups(['read-user', 'read-client', 'read-player'])]
+    #[Groups(['read-user', 'read-player'])]
     #[ORM\Column(length: 25, nullable: true)]
     private ?string $phone = null;
 
-    #[Groups(['create-user', 'read-user', 'update-user', 'read-player'])]
+    #[Groups(['create-user', 'read-user', 'update-user', 'read-player', 'read-client'])]
     #[ORM\Column(nullable: true)]
     private ?string $type = null;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(['read-user'])]
+    #[Groups(['read-user', 'read-client'])]
     private ?int $coins = null;
 
     #[Groups(['read-user', 'create-user', 'update-user', 'read-team', 'read-player'])]
@@ -150,12 +151,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['user-img', 'create-user'])]
     private ?File $file = null;
 
-
-    #[Groups(['create-user', 'read-user', 'update-user', 'read-player', 'read-team'])]
-    #[ORM\Column(nullable: true)]
-    private ?string $postal = null;
-
-    #[Groups(['create-user', 'read-user', 'update-user', 'read-player', 'read-team'])]
+    #[Groups(['create-user', 'read-user', 'update-user', 'read-player', 'read-team', 'read-user'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $address = null;
 
@@ -168,6 +164,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $coin_generated = 0;
 
     // les réservations du client
+    #[Groups(['read-client'])]
     #[ORM\OneToMany(mappedBy: 'client', targetEntity: Booking::class)]
     private Collection $bookings;
 
@@ -175,6 +172,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['read-schedule', 'read-team', 'read-player'])]
     #[ORM\OneToMany(mappedBy: 'booster', targetEntity: Schedule::class)]
     private Collection $schedules;
+
+    #[Groups(['read-player', 'read-team'])]
+    #[ORM\Column(nullable: true)]
+    private ?float $lat = null;
+
+    #[Groups(['read-player', 'read-team'])]
+    #[ORM\Column(nullable: true)]
+    private ?float $lng = null;
 
     public function __construct()
     {
@@ -497,16 +502,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getPostal(): ?int
-    {
-        return $this->postal;
-    }
-
-    public function setPostal(int $postal): static
-    {
-        $this->postal = $postal;
-        return $this;
-    }
     /**
      * @return Collection<int, Schedule>
      */
@@ -567,6 +562,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $schedule->setBooster(null);
             }
         }
+        return $this;
+    }
+
+    public function getLat(): ?float
+    {
+        return $this->lat;
+    }
+
+    public function setLat(?float $lat): static
+    {
+        $this->lat = $lat;
+
+        return $this;
+    }
+
+    public function getLng(): ?float
+    {
+        return $this->lng;
+    }
+
+    public function setLng(?float $lng): static
+    {
+        $this->lng = $lng;
+
         return $this;
     }
 }

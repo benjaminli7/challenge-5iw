@@ -38,7 +38,8 @@ class AddPlayerTeamController
         $player->setType("player");
         $player->setTauxHoraire($values["tauxHoraire"]);
         $player->setaddress($values["address"]);
-        $player->setPostal($values["postal"]);
+        $player->setLng($values["lng"]);
+        $player->setLat($values["lat"]);
 
         $entityManager->persist($player);
         $entityManager->flush();

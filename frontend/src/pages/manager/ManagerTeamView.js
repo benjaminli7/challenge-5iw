@@ -26,8 +26,6 @@ function CustomTabPanel(props) {
 
 function ManagerTeamView({ team, games }) {
   const [value, setValue] = React.useState(0);
-  console.log(team);
-
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };

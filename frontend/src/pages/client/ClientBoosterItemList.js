@@ -19,7 +19,7 @@ function ClientBoosterItemList({ player }) {
             </Typography>
           </Stack>
         </Stack>
-        <Divider />{" "}
+        <Divider />
       </Link>
     </>
   );
