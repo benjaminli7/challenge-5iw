@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 function ClientBoosterItemList({ player }) {
   return (
     <>
-      <Link to={`/client/player/${player.id}`}>
+      <Link to={`/client/players/${player.id}`}>
         <Stack direction="row" spacing={3} alignItems="center" py={1}>
           <Avatar />
           <Stack>
