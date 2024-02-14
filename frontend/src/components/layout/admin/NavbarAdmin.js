@@ -34,6 +34,11 @@ const navbarItems = [
     icon: <SportsEsportsIcon />,
     path: "/admin/games",
   },
+  {
+      label: "Offers",
+      icon: <SportsEsportsIcon />,
+      path: "/admin/offers",
+  },
 ];
 
 export default function NavbarAdmin({ window, drawerWidth, children }) {

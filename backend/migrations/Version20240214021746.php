@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20240213145426 extends AbstractMigration
+final class Version20240214021746 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -22,6 +22,8 @@ final class Version20240213145426 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('CREATE SEQUENCE booking_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE game_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE offer_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE payment_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE rank_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE review_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE review_type_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
@@ -31,6 +33,10 @@ final class Version20240213145426 extends AbstractMigration
         $this->addSql('CREATE TABLE booking (id INT NOT NULL, coins_used INT NOT NULL, status VARCHAR(50) NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE TABLE game (id INT NOT NULL, name VARCHAR(255) NOT NULL, file_path VARCHAR(255) DEFAULT NULL, color VARCHAR(255) DEFAULT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE UNIQUE INDEX UNIQ_232B318C5E237E06 ON game (name)');
+        $this->addSql('CREATE TABLE offer (id INT NOT NULL, name VARCHAR(255) NOT NULL, coins INT NOT NULL, price NUMERIC(10, 2) NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE payment (id INT NOT NULL, user_id INT NOT NULL, offer_id INT NOT NULL, amount NUMERIC(10, 2) NOT NULL, status VARCHAR(255) NOT NULL, payment_date TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE INDEX IDX_6D28840DA76ED395 ON payment (user_id)');
+        $this->addSql('CREATE INDEX IDX_6D28840D53C674EE ON payment (offer_id)');
         $this->addSql('CREATE TABLE rank (id INT NOT NULL, game_id INT NOT NULL, name VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_8879E8E5E48FD905 ON rank (game_id)');
         $this->addSql('CREATE TABLE review (id INT NOT NULL, rating INT NOT NULL, comment VARCHAR(255) NOT NULL, author_type VARCHAR(20) NOT NULL, PRIMARY KEY(id))');
@@ -45,6 +51,8 @@ final class Version20240213145426 extends AbstractMigration
         $this->addSql('CREATE INDEX IDX_8D93D649EE17618A ON "user" (assigned_game_id)');
         $this->addSql('CREATE INDEX IDX_8D93D649296CD8AE ON "user" (team_id)');
         $this->addSql('CREATE INDEX IDX_8D93D64950443CF6 ON "user" (rank_user_id_id)');
+        $this->addSql('ALTER TABLE payment ADD CONSTRAINT FK_6D28840DA76ED395 FOREIGN KEY (user_id) REFERENCES "user" (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE payment ADD CONSTRAINT FK_6D28840D53C674EE FOREIGN KEY (offer_id) REFERENCES offer (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE rank ADD CONSTRAINT FK_8879E8E5E48FD905 FOREIGN KEY (game_id) REFERENCES game (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE team ADD CONSTRAINT FK_C4E0A61F783E3463 FOREIGN KEY (manager_id) REFERENCES "user" (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE "user" ADD CONSTRAINT FK_8D93D649EE17618A FOREIGN KEY (assigned_game_id) REFERENCES game (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
@@ -58,12 +66,16 @@ final class Version20240213145426 extends AbstractMigration
         $this->addSql('CREATE SCHEMA public');
         $this->addSql('DROP SEQUENCE booking_id_seq CASCADE');
         $this->addSql('DROP SEQUENCE game_id_seq CASCADE');
+        $this->addSql('DROP SEQUENCE offer_id_seq CASCADE');
+        $this->addSql('DROP SEQUENCE payment_id_seq CASCADE');
         $this->addSql('DROP SEQUENCE rank_id_seq CASCADE');
         $this->addSql('DROP SEQUENCE review_id_seq CASCADE');
         $this->addSql('DROP SEQUENCE review_type_id_seq CASCADE');
         $this->addSql('DROP SEQUENCE schedule_id_seq CASCADE');
         $this->addSql('DROP SEQUENCE team_id_seq CASCADE');
         $this->addSql('DROP SEQUENCE "user_id_seq" CASCADE');
+        $this->addSql('ALTER TABLE payment DROP CONSTRAINT FK_6D28840DA76ED395');
+        $this->addSql('ALTER TABLE payment DROP CONSTRAINT FK_6D28840D53C674EE');
         $this->addSql('ALTER TABLE rank DROP CONSTRAINT FK_8879E8E5E48FD905');
         $this->addSql('ALTER TABLE team DROP CONSTRAINT FK_C4E0A61F783E3463');
         $this->addSql('ALTER TABLE "user" DROP CONSTRAINT FK_8D93D649EE17618A');
@@ -71,6 +83,8 @@ final class Version20240213145426 extends AbstractMigration
         $this->addSql('ALTER TABLE "user" DROP CONSTRAINT FK_8D93D64950443CF6');
         $this->addSql('DROP TABLE booking');
         $this->addSql('DROP TABLE game');
+        $this->addSql('DROP TABLE offer');
+        $this->addSql('DROP TABLE payment');
         $this->addSql('DROP TABLE rank');
         $this->addSql('DROP TABLE review');
         $this->addSql('DROP TABLE review_type');

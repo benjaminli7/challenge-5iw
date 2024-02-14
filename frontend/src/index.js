@@ -22,6 +22,8 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import "./index.css";
 import ManagerView from "@/pages/manager/ManagerView";
 import ManagerCreateTeamForm from "@/pages/manager/ManagerCreateTeamForm";
+import PurchaseCoins from "@/pages/purchase/PurchaseCoins";
+import CreateOfferForm from "@/pages/admin/offers/CreateOfferForm";
 import { Box } from "@mui/material";
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -125,7 +127,23 @@ const router = createBrowserRouter([
         path: "games",
         element: <AdminGamesView />,
       },
+      {
+        path: "offers/create",
+        element: (
+            <ProtectedRoute>
+              <CreateOfferForm />
+            </ProtectedRoute>
+        ),
+      },
     ],
+  },
+  {
+    path: "purchase",
+    element: (
+        <ProtectedRoute>
+          <PurchaseCoins />
+        </ProtectedRoute>
+    ),
   },
 ]);
 
