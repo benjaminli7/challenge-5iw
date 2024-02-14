@@ -5,11 +5,14 @@ namespace App\Entity;
 use App\Repository\ReviewRepository;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
+use App\Entity\Traits\TimestampableTrait;
 
 #[ORM\Entity(repositoryClass: ReviewRepository::class)]
 #[ApiResource]
 class Review
 {
+    use TimestampableTrait;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -21,11 +24,6 @@ class Review
     #[ORM\Column(length: 255)]
     private ?string $comment = null;
 
-    #[ORM\ManyToOne(inversedBy: 'reviews')]
-    private ?User $author = null;
-
-    #[ORM\ManyToOne(inversedBy: 'boosterReviews')]
-    private ?User $booster = null;
 
     public function getId(): ?int
     {
@@ -52,30 +50,6 @@ class Review
     public function setComment(string $comment): static
     {
         $this->comment = $comment;
-
-        return $this;
-    }
-
-    public function getAuthor(): ?User
-    {
-        return $this->author;
-    }
-
-    public function setAuthor(?User $author): static
-    {
-        $this->author = $author;
-
-        return $this;
-    }
-
-    public function getBooster(): ?User
-    {
-        return $this->booster;
-    }
-
-    public function setBooster(?User $booster): static
-    {
-        $this->booster = $booster;
 
         return $this;
     }

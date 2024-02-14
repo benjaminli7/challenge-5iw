@@ -37,6 +37,9 @@ class Booking
     #[ORM\OneToOne(inversedBy: 'booking', cascade: ['persist', 'remove'])]
     private ?Schedule $schedule = null;
 
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    private ?Review $review = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -86,6 +89,18 @@ class Booking
     public function setSchedule(?Schedule $schedule): static
     {
         $this->schedule = $schedule;
+
+        return $this;
+    }
+
+    public function getReview(): ?Review
+    {
+        return $this->review;
+    }
+
+    public function setReview(?Review $review): static
+    {
+        $this->review = $review;
 
         return $this;
     }
