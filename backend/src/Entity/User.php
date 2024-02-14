@@ -181,11 +181,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(nullable: true)]
     private ?float $lng = null;
 
+    #[ORM\OneToMany(mappedBy: 'author', targetEntity: Review::class)]
+    private Collection $reviews;
+
+    #[ORM\OneToMany(mappedBy: 'booster', targetEntity: Review::class)]
+    private Collection $boosterReviews;
+
     public function __construct()
     {
         $this->coins = 0;
         $this->bookings = new ArrayCollection();
         $this->schedules = new ArrayCollection();
+        $this->reviews = new ArrayCollection();
+        $this->boosterReviews = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -585,6 +593,66 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setLng(?float $lng): static
     {
         $this->lng = $lng;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Review>
+     */
+    public function getReviews(): Collection
+    {
+        return $this->reviews;
+    }
+
+    public function addReview(Review $review): static
+    {
+        if (!$this->reviews->contains($review)) {
+            $this->reviews->add($review);
+            $review->setAuthor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReview(Review $review): static
+    {
+        if ($this->reviews->removeElement($review)) {
+            // set the owning side to null (unless already changed)
+            if ($review->getAuthor() === $this) {
+                $review->setAuthor(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Review>
+     */
+    public function getBoosterReviews(): Collection
+    {
+        return $this->boosterReviews;
+    }
+
+    public function addBoosterReview(Review $boosterReview): static
+    {
+        if (!$this->boosterReviews->contains($boosterReview)) {
+            $this->boosterReviews->add($boosterReview);
+            $boosterReview->setBooster($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBoosterReview(Review $boosterReview): static
+    {
+        if ($this->boosterReviews->removeElement($boosterReview)) {
+            // set the owning side to null (unless already changed)
+            if ($boosterReview->getBooster() === $this) {
+                $boosterReview->setBooster(null);
+            }
+        }
 
         return $this;
     }

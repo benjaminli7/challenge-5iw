@@ -21,8 +21,11 @@ class Review
     #[ORM\Column(length: 255)]
     private ?string $comment = null;
 
-    #[ORM\Column(length: 20)]
-    private ?string $authorType = null;
+    #[ORM\ManyToOne(inversedBy: 'reviews')]
+    private ?User $author = null;
+
+    #[ORM\ManyToOne(inversedBy: 'boosterReviews')]
+    private ?User $booster = null;
 
     public function getId(): ?int
     {
@@ -53,14 +56,26 @@ class Review
         return $this;
     }
 
-    public function getAuthorType(): ?string
+    public function getAuthor(): ?User
     {
-        return $this->authorType;
+        return $this->author;
     }
 
-    public function setAuthorType(string $authorType): static
+    public function setAuthor(?User $author): static
     {
-        $this->authorType = $authorType;
+        $this->author = $author;
+
+        return $this;
+    }
+
+    public function getBooster(): ?User
+    {
+        return $this->booster;
+    }
+
+    public function setBooster(?User $booster): static
+    {
+        $this->booster = $booster;
 
         return $this;
     }

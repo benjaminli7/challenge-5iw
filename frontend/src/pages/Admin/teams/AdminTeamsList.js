@@ -24,7 +24,7 @@ function AdminTeamsList({ teams, teamId, setTeamId, isPendingTeams }) {
     try {
       await approveTeamMutation.mutateAsync({});
       await handleDialogClose();
-      toast.success("approved!");
+      toast.success("Approved! E-mail sent to the team manager");
     } catch (error) {
       console.error("Error approving team:", error);
       toast.error("error approving!");

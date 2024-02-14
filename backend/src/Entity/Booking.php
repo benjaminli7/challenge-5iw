@@ -4,11 +4,20 @@ namespace App\Entity;
 
 use App\Repository\BookingRepository;
 use ApiPlatform\Metadata\ApiResource;
-
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: BookingRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    operations: [
+        new GetCollection(normalizationContext: ['groups' => ['read-booking']], security: 'is_granted("ROLE_ADMIN")'),
+        new Post(denormalizationContext: ['groups' => ['create-booking']], security: 'is_granted("ROLE_ADMIN") or object.getClient() == user'),
+        new Patch(denormalizationContext: ['groups' => ['update-booking']], security: 'is_granted("ROLE_ADMIN")')
+    ]
+)]
 class Booking
 {
     #[ORM\Id]
