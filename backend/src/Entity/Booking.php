@@ -2,19 +2,21 @@
 
 namespace App\Entity;
 
+use Symfony\Component\Serializer\Annotation\Groups;
 use App\Repository\BookingRepository;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
+use App\Controller\AddBookingController;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: BookingRepository::class)]
 #[ApiResource(
     operations: [
         new GetCollection(normalizationContext: ['groups' => ['read-booking']], security: 'is_granted("ROLE_ADMIN")'),
-        new Post(denormalizationContext: ['groups' => ['create-booking']], security: 'is_granted("ROLE_ADMIN") or object.getClient() == user'),
+        new Post(uriTemplate: "/bookings/new", controller: AddBookingController::class, denormalizationContext: ['groups' => ['create-booking']], securityPostDenormalize: 'is_granted("ROLE_ADMIN") or object.getClient() == user', securityPostDenormalizeMessage: 'You can only create bookings for yourself.'),
         new Patch(denormalizationContext: ['groups' => ['update-booking']], security: 'is_granted("ROLE_ADMIN")')
     ]
 )]
@@ -23,17 +25,17 @@ class Booking
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['read-client'])]
     private ?int $id = null;
 
-    #[ORM\Column]
-    private ?int $coinsUsed = null;
-
+    #[Groups(['read-client'])]
     #[ORM\Column(length: 50)]
     private ?string $status = null;
 
     #[ORM\ManyToOne(inversedBy: 'bookings')]
     private ?User $client = null;
 
+    #[Groups(['read-client'])]
     #[ORM\OneToOne(inversedBy: 'booking', cascade: ['persist', 'remove'])]
     private ?Schedule $schedule = null;
 
@@ -43,18 +45,6 @@ class Booking
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getCoinsUsed(): ?int
-    {
-        return $this->coinsUsed;
-    }
-
-    public function setCoinsUsed(int $coinsUsed): static
-    {
-        $this->coinsUsed = $coinsUsed;
-
-        return $this;
     }
 
     public function getStatus(): ?string
@@ -105,4 +95,3 @@ class Booking
         return $this;
     }
 }
-

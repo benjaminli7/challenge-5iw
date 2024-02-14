@@ -6,6 +6,7 @@ const ENDPOINTS = {
     userImg: (userId) => `api/users/${userId}/image`,
     schedules: (userId) => `api/player/${userId}/schedules`,
     players: "api/players",
+    client: (clientId) => `api/clients/${clientId}`,
     resetPassword:  `api/users/reset-password`,
     changePassword: (token) => `api/users/change-password/${token}`,
     player: (playerId) => `api/players/${playerId}`,
@@ -31,6 +32,12 @@ const ENDPOINTS = {
   schedules: {
     root: "api/schedules",
     scheduleId: (scheduleId) => `api/schedules/${scheduleId}`,
+  },
+  bookings: {
+    root: "api/bookings",
+    bookingId: (bookingId) => `api/bookings/${bookingId}`,
+    add: "api/bookings/new",
+
   }
 };
 
