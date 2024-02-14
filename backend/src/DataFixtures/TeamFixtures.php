@@ -65,6 +65,10 @@ class TeamFixtures extends Fixture implements DependentFixtureInterface
                 $user->setType("player");
                 $user->setAssignedGame($this->faker->randomElement([$lol, $rl, $vlr]));
                 $user->setTauxHoraire($this->faker->numberBetween(100, 1000));
+                // set the createdAt and updatedAt date for the user
+                $user->setCreatedAt($this->faker->dateTimeBetween('-1 months', 'now'));
+                $user->setUpdatedAt($this->faker->dateTimeBetween($user->getCreatedAt(), 'now'));
+
                 $newTeam->addBooster($user);
                 $manager->persist($user);
             }
