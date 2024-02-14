@@ -17,6 +17,17 @@ export default function AdminDashboardPie() {
         Review notes
       </Typography>
       <PieChart
+        slotProps={{
+          legend: {
+            direction: "column",
+            position: { vertical: "top", horizontal: "left" },
+
+            itemMarkWidth: 20,
+            itemMarkHeight: 2,
+            markGap: 5,
+            itemGap: 10,
+          },
+        }}
         series={[
           {
             data: [
@@ -26,8 +37,8 @@ export default function AdminDashboardPie() {
             ],
           },
         ]}
-        width={450}
-        height={350}
+        width={600}
+        height={400}
         center={{ x: "50%", y: "50%" }}
       />
     </Box>

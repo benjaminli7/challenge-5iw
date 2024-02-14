@@ -6,7 +6,6 @@ function AdminDashboardChart({ playerData, theme, playerMinusOneMonthData }) {
   const mappedPlayerData = playerData.map((player) => {
     return player.amount;
   });
-  console.log(mappedPlayerData);
 
   const mappedPlayerMinusOneMonthData = playerMinusOneMonthData.map(
     (player) => {
@@ -15,7 +14,6 @@ function AdminDashboardChart({ playerData, theme, playerMinusOneMonthData }) {
   );
 
   const max = Math.max(...mappedPlayerData, ...mappedPlayerMinusOneMonthData);
-  console.log(max);
   return (
     <div style={{ width: "100%", flexGrow: 1, overflow: "hidden" }}>
       <Typography variant="h6" gutterBottom color="primary" bold>

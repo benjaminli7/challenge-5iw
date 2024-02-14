@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20240214172658 extends AbstractMigration
+final class Version20240214221146 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -20,7 +20,7 @@ final class Version20240214172658 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('CREATE TABLE booking (id INT NOT NULL, client_id INT DEFAULT NULL, schedule_id INT DEFAULT NULL, review_id INT DEFAULT NULL, status VARCHAR(50) NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE booking (id INT NOT NULL, client_id INT DEFAULT NULL, schedule_id INT DEFAULT NULL, review_id INT DEFAULT NULL, status VARCHAR(50) NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_E00CEDDE19EB6921 ON booking (client_id)');
         $this->addSql('CREATE UNIQUE INDEX UNIQ_E00CEDDEA40BC2D5 ON booking (schedule_id)');
         $this->addSql('CREATE UNIQUE INDEX UNIQ_E00CEDDE3E2E969B ON booking (review_id)');

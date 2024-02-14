@@ -11,6 +11,10 @@ use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use App\Controller\AddBookingController;
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\Traits\TimestampableTrait;
+use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
+
 
 #[ORM\Entity(repositoryClass: BookingRepository::class)]
 #[ApiResource(
@@ -20,8 +24,12 @@ use Doctrine\ORM\Mapping as ORM;
         new Patch(denormalizationContext: ['groups' => ['update-booking']], security: 'is_granted("ROLE_ADMIN")')
     ]
 )]
+#[ApiFilter(DateFilter::class, properties: ['createdAt'])]
+
 class Booking
 {
+    use TimestampableTrait;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
