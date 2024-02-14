@@ -23,6 +23,7 @@ function ManagerPlayerForm({
   setLatLng,
   latLng,
 }) {
+  console.log("selectedUser", selectedUser);
   const defaultValues = {
     email: selectedUser?.email || "",
     username: selectedUser?.username || "",
@@ -30,6 +31,8 @@ function ManagerPlayerForm({
     lastName: selectedUser?.lastName || "",
     assignedGame: selectedUser?.assignedGame.id || "",
     discord: selectedUser?.discord || "",
+    tauxHoraire: selectedUser?.taux_horaire || "",
+    address: selectedUser?.address || "",
   };
 
   const {
@@ -39,10 +42,10 @@ function ManagerPlayerForm({
     getValues,
     formState: { errors, isSubmitting },
   } = useForm({ defaultValues });
+
   const { ref: materialRef } = usePlacesWidget({
     apiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
     onPlaceSelected: (place) => {
-      // console.log(place);
       setLatLng({
         lat: place.geometry.location.lat(),
         lng: place.geometry.location.lng(),

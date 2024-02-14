@@ -33,10 +33,9 @@ use App\Controller\GetPlayersListController;
         new GetCollection(normalizationContext: ['groups' => ['read-user']], security: 'is_granted("ROLE_ADMIN")', securityMessage: 'Only admins can see all users.'),
         new Get(normalizationContext: ['groups' => ['read-user']], security: 'is_granted("ROLE_ADMIN") or object == user', securityMessage: 'You can only see your own user.'),
         //  new Get(uriTemplate: '/users/{id}/infos', normalizationContext: ['groups' => ['read-user', 'read-user-as-admin']], security: 'is_granted("ROLE_ADMIN")'),
-        new Get(uriTemplate: '/players/{id}', security: "object.getType() == 'player'", securityMessage: "it's not a player!",normalizationContext: ['groups' => ['read-player']]),
+        new Get(uriTemplate: '/players/{id}', security: "object.getType() == 'player'", securityMessage: "it's not a player!", normalizationContext: ['groups' => ['read-player']]),
         new Post(denormalizationContext: ['groups' => ['create-user']]),
-        new Patch(denormalizationContext: ['groups' => ['update-user']], securityPostDenormalize: 'is_granted("ROLE_ADMIN") or object == user', securityPostDenormalizeMessage: 'You can only edit your own user.'),
-        new Get(
+        new Patch(denormalizationContext: ['groups' => ['update-user']], securityPostDenormalize: 'is_granted("ROLE_ADMIN") or object.getTeam().manager == user', securityPostDenormalizeMessage: 'You can only edit your own user.'),        new Get(
             uriTemplate: '/users/{id}/team',
             controller: GetManagerTeamController::class,
             normalizationContext: ['groups' => ['read-team']],
@@ -152,7 +151,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
 
 
-    #[Groups(['create-user', 'read-user', 'update-user', 'read-player', 'read-team'])]
+    #[Groups(['create-user', 'read-user', 'update-user', 'read-player', 'read-team', 'read-user'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $address = null;
 
