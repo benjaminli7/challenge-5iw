@@ -15,8 +15,8 @@ export function usePlayerView() {
   } = useCalendar();
 
   const user = auth().user;
-  const { data: events, isLoading } = useFetch(
-    "schedules",
+  const { data: player, isLoading } = useFetch(
+    "player",
     ENDPOINTS.users.schedules(user.id)
   );
   const [startingDate, setStartingDate] = useState(new Date());
@@ -54,12 +54,11 @@ export function usePlayerView() {
     ACTION_TYPES,
     startingDate,
     endingDate,
-    events,
     selectedEventId,
     actionType,
     openDialog,
     handleDialogClose,
-    user,
-    isLoading
+    isLoading,
+    player
   };
 }

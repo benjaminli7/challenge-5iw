@@ -28,7 +28,6 @@ export default function Signup() {
 
   const onSubmit = async (data) => {
     try {
-      console.log(data);
       await registerMutation.mutateAsync(data);
       toast.success("Signed up successfully");
       reset();
@@ -147,7 +146,7 @@ export default function Signup() {
               />
             </Grid>
             <Grid item xs={12}>
-            
+
             </Grid>
             <Grid item xs={12}>
               <TextField

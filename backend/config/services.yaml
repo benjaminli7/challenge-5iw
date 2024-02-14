@@ -63,6 +63,11 @@ services:
   App\Controller\GetClientController:
     tags: ["controller.service_arguments"]
 
+  App\Controller\GetPlayerController:
+    tags: ["controller.service_arguments"]
+
+  App\Controller\CancelBookingController:
+    tags: ["controller.service_arguments"]
 
 
 
