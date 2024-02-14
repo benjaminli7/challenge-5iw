@@ -24,14 +24,9 @@ const AdminRankImageUploader = ({ onUpload, rank }) => {
   const [file, setFile] = useState(null);
 
   const handleFileChange = async (e, rankId) => {
-    // console.log(
-    //   "Changement d'image pour le rang " + rank.name + " Dont l'id est ",
-    //   rankId
-    // );
     setFile(e.target.files[0]);
     await onUpload(e.target.files[0], setFile, rankId);
   };
-  // console.log(rank);
   return (
     <>
       <label htmlFor={`upload-button-${rank.id}`}>

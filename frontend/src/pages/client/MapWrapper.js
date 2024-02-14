@@ -35,7 +35,6 @@ function MapWrapper({ players }) {
     const playersByAddress = players.filter(
       (p) => p.address === player.address
     );
-    console.log(playersByAddress);
     setSelectedPlayers(playersByAddress);
     setOpenModal(true);
   };

@@ -4,9 +4,12 @@ namespace App\Entity\Traits;
 
 use Gedmo\Mapping\Annotation\Timestampable;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+
 
 trait TimestampableTrait
 {
+    #[Groups(['Timestampable'])]
     #[ORM\Column(options: ['default' => 'CURRENT_TIMESTAMP'])]
     #[Timestampable(on: 'create')]
     private ?\DateTime $createdAt = null;

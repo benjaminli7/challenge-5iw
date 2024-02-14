@@ -37,7 +37,7 @@ const ENDPOINTS = {
     root: "api/bookings",
     bookingId: (bookingId) => `api/bookings/${bookingId}`,
     add: "api/bookings/new",
-
+    cancel: (bookingId) => `api/bookings/${bookingId}/cancel`,
   }
 };
 

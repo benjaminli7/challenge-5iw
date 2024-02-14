@@ -27,6 +27,8 @@ class AddBookingController
         $userId = $values['user'];
         $user = $this->userRepository->find($userId);
 
+        $booster = $schedule->getBooster();
+
         if($user === null) {
             throw new \Exception('User not found');
         }
@@ -49,6 +51,9 @@ class AddBookingController
         $data->setStatus('pending');
 
         $user->setCoins($user->getCoins() - $schedule->getCoinsNeeded());
+        $boosterTeam = $booster->getTeam();
+        $boosterTeam->setCoins($boosterTeam->getCoins() + $schedule->getCoinsNeeded());
+        $booster->setCoinGenerated($booster->getCoinGenerated() + $schedule->getCoinsNeeded());
         $schedule->setStatus('booked');
 
         return $data;

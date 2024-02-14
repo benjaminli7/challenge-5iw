@@ -23,7 +23,6 @@ function ManagerPlayerForm({
   setLatLng,
   latLng,
 }) {
-  console.log("selectedUser", selectedUser);
   const defaultValues = {
     email: selectedUser?.email || "",
     username: selectedUser?.username || "",

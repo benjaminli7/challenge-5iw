@@ -15,7 +15,7 @@ root: {
     marginTop: 24,
     padding: theme.spacing(2),
     position: 'absolute',
-    zIndex: '7 !important', 
+    zIndex: '7 !important',
     right: '0px',
     bottom: '0px',
     top: '0px',
@@ -27,7 +27,7 @@ closeButton: {
     top: theme.spacing(2),
     color: theme.palette.grey[500]
 }
-}); 
+});
 const CustomDialog = withStyles(styles)(Dialog);
 
 
@@ -68,6 +68,9 @@ function MembersView({ team, games }) {
   return (
     <div>
       <Stack direction="row" spacing={2} sx={{ mb: 3 }}>
+        <Typography variant="h4">
+          {team.coins} coins
+        </Typography>
         <Typography variant="h4" className="titleBorder">
           Liste des membres
         </Typography>
