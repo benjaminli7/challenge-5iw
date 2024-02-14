@@ -17,6 +17,7 @@ function AdminDashboardView() {
   const [coinsCardStats, setCoinsCardStats] = useState({});
   const [transactionsCardStats, setTransactionsCardStats] = useState({});
   const [teamCardStats, setTeamCardStats] = useState({});
+  const [teamCoinsCardStats, setTeamCoinsCardStats] = useState({});
 
   const currentMonthFirstDay = new Date(
     new Date().getFullYear(),
@@ -30,7 +31,7 @@ function AdminDashboardView() {
     1
   ).toISOString();
 
-  const { data: players, isLoading: isLoadingTeams } = useFetch(
+  const { data: players, isLoading: isLoadingPlayers } = useFetch(
     "players",
     `${ENDPOINTS.users.players}`
   );
@@ -43,6 +44,11 @@ function AdminDashboardView() {
   const { data: users, isLoading: isLoadingUsers } = useFetch(
     "users",
     `${ENDPOINTS.users.root}?isVerified=true&createdAt[after]=${currentMonthFirstDay}`
+  );
+
+  const { data: teams, isLoading: isLoadingTeams } = useFetch(
+    "teams",
+    `${ENDPOINTS.teams.root}`
   );
 
   useEffect(() => {
@@ -110,7 +116,17 @@ function AdminDashboardView() {
         details: "Total bookings created this month",
       });
     }
-  }, [players]);
+    if (teams) {
+      const mostEarnedTeam = teams.reduce((prev, current) =>
+        prev.coins > current.coins ? prev : current
+      );
+      setTeamCoinsCardStats({
+        title: "Most Earned Team",
+        amount: mostEarnedTeam.coins,
+        details: `${mostEarnedTeam.name} is the most rentable team`,
+      });
+    }
+  }, [players, users, bookings, teams]);
 
   const customStyles = {
     boxShadow: "0 0 10px 0 rgba(100, 100, 100, 0.2)",
@@ -154,6 +170,9 @@ function AdminDashboardView() {
         </Grid>
         <Grid item xs={3}>
           <AdminDashboardCard stats={bookingsCardStats} />
+        </Grid>
+        <Grid item xs={3}>
+          <AdminDashboardCard stats={teamCoinsCardStats} />
         </Grid>
       </Grid>
     </>
