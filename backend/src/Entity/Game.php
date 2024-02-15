@@ -60,7 +60,7 @@ class Game
     #[Groups(['read-game', 'update-rank', 'read-team'])]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255 , unique: true)]
+    #[ORM\Column(length: 255, unique: true)]
     #[Groups(['read-game', 'create-game', 'update-game', 'read-team', 'read-player'])]
     private ?string $name = null;
 
@@ -75,6 +75,11 @@ class Game
     private ?string $fileUrl = null;
 
     #[Vich\UploadableField(mapping: 'game_image', fileNameProperty: 'filePath')]
+    #[Assert\File(
+        maxSize: '1024k',
+        extensions: ['png', 'jpg', 'jpeg', 'gif'],
+        extensionsMessage: 'Please upload a valid image file.',
+    )]
     #[Groups(['test-img', 'create-game'])]
     private ?File $file = null;
 
@@ -220,6 +225,4 @@ class Game
 
         return $this;
     }
-
-    
 }

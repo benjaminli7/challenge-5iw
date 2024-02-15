@@ -6,4 +6,4 @@
 
 api_login_route:
   path: /api/login
-  methods: ['POST']
+  methods: ["POST"]
