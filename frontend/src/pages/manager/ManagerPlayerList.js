@@ -7,6 +7,7 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
+import StarRateIcon from "@mui/icons-material/StarRate";
 
 function ManagerPlayerList({
   players,
@@ -14,6 +15,7 @@ function ManagerPlayerList({
   handleActionType,
   ACTION_TYPES,
 }) {
+  console.log(players);
   return (
     <Grid container spacing={4}>
       {players?.length === 0 && (
@@ -49,6 +51,12 @@ function ManagerPlayerList({
               {player.address && <Typography>{player.address}</Typography>}
               <Typography>{player.taux_horaire} coins per hour</Typography>
               <Typography>{player.coin_generated} coins generated</Typography>
+              {player.moyenneReviews && (
+                <Typography variant="subtitle">
+                  <StarRateIcon style={{ color: "gold" }} />
+                  {player.moyenneReviews}{" "}
+                </Typography>
+              )}
               <Box sx={{ display: "flex", gap: 2 }}>
                 <Button
                   variant="contained"

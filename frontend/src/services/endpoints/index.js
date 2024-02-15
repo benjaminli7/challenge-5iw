@@ -43,6 +43,9 @@ const ENDPOINTS = {
   stats: {
     root: "api/stats",
   },
+  reviews: {
+    root: "api/reviews",
+  },
 };
 
 export default ENDPOINTS;
