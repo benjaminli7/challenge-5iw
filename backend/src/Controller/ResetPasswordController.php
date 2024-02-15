@@ -17,6 +17,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
+
 #[AsController]
 class ResetPasswordController
 {       
@@ -24,7 +25,7 @@ class ResetPasswordController
     public function __construct(
         protected MailerInterface $mailer,
         protected UserRepository $userRepository,
-        protected UrlGeneratorInterface $urlGenerator
+        protected UrlGeneratorInterface $urlGenerator,
     )
     {
         $this->mailer = $mailer;
@@ -62,4 +63,5 @@ class ResetPasswordController
         // Implémentez ici la logique pour générer un token sécurisé
         return bin2hex(random_bytes(32));
     }
+   
 }
