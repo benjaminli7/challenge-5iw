@@ -3,7 +3,7 @@ import RootAdmin from "@/RootAdmin";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import ProtectedUserTypeRoute from "@/components/ProtectedUserTypeRoute";
 import Page404 from "@/components/layout/404";
-import AdminDashboardView from "@/pages/admin/AdminDashboardView";
+// import AdminDashboardView from "@/pages/admin/AdminDashboardView";
 import AdminGamesView from "@/pages/admin/games/AdminGamesView";
 import AdminTeamsView from "@/pages/admin/teams/AdminTeamsView";
 import AdminUsersView from "@/pages/admin/users/AdminUsersView";
@@ -152,7 +152,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: "",
-        element: <AdminDashboardView />,
+        element: <div>test</div>,
       },
       {
         path: "users",
