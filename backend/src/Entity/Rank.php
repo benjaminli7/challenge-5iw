@@ -16,6 +16,7 @@ use App\Controller\PostImageRankController;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use App\Entity\Traits\TimestampableTrait;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[Vich\Uploadable]
 #[ORM\Entity(repositoryClass: RankRepository::class)]
@@ -63,6 +64,11 @@ class Rank
     private ?string $fileUrl = null;
 
     #[Vich\UploadableField(mapping: 'rank_image', fileNameProperty: 'filePath')]
+    #[Assert\File(
+        maxSize: '1024k',
+        extensions: ['png', 'jpg', 'jpeg', 'gif'],
+        extensionsMessage: 'Please upload a valid image file.',
+    )]
     #[Groups(['test-img-rank'])]
     private ?File $file = null;
 
