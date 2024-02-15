@@ -16,51 +16,84 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Delete;
+use App\Controller\GetClientController;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
 use App\Controller\GetManagerTeamController;
+use App\Controller\GetPlayerController;
+use App\Controller\PostImageUserController;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Symfony\Component\HttpFoundation\File\File;
+use App\Controller\GetPlayerScheduleController;
+use App\Controller\GetPlayersListController;
+use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Doctrine\Orm\Filter\BooleanFilter;
+use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
 
 
+
+#[Vich\Uploadable]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
 #[ApiResource(
     operations: [
-        new GetCollection(normalizationContext: ['groups' => ['read-user']], security: 'is_granted("ROLE_ADMIN")', securityMessage: 'Only admins can see all users.'),
+        new GetCollection(normalizationContext: ['groups' => ['read-user', 'Timestampable']], security: 'is_granted("ROLE_ADMIN")', securityMessage: 'Only admins can see all users.'),
         new Get(normalizationContext: ['groups' => ['read-user']], security: 'is_granted("ROLE_ADMIN") or object == user', securityMessage: 'You can only see your own user.'),
+        //  new Get(uriTemplate: '/users/{id}/infos', normalizationContext: ['groups' => ['read-user', 'read-user-as-admin']], security: 'is_granted("ROLE_ADMIN")'),
+        new Get(uriTemplate: '/players/{id}', security: "object.getType() == 'player'", securityMessage: "it's not a player!", normalizationContext: ['groups' => ['read-player']]),
+        new Get(controller: GetClientController::class, uriTemplate: '/clients/{id}', security: "object == user or is_granted('ROLE_ADMIN')", securityMessage: "You can only see your own user.", normalizationContext: ['groups' => ['read-client']]),
         new Post(denormalizationContext: ['groups' => ['create-user']]),
-        new Patch(denormalizationContext: ['groups' => ['update-user']], securityPostDenormalize: 'is_granted("ROLE_ADMIN") or object == user', securityPostDenormalizeMessage: 'You can only edit your own user.'),
-        new Get(
+        new Patch(denormalizationContext: ['groups' => ['update-user']], securityPostDenormalize: 'is_granted("ROLE_ADMIN") or object.getTeam().manager == user', securityPostDenormalizeMessage: 'You can only edit your own user.'),        new Get(
             uriTemplate: '/users/{id}/team',
             controller: GetManagerTeamController::class,
             normalizationContext: ['groups' => ['read-team']],
             security: 'is_granted("ROLE_ADMIN") or (object == user)',
             securityMessage: 'You can only see your own team.'
         ),
-        // can only delete if you're the manager of the team which contains the user
-        new Delete(security: 'is_granted("ROLE_ADMIN") or (object.ownedTeam.manager == user)', securityMessage: 'You can only delete your own user.'),
+        new Delete(security: 'is_granted("ROLE_ADMIN") or (object.getOwnedTeam().manager == user)', securityMessage: 'You can only delete your own user.'),
+        new Post(
+            uriTemplate: '/users/{id}/image',
+            controller: PostImageUserController::class,
+            denormalizationContext: ['groups' => ['user-img']],
+            normalizationContext: ['groups' => ['read-user']],
+            security: 'is_granted("ROLE_ADMIN") or (object.getTeam().manager == user)',
+            securityMessage: 'Only admins can create games images.',
+            deserialize: false
+        ),
+        new Get(uriTemplate: '/player/{id}/schedules', normalizationContext: ['groups' => ['read-player-schedule']], controller: GetPlayerController::class, security: 'is_granted("ROLE_ADMIN") or (object == user) or (object.getTeam().manager == user)', securityMessage: 'You can only see your own schedules.'),
+        new GetCollection(uriTemplate: '/players', controller: GetPlayersListController::class, normalizationContext: ['groups' => ['read-player', 'Timestampable']]),
     ],
     normalizationContext: ['groups' => ['read-user']],
 )]
+#[ApiFilter(BooleanFilter::class, properties: ['isVerified'])]
+#[ApiFilter(DateFilter::class, properties: ['createdAt'])]
+
+
+
 #[UniqueEntity(['email'])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
 
     use TimestampableTrait;
 
+    // #[ORM\Column(type: 'timestamp')]
+    // #[Groups(["read-player"])]
+    // private $createdAt;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['read-user', 'update-user', 'read-team'])]
+    #[Groups(['read-user', 'update-user', 'read-team', 'read-player', 'read-client'])]
     private ?int $id = null;
 
     #[Assert\Email()]
-    #[Groups(['create-user', 'read-user', 'read-player', 'read-team'])]
+    #[Groups(['create-user', 'read-user', 'read-player', 'read-team', 'read-client'])]
     #[ORM\Column(length: 180, unique: true)]
     private ?string $email = null;
 
     #[Assert\Length(min: 3, max: 32)]
     #[ORM\Column(length: 50, unique: true)]
-    #[Groups(['create-user', 'read-user', 'read-player', 'read-team', 'update-user'])]
+    #[Groups(['create-user', 'read-user', 'read-player', 'read-team', 'read-schedule', 'read-player-schedule'])]
     private ?string $username = null;
     #[ORM\Column]
     #[Groups(['read-user'])]
@@ -85,9 +118,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $plainPassword = null;
 
-
-    #[ORM\Column(type: 'boolean', nullable: true, options: ['default' => false])]
-    #[Groups(['update-user', 'read-client', 'read-user'])]
+    #[ORM\Column(type: 'boolean', options: ['default' => false], nullable: true)]
+    #[Groups(['update-user', 'read-user'])]
     private ?bool $isVerified = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -96,18 +128,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $resetToken = null;
 
-
-    #[Groups(['read-user', 'read-client', 'read-player'])]
-    #[ORM\Column(length: 16, nullable: true)]
+    #[Groups(['read-user', 'read-player'])]
+    #[ORM\Column(length: 25, nullable: true)]
     private ?string $phone = null;
 
+    #[Groups(['create-user', 'read-user', 'update-user', 'read-player', 'read-client'])]
     #[ORM\Column(nullable: true)]
     #[Groups(['create-user', 'read-user', 'read-player'])]
     #[Assert\Choice(choices: ['client', 'manager', 'player'], message: 'The type must be either client, manager, or player.')]
     private ?string $type = null;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(['read-user'])]
+    #[Groups(['read-user', 'read-client'])]
     private ?int $coins = null;
 
     #[Groups(['read-user', 'create-user', 'update-user', 'read-team', 'read-player'])]
@@ -138,6 +170,52 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'json', nullable: true)]
     #[Groups(['read-user', 'create-user', 'update-user'])]
     private array $rankIRIs = [];
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $filePath = null;
+
+    #[Groups(['read-team', 'read-player', 'read-user'])]
+    private ?string $fileUrl = null;
+
+    #[Vich\UploadableField(mapping: 'user_image', fileNameProperty: 'filePath')]
+    #[Groups(['user-img', 'create-user'])]
+    private ?File $file = null;
+
+    #[Groups(['create-user', 'read-user', 'update-user', 'read-player', 'read-team', 'read-user'])]
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $address = null;
+
+    #[Groups(['create-user', 'read-user', 'update-user', 'read-player', 'read-team'])]
+    #[ORM\Column(nullable: true)]
+    private ?int $taux_horaire = null;
+
+    #[ORM\Column]
+    #[Groups(['create-user', 'read-user', 'update-user', 'read-player', 'read-team'])]
+    private ?int $coin_generated = 0;
+
+    // les réservations du client
+    #[Groups(['read-client'])]
+    #[ORM\OneToMany(mappedBy: 'client', targetEntity: Booking::class)]
+    private Collection $bookings;
+
+    // les disponibilités du booster
+    #[Groups(['read-schedule', 'read-team', 'read-player'])]
+    #[ORM\OneToMany(mappedBy: 'booster', targetEntity: Schedule::class)]
+    private Collection $schedules;
+
+    #[Groups(['read-player', 'read-team', 'update-user'])]
+    #[ORM\Column(nullable: true)]
+    private ?float $lat = null;
+
+    #[Groups(['read-player', 'read-team', 'update-user'])]
+    #[ORM\Column(nullable: true)]
+    private ?float $lng = null;
+
+    public function __construct()
+    {
+        $this->coins = 0;
+        $this->bookings = new ArrayCollection();
+        $this->schedules = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -389,6 +467,156 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getFilePath(): ?string
+    {
+        return $this->filePath;
+    }
+
+    public function setFilePath(?string $filePath): static
+    {
+        $this->filePath = $filePath;
+
+        return $this;
+    }
+
+    public function getFile(): ?File
+    {
+        return $this->file;
+    }
+
+    public function setFile(?File $file = null): static
+    {
+        $this->file = $file;
+        return $this;
+    }
+
+    public function getFileUrl(): ?string
+    {
+        return $this->fileUrl;
+    }
+
+    public function setFileUrl(?string $fileUrl): static
+    {
+
+        $this->fileUrl = $fileUrl;
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Booking>
+     */
+    public function getBookings(): Collection
+    {
+        return $this->bookings;
+    }
+
+    public function addBooking(Booking $booking): static
+    {
+        if (!$this->bookings->contains($booking)) {
+            $this->bookings->add($booking);
+            $booking->setClient($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBooking(Booking $booking): static
+    {
+        if ($this->bookings->removeElement($booking)) {
+            // set the owning side to null (unless already changed)
+            if ($booking->getClient() === $this) {
+                $booking->setClient(null);
+            }
+        }
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Schedule>
+     */
+    public function getSchedules(): Collection
+    {
+        return $this->schedules;
+    }
+
+    public function addSchedule(Schedule $schedule): static
+    {
+        if (!$this->schedules->contains($schedule)) {
+            $this->schedules->add($schedule);
+            $schedule->setBooster($this);
+        }
+        return $this;
+    }
+
+    public function getaddress(): ?string
+    {
+        return $this->address;
+    }
+
+    public function setaddress(string $address): static
+    {
+        $this->address = $address;
+        return $this;
+    }
+
+    public function getTauxHoraire(): ?float
+    {
+        return $this->taux_horaire;
+    }
+
+    public function setTauxHoraire(?float $taux_horaire): static
+    {
+        $this->taux_horaire = $taux_horaire;
+
+        return $this;
+    }
+
+    public function getCoinGenerated(): ?int
+    {
+        return $this->coin_generated;
+    }
+
+    public function setCoinGenerated(int $coin_generated): static
+    {
+        $this->coin_generated = $coin_generated;
+        return $this;
+    }
+
+    public function removeSchedule(Schedule $schedule): static
+    {
+        if ($this->schedules->removeElement($schedule)) {
+            // set the owning side to null (unless already changed)
+            if ($schedule->getBooster() === $this) {
+                $schedule->setBooster(null);
+            }
+        }
+        return $this;
+    }
+
+    public function getLat(): ?float
+    {
+        return $this->lat;
+    }
+
+    public function setLat(?float $lat): static
+    {
+        $this->lat = $lat;
+
+        return $this;
+    }
+
+    public function getLng(): ?float
+    {
+        return $this->lng;
+    }
+
+    public function setLng(?float $lng): static
+    {
+        $this->lng = $lng;
+
+        return $this;
+    }
+
     public function getRankUserId(): ?Rank
     {
         return $this->rankUserId;
@@ -435,6 +663,4 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
-
-
 }

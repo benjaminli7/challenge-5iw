@@ -7,8 +7,11 @@ import {
   Grid,
   MenuItem,
   TextField,
+  Input,
 } from "@mui/material";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
+import Autocomplete, { usePlacesWidget } from "react-google-autocomplete";
 
 function ManagerPlayerForm({
   deleteUserMutation,
@@ -17,6 +20,8 @@ function ManagerPlayerForm({
   onSubmit,
   actionType,
   games,
+  setLatLng,
+  latLng,
 }) {
   const defaultValues = {
     email: selectedUser?.email || "",
@@ -25,6 +30,8 @@ function ManagerPlayerForm({
     lastName: selectedUser?.lastName || "",
     assignedGame: selectedUser?.assignedGame.id || "",
     discord: selectedUser?.discord || "",
+    tauxHoraire: selectedUser?.taux_horaire || "",
+    address: selectedUser?.address || "",
   };
 
   const {
@@ -34,6 +41,16 @@ function ManagerPlayerForm({
     getValues,
     formState: { errors, isSubmitting },
   } = useForm({ defaultValues });
+
+  const { ref: materialRef } = usePlacesWidget({
+    apiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
+    onPlaceSelected: (place) => {
+      setLatLng({
+        lat: place.geometry.location.lat(),
+        lng: place.geometry.location.lng(),
+      });
+    },
+  });
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -100,7 +117,6 @@ function ManagerPlayerForm({
               helperText={errors.firstName && errors.firstName.message}
             />
           </Grid>
-
           <Grid item xs={12} sm={6}>
             <TextField
               {...register("lastName", {
@@ -117,6 +133,39 @@ function ManagerPlayerForm({
               autoFocus
               error={errors.lastName ? true : false}
               helperText={errors.lastName && errors.lastName.message}
+            />
+          </Grid>
+
+          <Grid item xs={12}>
+            <div>
+              <span>Ville </span>
+              <TextField
+                fullWidth
+                variant="outlined"
+                inputRef={materialRef}
+                {...register("address")}
+              />
+            </div>
+          </Grid>
+
+          <Grid item xs={12}>
+            <TextField
+              {...register("tauxHoraire", {
+                required: "Taux Horaire is required",
+                pattern: {
+                  value: /^[0-9]+(\.[0-9]{1,2})?$/i,
+                  message: "Invalid taux horaire",
+                },
+              })}
+              required
+              fullWidth
+              id="tauxHoraire"
+              label="Taux Horaire"
+              name="tauxHoraire"
+              autoComplete="tauxHoraire"
+              placeholder="0.00"
+              error={errors.tauxHoraire ? true : false}
+              helperText={errors.tauxHoraire && errors.tauxHoraire.message}
             />
           </Grid>
           {actionType === "create" && (
@@ -187,7 +236,6 @@ function ManagerPlayerForm({
               ))}
             </CustomSelectForm>
           </Grid>
-
           <Grid item xs={12}>
             <TextField
               {...register("discord", {

@@ -2,10 +2,7 @@ import React from "react";
 import AdminGameForm from "@/pages/admin/games/forms/AdminGameForm";
 import { useGames } from "@/hooks/models/useGames";
 
-function AdminGameUpdateForm({
-  selectedGame,
-  handleDialogClose,
-}) {
+function AdminGameUpdateForm({ selectedGame, handleDialogClose }) {
   const { updateGameMutation, deleteGameMutation } = useGames(selectedGame);
 
   const onSubmit = async (data) => {
@@ -15,7 +12,7 @@ function AdminGameUpdateForm({
     } catch (error) {
       console.error("Error updating game:", error);
     }
-  }
+  };
 
   const handleDeleteGame = async () => {
     try {

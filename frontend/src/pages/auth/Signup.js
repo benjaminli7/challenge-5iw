@@ -1,19 +1,18 @@
-import * as React from "react";
-import Avatar from "@mui/material/Avatar";
-import TextField from "@mui/material/TextField";
-import Link from "@mui/material/Link";
-import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
-import { Link as RouterLink } from "react-router-dom";
-import { useForm } from "react-hook-form";
-import { MenuItem } from "@mui/material";
-import CustomSelectForm from "@/components/commons/CustomSelectForm";
 import CustomButton from "@/components/commons/CustomButton";
-import { toast } from "sonner"
+import CustomSelectForm from "@/components/commons/CustomSelectForm";
 import { useUsers } from "@/hooks/models/useUsers";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import { MenuItem } from "@mui/material";
+import Avatar from "@mui/material/Avatar";
+import Box from "@mui/material/Box";
+import Container from "@mui/material/Container";
+import Grid from "@mui/material/Grid";
+import Link from "@mui/material/Link";
+import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
+import { useForm } from "react-hook-form";
+import { Link as RouterLink } from "react-router-dom";
+import { toast } from "sonner";
 
 export default function Signup() {
   const { registerMutation } = useUsers();
@@ -36,8 +35,7 @@ export default function Signup() {
       console.log(error);
       toast.error("Error signing up");
     }
-  }
-
+  };
 
   return (
     <Container component="main" maxWidth="xs">
@@ -61,6 +59,39 @@ export default function Signup() {
           sx={{ mt: 3 }}
         >
           <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <CustomSelectForm
+                id="type"
+                name="type"
+                label="Type"
+                control={control}
+                defaultValue={"client"}
+                fullWidth
+              >
+                <MenuItem value="client">Client</MenuItem>
+                <MenuItem value="manager">Manager</MenuItem>
+              </CustomSelectForm>
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                {...register("email", {
+                  required: "Email is required",
+                  pattern: {
+                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                    message: "Invalid email address",
+                  },
+                })}
+                required
+                fullWidth
+                id="email"
+                label="Email Address"
+                name="email"
+                autoComplete="email"
+                placeholder="johndoe@gmail.com"
+                error={errors.email ? true : false}
+                helperText={errors.email && errors.email.message}
+              />
+            </Grid>
             <Grid item xs={12}>
               <TextField
                 {...register("username", {
@@ -99,37 +130,23 @@ export default function Signup() {
               />
             </Grid>
             <Grid item xs={12}>
-              <CustomSelectForm
-                id="type"
-                name="type"
-                label="Type"
-                control={control}
-                defaultValue={"client"}
-                fullWidth
-              >
-                <MenuItem value="client">Client</MenuItem>
-                <MenuItem value="manager">Manager</MenuItem>
-              </CustomSelectForm>
-            </Grid>
-            <Grid item xs={12}>
               <TextField
-                {...register("email", {
-                  required: "Email is required",
-                  pattern: {
-                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                    message: "Invalid email address",
-                  },
+                {...register("address", {
+                  required: "Address is required",
                 })}
                 required
                 fullWidth
-                id="email"
-                label="Email Address"
-                name="email"
-                autoComplete="email"
-                placeholder="johndoe@gmail.com"
-                error={errors.email ? true : false}
-                helperText={errors.email && errors.email.message}
+                id="address"
+                label="Address"
+                name="address"
+                autoComplete="address"
+                placeholder="1234 Main St"
+                error={errors.address ? true : false}
+                helperText={errors.address && errors.address.message}
               />
+            </Grid>
+            <Grid item xs={12}>
+
             </Grid>
             <Grid item xs={12}>
               <TextField

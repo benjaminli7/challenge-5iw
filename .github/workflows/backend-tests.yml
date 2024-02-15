@@ -1,0 +1,66 @@
+name: PHPUnit Tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    name: Run PHPUnit tests in Docker
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Install Docker
+      - name: Install Docker
+        run: |
+          sudo apt-get update
+          sudo apt-get install apt-transport-https ca-certificates curl software-properties-common
+          curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+          sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+          sudo apt-get update
+          sudo apt-get install docker-ce
+
+      # Install Make
+      - name: Install Make
+        run: sudo apt-get -y install make
+
+      # Install Composer
+      - name: Install Composer
+        run: |
+          sudo apt-get update
+          sudo apt-get install php-cli unzip
+          php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+          php composer-setup.php
+          php -r "unlink('composer-setup.php');"
+          sudo mv composer.phar /usr/local/bin/composer
+
+      # Build Docker image
+      - name: Build Docker image
+        working-directory: ./backend
+        run: docker build .
+
+      # Install Docker compose
+      - name: Run Docker compose
+        run: sudo apt-get install docker-compose
+
+      # Run Docker container
+      - name: Docker compose up
+        working-directory: ./backend
+        run: docker-compose up -d
+
+      # Run PHPUnit tests (Make sh to connect to the Docker container) then run the tests
+      - name: Run PHPUnit tests
+        working-directory: ./backend
+        run: |
+          make sh
+          composer update
+          composer install
+          ./vendor/bin/phpunit
+          exit

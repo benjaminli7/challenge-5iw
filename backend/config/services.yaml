@@ -26,14 +26,47 @@ services:
           event: lexik_jwt_authentication.on_authentication_success,
           method: onAuthenticationSuccess,
         }
+  App\EventListener\ScheduleListener:
+    tags:
+        - { name: doctrine.event_subscriber }
 
-  App\Controller\PostImageController:
+  App\Controller\PostImageGameController:
+    tags: ["controller.service_arguments"]
+
+  App\Controller\PostImageRankController:
+    tags: ["controller.service_arguments"]
+
+  App\Controller\PostImageUserController:
+    tags: ["controller.service_arguments"]
+
+  App\Controller\PostImageTeamController:
     tags: ["controller.service_arguments"]
 
   App\Controller\GetManagerTeamController:
     tags: ["controller.service_arguments"]
 
   App\Controller\AddPlayerTeamController:
+    tags: ["controller.service_arguments"]
+
+  App\Controller\GetPlayerScheduleController:
+    tags: ["controller.service_arguments"]
+
+  App\Controller\ApproveTeamController:
+    tags: ["controller.service_arguments"]
+
+  App\Controller\GetPlayersListController:
+    tags: ["controller.service_arguments"]
+
+  App\Controller\AddBookingController:
+    tags: ["controller.service_arguments"]
+
+  App\Controller\GetClientController:
+    tags: ["controller.service_arguments"]
+
+  App\Controller\GetPlayerController:
+    tags: ["controller.service_arguments"]
+
+  App\Controller\CancelBookingController:
     tags: ["controller.service_arguments"]
 
   # add more service definitions when explicit configuration is needed

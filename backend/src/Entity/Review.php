@@ -5,11 +5,14 @@ namespace App\Entity;
 use App\Repository\ReviewRepository;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
+use App\Entity\Traits\TimestampableTrait;
 
 #[ORM\Entity(repositoryClass: ReviewRepository::class)]
 #[ApiResource]
 class Review
 {
+    use TimestampableTrait;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -21,8 +24,6 @@ class Review
     #[ORM\Column(length: 255)]
     private ?string $comment = null;
 
-    #[ORM\Column(length: 20)]
-    private ?string $authorType = null;
 
     public function getId(): ?int
     {
@@ -53,15 +54,5 @@ class Review
         return $this;
     }
 
-    public function getAuthorType(): ?string
-    {
-        return $this->authorType;
-    }
-
-    public function setAuthorType(string $authorType): static
-    {
-        $this->authorType = $authorType;
-
-        return $this;
-    }
 }
+

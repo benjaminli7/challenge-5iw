@@ -23,6 +23,7 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useQueryClient } from "react-query";
 
 const drawerWidth = 240;
 
@@ -36,6 +37,7 @@ export default function Navbar({ window }) {
     authNavItems,
   } = useNavbar();
 
+  const queryClient = useQueryClient();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -79,7 +81,14 @@ export default function Navbar({ window }) {
       <Box sx={{ m: 3 }}>
         <Stack spacing={2} sx={{ width: "100%" }}>
           {isAuthenticated() ? (
-            <Button variant="contained" fullWidth onClick={() => signOut()}>
+            <Button
+              variant="contained"
+              fullWidth
+              onClick={() => {
+                queryClient.removeQueries();
+                signOut();
+              }}
+            >
               Logout
             </Button>
           ) : (
@@ -218,7 +227,10 @@ export default function Navbar({ window }) {
                     </MenuItem>
                   ))}
                   <Divider />
-                  <MenuItem onClick={() => signOut()}>
+                  <MenuItem onClick={() => {
+                    queryClient.removeQueries();
+                    signOut()
+                  }}>
                     <ListItemIcon>
                       <Logout fontSize="small" />
                     </ListItemIcon>
