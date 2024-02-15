@@ -48,7 +48,7 @@ WORKDIR /srv/app/
 
 COPY ./composer.json ./composer.lock* /srv/app/
 COPY ./symfony.lock /srv/app/
-
+ENV COMPOSER_ALLOW_SUPERUSER=1
 RUN composer install --no-dev --no-scripts
 
 COPY . /srv/app/
