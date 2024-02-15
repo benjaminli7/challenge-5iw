@@ -2,7 +2,8 @@ import * as React from "react";
 import { PieChart } from "@mui/x-charts/PieChart";
 import { Box, Typography } from "@material-ui/core";
 
-export default function AdminDashboardPie() {
+export default function AdminDashboardPie({ ratings }) {
+  const values = Object.values(ratings);
   return (
     // box align center in height and width
     <Box
@@ -31,9 +32,11 @@ export default function AdminDashboardPie() {
         series={[
           {
             data: [
-              { id: 0, value: 10, label: "series A" },
-              { id: 1, value: 15, label: "series B" },
-              { id: 2, value: 20, label: "series C" },
+              { id: 0, value: values[0], label: "1" },
+              { id: 1, value: values[1], label: "2" },
+              { id: 2, value: values[2], label: "3" },
+              { id: 3, value: values[3], label: "4" },
+              { id: 4, value: values[4], label: "5" },
             ],
           },
         ]}
