@@ -12,7 +12,7 @@ const PurchaseCoins = () => {
     const auth = useAuthUser();
     const { data: user, isLoading: isLoadingUser } = useFetch("user", ENDPOINTS.users.userId(auth().user.id));
     const { data: existingOffers, isLoading: isLoadingOffers } = useFetch("offers", ENDPOINTS.offers.root);
-    const { processPayment, paymentResponse } = usePayment(); // Destructure paymentResponse from usePayment
+    const { processPayment, paymentResponse } = usePayment(); 
 
     useEffect(() => {
     }, [paymentResponse]);
