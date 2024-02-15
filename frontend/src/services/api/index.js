@@ -80,29 +80,24 @@ export function httpPost(url, body) {
 
 export function httpPut(url, body) {
   return axios.put(
-      makeUrl(url),
-      {
-        ...body,
-      },
-      {
-        ...makeConfig(),
-      }
+    makeUrl(url),
+    {
+      ...body,
+    },
+    {
+      ...makeConfig(),
+    }
   );
 }
 
 export function httpPatch(url, body) {
-  return axios.patch(
-      makeUrl(url),
-      JSON.stringify(body),
-      {
-        headers: {
-          ...makeHeaders(),
-          'Content-Type': 'application/merge-patch+json'
-        }
-      }
-  );
+  return axios.patch(makeUrl(url), JSON.stringify(body), {
+    headers: {
+      ...makeHeaders(),
+      "Content-Type": "application/merge-patch+json",
+    },
+  });
 }
-
 
 export function httpPostMultiPart(url, body) {
   let formData = new FormData();
@@ -111,7 +106,6 @@ export function httpPostMultiPart(url, body) {
     ...makeConfig("multipart"),
   });
 }
-
 
 export function httpDelete(url) {
   return axios.delete(makeUrl(url), {

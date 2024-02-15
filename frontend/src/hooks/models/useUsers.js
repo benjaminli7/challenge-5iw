@@ -1,13 +1,7 @@
 import { useCustomMutation } from "@/hooks/useCustomMutation";
 import ENDPOINTS from "@/services/endpoints";
 
-<<<<<<< HEAD
-export function useUsers(userId) {
-
-
-=======
 export function useUsers(userId, token) {
->>>>>>> dev
   const loginMutation = useCustomMutation(ENDPOINTS.users.login, "post", [
     "users",
   ]);
