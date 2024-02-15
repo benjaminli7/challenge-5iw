@@ -10,15 +10,14 @@ import { useAuthUser } from "react-auth-kit";
 export function usePlayerView() {
   const auth = useAuthUser();
 
-  const {
-    formatEvents,
-  } = useCalendar();
+  const { formatEvents } = useCalendar();
 
   const user = auth().user;
   const { data: player, isLoading } = useFetch(
     "player",
     ENDPOINTS.users.schedules(user.id)
   );
+  // console.log(player);
   const [startingDate, setStartingDate] = useState(new Date());
   const [endingDate, setEndingDate] = useState(new Date());
   const [selectedEventId, setSelectedEventId] = useState(null);
@@ -59,6 +58,6 @@ export function usePlayerView() {
     openDialog,
     handleDialogClose,
     isLoading,
-    player
+    player,
   };
 }

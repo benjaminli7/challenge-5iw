@@ -13,7 +13,7 @@ export function useCalendar() {
       return "Expired";
     }
     return event.status === "available" ? "Available" : "Booked";
-  }
+  };
 
   const formatEvents = (events) => {
     return events?.map((event) => {

@@ -38,6 +38,7 @@ function ClientBoosterDetailCalendar({ player }) {
       handleOpenDialog();
     }
   };
+  console.log(player);
 
   return (
     <>

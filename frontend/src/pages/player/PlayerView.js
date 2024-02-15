@@ -15,20 +15,21 @@ function PlayerView() {
     ACTION_TYPES,
     startingDate,
     endingDate,
-    events,
+    player,
     selectedEventId,
     actionType,
     openDialog,
     handleDialogClose,
-    player,
     formatEvents,
     isLoading,
   } = usePlayerView();
+  // console.log(player);
+  // console.log(events);
 
   if (isLoading) return <div>Loading...</div>;
 
   const upcomingEvents = player.schedules.filter((event) => {
-    if(event.status === "booked") {
+    if (event.status === "booked") {
       return isBefore(new Date(), new Date(event.startingDate));
     }
   });
