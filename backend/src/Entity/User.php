@@ -61,7 +61,7 @@ use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
             deserialize: false
         ),
         new Get(uriTemplate: '/player/{id}/schedules', normalizationContext: ['groups' => ['read-player-schedule']], controller: GetPlayerController::class, security: 'is_granted("ROLE_ADMIN") or (object == user) or (object.getTeam().manager == user)', securityMessage: 'You can only see your own schedules.'),
-        new GetCollection(uriTemplate: '/players', controller: GetPlayersListController::class, normalizationContext: ['groups' => ['read-player', 'Timestampable']])
+        new GetCollection(uriTemplate: '/players', controller: GetPlayersListController::class, normalizationContext: ['groups' => ['read-player', 'Timestampable']]),
     ],
     normalizationContext: ['groups' => ['read-user']],
 )]
