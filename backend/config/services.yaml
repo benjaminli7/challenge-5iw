@@ -28,7 +28,7 @@ services:
         }
   App\EventListener\ScheduleListener:
     tags:
-        - { name: doctrine.event_subscriber }
+      - { name: doctrine.event_subscriber }
 
   App\Controller\PostImageGameController:
     tags: ["controller.service_arguments"]
@@ -61,6 +61,10 @@ services:
     tags: ["controller.service_arguments"]
 
   App\Controller\GetClientController:
+    tags: ["controller.service_arguments"]
+
+
+  App\Controller\GetAllStatsController:
     tags: ["controller.service_arguments"]
 
   App\Controller\GetPlayerController:

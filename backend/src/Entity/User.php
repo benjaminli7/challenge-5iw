@@ -29,7 +29,7 @@ use App\Controller\GetPlayersListController;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Doctrine\Orm\Filter\BooleanFilter;
 use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
-
+use App\Controller\GetAllStatsController;
 
 
 #[Vich\Uploadable]
@@ -62,6 +62,12 @@ use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
         ),
         new Get(uriTemplate: '/player/{id}/schedules', normalizationContext: ['groups' => ['read-player-schedule']], controller: GetPlayerController::class, security: 'is_granted("ROLE_ADMIN") or (object == user) or (object.getTeam().manager == user)', securityMessage: 'You can only see your own schedules.'),
         new GetCollection(uriTemplate: '/players', controller: GetPlayersListController::class, normalizationContext: ['groups' => ['read-player', 'Timestampable']]),
+        new GetCollection(
+            uriTemplate: '/stats',
+            controller: GetAllStatsController::class,
+            security: 'is_granted("ROLE_ADMIN")',
+            securityMessage: 'Only admins can see stats.'
+        )
     ],
     normalizationContext: ['groups' => ['read-user']],
 )]
@@ -163,6 +169,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $fileUrl = null;
 
     #[Vich\UploadableField(mapping: 'user_image', fileNameProperty: 'filePath')]
+    #[Assert\File(
+        maxSize: '1024k',
+        extensions: ['png', 'jpg', 'jpeg', 'gif'],
+        extensionsMessage: 'Please upload a valid image file.',
+    )]
     #[Groups(['user-img', 'create-user'])]
     private ?File $file = null;
 

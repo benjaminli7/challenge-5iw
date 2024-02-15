@@ -40,30 +40,80 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->getEntityManager()->flush();
     }
 
-//    /**
-//     * @return User[] Returns an array of User objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('u')
-//            ->andWhere('u.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('u.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    public function getMonthVerifiedPlayers(): array
+    {
+        $startOfMonth = new \DateTime('first day of this month 00:00:00');
+        $endOfMonth = new \DateTime('last day of this month 23:59:59');
 
-//    public function findOneBySomeField($value): ?User
-//    {
-//        return $this->createQueryBuilder('u')
-//            ->andWhere('u.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+        return $this->createQueryBuilder('u')
+            ->andWhere('u.type = :userType')
+            ->andWhere('u.isVerified = :isVerified')
+            ->andWhere('u.createdAt >= :startOfMonth AND u.createdAt <= :endOfMonth')
+            ->setParameter('userType', 'player')
+            ->setParameter('isVerified', true)
+            ->setParameter('startOfMonth', $startOfMonth)
+            ->setParameter('endOfMonth', $endOfMonth)
+            ->getQuery()
+            ->getResult();
+    }
+    public function getLastMonthVerifiedPlayers(): array
+    {
+        $startOfLastMonth = new \DateTime('first day of last month 00:00:00');
+        $endOfLastMonth = new \DateTime('last day of last month 23:59:59');
+
+        return $this->createQueryBuilder('u')
+            ->andWhere('u.type = :userType')
+            ->andWhere('u.isVerified = :isVerified')
+            ->andWhere('u.createdAt >= :startOfLastMonth AND u.createdAt <= :endOfLastMonth')
+            ->setParameter('userType', 'player')
+            ->setParameter('isVerified', true)
+            ->setParameter('startOfLastMonth', $startOfLastMonth)
+            ->setParameter('endOfLastMonth', $endOfLastMonth)
+            ->getQuery()
+            ->getResult();
+    }
+    public function getMonthVerifiedUsersCount(): int
+    {
+        $startOfMonth = new \DateTime('first day of this month 00:00:00');
+        $endOfMonth = new \DateTime('last day of this month 23:59:59');
+        // Assuming $startOfMonth and $endOfMonth are correctly defined as the first and last moments of the current month
+        return (int) $this->createQueryBuilder('u')
+            ->select('COUNT(u.id)')
+            ->where('u.type = :type')
+            ->andWhere('u.isVerified = :isVerified')
+            ->andWhere('u.createdAt >= :startOfMonth AND u.createdAt <= :endOfMonth')
+            ->setParameter('type', 'user') // Adjust if necessary
+            ->setParameter('isVerified', true)
+            ->setParameter('startOfMonth', $startOfMonth)
+            ->setParameter('endOfMonth', $endOfMonth)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    //    /**
+    //     * @return User[] Returns an array of User objects
+    //     */
+    //    public function findByExampleField($value): array
+    //    {
+    //        return $this->createQueryBuilder('u')
+    //            ->andWhere('u.exampleField = :val')
+    //            ->setParameter('val', $value)
+    //            ->orderBy('u.id', 'ASC')
+    //            ->setMaxResults(10)
+    //            ->getQuery()
+    //            ->getResult()
+    //        ;
+    //    }
+
+    //    public function findOneBySomeField($value): ?User
+    //    {
+    //        return $this->createQueryBuilder('u')
+    //            ->andWhere('u.exampleField = :val')
+    //            ->setParameter('val', $value)
+    //            ->getQuery()
+    //            ->getOneOrNullResult()
+    //        ;
+    //    }
 
     public function findAllPlayersInApprovedTeam(): array
     {
