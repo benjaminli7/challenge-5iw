@@ -615,4 +615,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+    #[Groups(['read-player', 'read-team'])]
+    public function getMoyenneReviews(): float
+    {
+        $schedules = $this->getSchedules();
+        $notes = [];
+        foreach ($schedules as $schedule) {
+            $notes[] = $schedule->getReview()->getRating();
+        }
+        if (count($notes) == 0) {
+            return null;
+        }
+        $moyenne = array_sum($notes) / count($notes);
+        return $moyenne;
+    }
 }

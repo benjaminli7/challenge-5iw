@@ -1,5 +1,6 @@
 import { Avatar, Divider, Stack, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
+import StarRateIcon from "@mui/icons-material/StarRate";
 
 function ClientBoosterItemList({ player }) {
   return (
@@ -17,6 +18,12 @@ function ClientBoosterItemList({ player }) {
             <Typography variant="subtitle2">
               {player.assignedGame.name}
             </Typography>
+            {player.moyenneReviews && (
+              <Typography variant="subtitle">
+                <StarRateIcon style={{ color: "gold" }} />
+                {player.moyenneReviews}{" "}
+              </Typography>
+            )}
           </Stack>
         </Stack>
         <Divider />

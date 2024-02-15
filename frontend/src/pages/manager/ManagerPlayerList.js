@@ -7,6 +7,7 @@ import {
   Typography,
   Avatar,
 } from "@mui/material";
+import StarRateIcon from "@mui/icons-material/StarRate";
 
 function ManagerPlayerList({
   players,
@@ -14,9 +15,9 @@ function ManagerPlayerList({
   handleActionType,
   ACTION_TYPES,
 }) {
+  console.log(players);
   return (
     <Grid container spacing={4}>
-      
       {players?.map((player) => (
         <Grid item key={player.id} xs={12} md={6} lg={4}>
           <Card variant="outlined" sx={{ p: 3, height: "100%" }}>
@@ -45,6 +46,13 @@ function ManagerPlayerList({
               <Typography>{player.address}</Typography>
               <Typography>{player.taux_horaire}coins/h</Typography>
               <Typography>{player.coin_generated} coins</Typography>
+              {player.moyenneReviews && (
+                <Typography variant="subtitle">
+                  <StarRateIcon style={{ color: "gold" }} />
+                  {player.moyenneReviews}{" "}
+                </Typography>
+              )}
+
               <Box sx={{ display: "flex", gap: 2 }}>
                 <Button
                   variant="contained"
