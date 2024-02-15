@@ -4,14 +4,9 @@ on:
   push:
     branches:
       - main
-      - develop
-      - feature/unitTest
-      - feature/ci
   pull_request:
     branches:
       - main
-      - develop
-      - feature/unitTest
 
 jobs:
   test:
@@ -36,7 +31,15 @@ jobs:
       - name: Install Make
         run: sudo apt-get -y install make
 
-        
+      # Install Composer
+      - name: Install Composer
+        run: |
+          sudo apt-get update
+          sudo apt-get install php-cli unzip
+          php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+          php composer-setup.php
+          php -r "unlink('composer-setup.php');"
+          sudo mv composer.phar /usr/local/bin/composer
 
       # Build Docker image
       - name: Build Docker image
@@ -58,6 +61,6 @@ jobs:
         run: |
           make sh
           composer update
-          composer install 
+          composer install
           ./vendor/bin/phpunit
           exit
