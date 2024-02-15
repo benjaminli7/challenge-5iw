@@ -15,6 +15,7 @@ function ClientBoosterDetailCalendar({ player }) {
   const [startingDate, setStartingDate] = useState(new Date());
   const [endingDate, setEndingDate] = useState(new Date());
   const [scheduleId, setScheduleId] = useState(null);
+  const [coinsNeeded, setCoinsNeeded] = useState(0);
 
   const { formatEvents } = useCalendar();
   const { openDialog, handleDialogClose, handleOpenDialog } =
@@ -22,10 +23,6 @@ function ClientBoosterDetailCalendar({ player }) {
 
   const handleEventClick = (arg) => {
     if (arg.event.title === "Available") {
-      console.log(arg.event)
-
-
-
       const startingDateISO = arg.event.start.toISOString();
       const endingDateISO = arg.event.end.toISOString();
       let startingDate = DateTime.fromISO(startingDateISO, {
@@ -36,12 +33,12 @@ function ClientBoosterDetailCalendar({ player }) {
       });
       setScheduleId(arg.event.id);
       setStartingDate(startingDate.toISO());
+      setCoinsNeeded(arg.event.extendedProps.coinsNeeded);
       setEndingDate(endingDate.toISO());
       handleOpenDialog();
     }
   };
 
-  console.log(player);
   return (
     <>
       <FullCalendar
@@ -73,6 +70,7 @@ function ClientBoosterDetailCalendar({ player }) {
           startingDate={startingDate}
           endingDate={endingDate}
           handleDialogClose={handleDialogClose}
+          coinsNeeded={coinsNeeded}
         />
       </Dialog>
     </>

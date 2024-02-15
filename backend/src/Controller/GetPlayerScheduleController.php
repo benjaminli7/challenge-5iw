@@ -19,6 +19,6 @@ class GetPlayerScheduleController
 
     public function __invoke(User $data, Request $request)
     {
-        return $data->getSchedules();
+        return $data->getCoinGenerated();
     }
 }

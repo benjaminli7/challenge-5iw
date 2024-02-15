@@ -5,6 +5,7 @@ import {
   DialogContent,
   DialogTitle,
   Stack,
+  Typography,
 } from "@mui/material";
 import { DateTimePicker } from "@mui/x-date-pickers";
 import { useForm } from "react-hook-form";
@@ -16,6 +17,7 @@ function AddReservationForm({
   scheduleId,
   userId,
   handleDialogClose,
+  coinsNeeded,
 }) {
   const { addBookingMutation } = useBookings();
   const {
@@ -25,7 +27,6 @@ function AddReservationForm({
 
   const onSubmit = async () => {
     try {
-      console.log(scheduleId);
       const data = {
         schedule: scheduleId,
         user: userId,
@@ -55,6 +56,9 @@ function AddReservationForm({
             value={endingDate}
             format="yyyy-MM-dd HH:mm"
           />
+          <Typography variant="subtitle2">
+            This will cost you {coinsNeeded} coins
+          </Typography>
         </Stack>
       </DialogContent>
       <DialogActions>

@@ -21,6 +21,10 @@ class GetClientController
     public function __invoke(User $data, Request $request, EntityManagerInterface $entityManager)
     {
         $bookings = $data->getBookings();
+
+        $bookings = array_filter($bookings->toArray(), function($booking) {
+            return $booking->getStatus() !== 'canceled';
+        });
         $newBookingsArr = [];
         foreach($bookings as $booking) {
             $newBookingsArr[] = [
@@ -36,10 +40,15 @@ class GetClientController
                         'id' => $booking->getSchedule()->getBooster()->getId(),
                         'username' => $booking->getSchedule()->getBooster()->getUsername(),
                         'discord' => $booking->getSchedule()->getBooster()->getDiscord(),
+                        'assignedGame' => $booking->getSchedule()->getBooster()->getAssignedGame()->getName(),
+                        'team' => $booking->getSchedule()->getBooster()->getTeam()->getName(),
                     ],
                 ],
             ];
         }
+        usort($newBookingsArr, function ($a, $b) {
+            return $a['schedule']['startingDate'] <=> $b['schedule']['startingDate'];
+        });
 
         $client = [
             'id' => $data->getId(),

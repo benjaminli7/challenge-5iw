@@ -63,7 +63,14 @@ services:
   App\Controller\GetClientController:
     tags: ["controller.service_arguments"]
 
+
   App\Controller\GetAllStatsController:
+    tags: ["controller.service_arguments"]
+
+  App\Controller\GetPlayerController:
+    tags: ["controller.service_arguments"]
+
+  App\Controller\CancelBookingController:
     tags: ["controller.service_arguments"]
 
   # add more service definitions when explicit configuration is needed

@@ -25,6 +25,11 @@ services:
       - ./.docker/php/conf.d/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
       - ~/.config/composer:/home/prod/.composer
       - .:/srv/app
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
   database:
     image: postgres:15.4-alpine
     environment:
