@@ -34,6 +34,12 @@ export function useUsers(userId, token) {
     ["token"]
   );
 
+  const emailValidationMutation = useCustomMutation(
+    ENDPOINTS.users.validation(token),
+    "post",
+    ["token"]
+  );
+
   return {
     loginMutation,
     registerMutation,
@@ -41,5 +47,6 @@ export function useUsers(userId, token) {
     deleteUserMutation,
     resetPasswordMutation,
     changePasswordMutation,
+    emailValidationMutation
   };
 }

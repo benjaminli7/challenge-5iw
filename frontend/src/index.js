@@ -8,6 +8,7 @@ import AdminGamesView from "@/pages/admin/games/AdminGamesView";
 import AdminTeamsView from "@/pages/admin/teams/AdminTeamsView";
 import AdminUsersView from "@/pages/admin/users/AdminUsersView";
 import ChangePassword from "@/pages/auth/ChangePassword";
+import Validation from "@/pages/auth/Validation";
 import EmailForgetPassword from "@/pages/auth/EmailForgetPassword";
 import Login from "@/pages/auth/Login";
 import Signup from "@/pages/auth/Signup";
@@ -67,6 +68,10 @@ const router = createBrowserRouter([
       {
         path: "changePassword",
         element: <ChangePassword />,
+      },
+      {
+        path: "validation",
+        element: <Validation />,
       },
       {
         path: "profile",

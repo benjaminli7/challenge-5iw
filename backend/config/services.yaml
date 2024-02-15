@@ -53,5 +53,15 @@ services:
 
   App\Controller\GetPlayersListController:
     tags: ["controller.service_arguments"]
+  
+  App\Controller\PostUserController:
+    tags: ["controller.service_arguments"]
+
+  App\Controller\ValidationEmailController:
+    tags: ["controller.service_arguments"]
+
+  App\EventSubscriber\JwtValidationSubscriber:
+    tags:
+      - { name: kernel.event_subscriber }
   # add more service definitions when explicit configuration is needed
   # please note that last definitions always *replace* previous ones

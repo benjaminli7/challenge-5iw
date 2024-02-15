@@ -20,6 +20,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
 use App\Controller\GetManagerTeamController;
 use App\Controller\PostImageUserController;
+use App\Controller\PostUserController;
+use App\Controller\ValidationEmailController;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Symfony\Component\HttpFoundation\File\File;
 use App\Controller\GetPlayerScheduleController;
@@ -34,8 +36,13 @@ use App\Controller\GetPlayersListController;
         new Get(normalizationContext: ['groups' => ['read-user']], security: 'is_granted("ROLE_ADMIN") or object == user', securityMessage: 'You can only see your own user.'),
         //  new Get(uriTemplate: '/users/{id}/infos', normalizationContext: ['groups' => ['read-user', 'read-user-as-admin']], security: 'is_granted("ROLE_ADMIN")'),
         new Get(uriTemplate: '/players/{id}', security: "object.getType() == 'player'", securityMessage: "it's not a player!",normalizationContext: ['groups' => ['read-player']]),
-        new Post(denormalizationContext: ['groups' => ['create-user']]),
+        new Post(
+            uriTemplate: '/users',
+            controller: PostUserController::class,
+            denormalizationContext: ['groups' => ['create-user']],
+        ),
         new Patch(denormalizationContext: ['groups' => ['update-user']], securityPostDenormalize: 'is_granted("ROLE_ADMIN") or object == user', securityPostDenormalizeMessage: 'You can only edit your own user.'),
+
         new Get(
             uriTemplate: '/users/{id}/team',
             controller: GetManagerTeamController::class,
@@ -67,7 +74,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['read-user', 'update-user', 'read-team'])]
+    #[Groups(['read-user', 'update-user', 'read-team', 'valide-user'])]
     private ?int $id = null;
 
     #[Assert\Email()]
@@ -103,7 +110,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $plainPassword = null;
 
     #[ORM\Column(type: 'boolean', options: ['default' => false], nullable: true)]
-    #[Groups(['update-user', 'read-client', 'read-user'])]
+    #[Groups(['update-user', 'read-client', 'read-user', 'valide-user'])]
     private ?bool $isVerified = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -181,6 +188,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->coins = 0;
         $this->bookings = new ArrayCollection();
         $this->schedules = new ArrayCollection();
+        $this->isVerified = false;
     }
 
     public function getId(): ?int
@@ -497,12 +505,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getPostal(): ?int
+    public function getPostal(): ?string
     {
         return $this->postal;
     }
 
-    public function setPostal(int $postal): static
+    public function setPostal(string $postal): static
     {
         $this->postal = $postal;
         return $this;
