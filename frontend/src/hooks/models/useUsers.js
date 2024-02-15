@@ -54,7 +54,7 @@ export function useUsers(userId, token) {
     deleteUserMutation,
     resetPasswordMutation,
     changePasswordMutation,
-    emailValidationMutation
+    emailValidationMutation,
     updatePlayerMutation,
   };
 }
