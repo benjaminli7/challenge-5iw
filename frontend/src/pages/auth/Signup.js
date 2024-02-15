@@ -131,25 +131,6 @@ export default function Signup() {
             </Grid>
             <Grid item xs={12}>
               <TextField
-                {...register("address", {
-                  required: "Address is required",
-                })}
-                required
-                fullWidth
-                id="address"
-                label="Address"
-                name="address"
-                autoComplete="address"
-                placeholder="1234 Main St"
-                error={errors.address ? true : false}
-                helperText={errors.address && errors.address.message}
-              />
-            </Grid>
-            <Grid item xs={12}>
-
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
                 {...register("plainPassword", {
                   required: "Password is required",
                   minLength: {

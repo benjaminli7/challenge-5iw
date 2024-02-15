@@ -6,127 +6,14 @@ import AdminDashboardCard from "./dashboard/AdminDashboardCard";
 import useFetch from "@/hooks/useFetch";
 import ENDPOINTS from "@/services/endpoints";
 import { Grid } from "@mui/material";
+import Loader from "@/components/commons/Loader";
 
 function AdminDashboardView() {
   const theme = useTheme();
-  const [playerData, setPlayerData] = useState([]);
-  const [playerMinusOneMonthData, setPlayerMinusOneMonthData] = useState([]);
-  const [playersCardStats, setPlayersCardStats] = useState({});
-  const [bookingsCardStats, setBookingsCardStats] = useState({});
-  const [usersMonhtlyStats, setUsersMonhtlyStats] = useState({});
-  const [coinsCardStats, setCoinsCardStats] = useState({});
-  const [transactionsCardStats, setTransactionsCardStats] = useState({});
-  const [teamCardStats, setTeamCardStats] = useState({});
-  const [teamCoinsCardStats, setTeamCoinsCardStats] = useState({});
-
-  const currentMonthFirstDay = new Date(
-    new Date().getFullYear(),
-    new Date().getMonth(),
-    1
-  ).toISOString();
-
-  const lastMonthFirstDay = new Date(
-    new Date().getFullYear(),
-    new Date().getMonth() - 1,
-    1
-  ).toISOString();
-
-  const { data: players, isLoading: isLoadingPlayers } = useFetch(
-    "players",
-    `${ENDPOINTS.users.players}`
+  const { data: stats, isLoading: isLoadingStats } = useFetch(
+    "stats",
+    ENDPOINTS.stats.root
   );
-
-  const { data: bookings, isLoading: isLoadingBookings } = useFetch(
-    "bookings",
-    `${ENDPOINTS.bookings.root}?createdAt[after]=${currentMonthFirstDay}`
-  );
-
-  const { data: users, isLoading: isLoadingUsers } = useFetch(
-    "users",
-    `${ENDPOINTS.users.root}?isVerified=true&createdAt[after]=${currentMonthFirstDay}`
-  );
-
-  const { data: teams, isLoading: isLoadingTeams } = useFetch(
-    "teams",
-    `${ENDPOINTS.teams.root}`
-  );
-
-  useEffect(() => {
-    if (players) {
-      const currentDate = new Date();
-      const currentMonth = currentDate.getMonth();
-      const currentYear = currentDate.getFullYear();
-
-      const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-      const dailyData = Array(daysInMonth).fill(0);
-      const minusOneMonth = new Date(currentYear, currentMonth, 0).getDate();
-      const minusOneMonthData = Array(minusOneMonth).fill(0);
-
-      players.forEach((player) => {
-        const playerCreatedAt = new Date(player.createdAt);
-        if (
-          playerCreatedAt.getMonth() === currentMonth &&
-          playerCreatedAt.getFullYear() === currentYear
-        ) {
-          const day = playerCreatedAt.getDate();
-          dailyData[day - 1]++;
-        } //else if month -1
-        else if (
-          playerCreatedAt.getMonth() === currentMonth - 1 &&
-          playerCreatedAt.getFullYear() === currentYear
-        ) {
-          const day = playerCreatedAt.getDate();
-          minusOneMonthData[day - 1]++;
-        }
-      });
-
-      const chartData = dailyData.map((count, index) => {
-        return { time: index + 1, amount: count };
-      });
-      const minusOneMonthChartData = minusOneMonthData.map((count, index) => {
-        return { time: index + 1, amount: count };
-      });
-
-      setPlayerData(chartData);
-      setPlayerMinusOneMonthData(minusOneMonthChartData);
-
-      setPlayersCardStats({
-        title: "Total Players",
-        amount: players.length,
-        details: "Total players in the system",
-      });
-      setTeamCardStats({
-        title: "Total Teams",
-        amount: 10,
-        details: "Total teams in the system",
-      });
-    }
-    if (users) {
-      setUsersMonhtlyStats({
-        title: "Total Users",
-        amount: users.length,
-        details: "Total users created and verified this month",
-      });
-    }
-
-    if (bookings) {
-      setBookingsCardStats({
-        title: "Total Bookings",
-        amount: bookings.length,
-        details: "Total bookings created this month",
-      });
-    }
-    if (teams) {
-      const mostEarnedTeam = teams.reduce((prev, current) =>
-        prev.coins > current.coins ? prev : current
-      );
-      setTeamCoinsCardStats({
-        title: "Most Earned Team",
-        amount: mostEarnedTeam.coins,
-        details: `${mostEarnedTeam.name} is the most rentable team`,
-      });
-    }
-  }, [players, users, bookings, teams]);
 
   const customStyles = {
     boxShadow: "0 0 10px 0 rgba(100, 100, 100, 0.2)",
@@ -139,19 +26,22 @@ function AdminDashboardView() {
     amount: 100,
     details: "Total players in the system",
   };
+  if (isLoadingStats) {
+    return <Loader />
+  }
   return (
     <>
       <Grid container spacing={3}>
         {/* CHARTS PART */}
         <Grid item xs={8} sx={customStyles}>
           <AdminDashboardChart
-            playerData={playerData}
+            currentMonthVerifiedPlayers={stats.currentMonthVerifiedPlayers}
             theme={theme}
-            playerMinusOneMonthData={playerMinusOneMonthData}
+            lastMonthVerifiedPlayers={stats.lastMonthVerifiedPlayers}
           />
         </Grid>
         <Grid item xs={4} sx={{ ...customStyles }}>
-          <AdminDashboardPie />
+          <AdminDashboardPie ratings={stats.ratings} />
         </Grid>
         {/* CARDS PART */}
         <Grid item xs={12}>
@@ -159,21 +49,14 @@ function AdminDashboardView() {
             Stats
           </Typography>
         </Grid>
-        <Grid item xs={3}>
-          <AdminDashboardCard stats={playersCardStats} />
-        </Grid>
-        <Grid item xs={3}>
-          <AdminDashboardCard stats={teamCardStats} />
-        </Grid>
-        <Grid item xs={3}>
-          <AdminDashboardCard stats={usersMonhtlyStats} />
-        </Grid>
-        <Grid item xs={3}>
-          <AdminDashboardCard stats={bookingsCardStats} />
-        </Grid>
-        <Grid item xs={3}>
-          <AdminDashboardCard stats={teamCoinsCardStats} />
-        </Grid>
+        {Object.values(stats.cards).map(
+          (stat, index) =>
+            stat && (
+              <Grid item xs={3} key={index}>
+                <AdminDashboardCard stats={stat} />
+              </Grid>
+            )
+        )}
       </Grid>
     </>
   );

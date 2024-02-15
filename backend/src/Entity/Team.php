@@ -22,6 +22,8 @@ use App\Entity\Traits\TimestampableTrait;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Doctrine\Orm\Filter\BooleanFilter;
 use App\Controller\ApproveTeamController;
+use Symfony\Component\Validator\Constraints as Assert;
+
 
 #[Vich\Uploadable]
 #[ORM\Entity(repositoryClass: TeamRepository::class)]
@@ -109,6 +111,11 @@ class Team
     private ?string $fileUrl = null;
 
     #[Vich\UploadableField(mapping: 'team_image', fileNameProperty: 'filePath')]
+    #[Assert\File(
+        maxSize: '1024k',
+        extensions: ['png', 'jpg', 'jpeg', 'gif'],
+        extensionsMessage: 'Please upload a valid image file.',
+    )]
     #[Groups(['team-img', 'create-team'])]
     private ?File $file = null;
 

@@ -29,8 +29,8 @@ use App\Controller\GetPlayersListController;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Doctrine\Orm\Filter\BooleanFilter;
 use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
-
-
+use App\Controller\GetAllStatsController;
+use App\Controller\ProfileController;
 
 #[Vich\Uploadable]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
@@ -43,14 +43,18 @@ use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
         new Get(uriTemplate: '/players/{id}', security: "object.getType() == 'player'", securityMessage: "it's not a player!", normalizationContext: ['groups' => ['read-player']]),
         new Get(controller: GetClientController::class, uriTemplate: '/clients/{id}', security: "object == user or is_granted('ROLE_ADMIN')", securityMessage: "You can only see your own user.", normalizationContext: ['groups' => ['read-client']]),
         new Post(denormalizationContext: ['groups' => ['create-user']]),
-        new Patch(denormalizationContext: ['groups' => ['update-user']], securityPostDenormalize: 'is_granted("ROLE_ADMIN") or object.getTeam().manager == user', securityPostDenormalizeMessage: 'You can only edit your own user.'),        new Get(
+        new Patch(denormalizationContext: ['groups' => ['update-user']], securityPostDenormalize: 'is_granted("ROLE_ADMIN") or object == user', securityPostDenormalizeMessage: 'You can only edit your own user.'),
+
+        new Patch(uriTemplate: '/players/{id}', denormalizationContext: ['groups' => ['update-player']], securityPostDenormalize: 'is_granted("ROLE_ADMIN") or object.getTeam().getManager() == user', securityPostDenormalizeMessage: 'You can only edit your own user.'),
+
+        new Get(
             uriTemplate: '/users/{id}/team',
             controller: GetManagerTeamController::class,
             normalizationContext: ['groups' => ['read-team']],
             security: 'is_granted("ROLE_ADMIN") or (object == user)',
             securityMessage: 'You can only see your own team.'
         ),
-        new Delete(security: 'is_granted("ROLE_ADMIN") or (object.getOwnedTeam().manager == user)', securityMessage: 'You can only delete your own user.'),
+        new Delete(security: 'is_granted("ROLE_ADMIN") or (object.getTeam().getManager() == user)', securityMessage: 'You can only delete your own user.'),
         new Post(
             uriTemplate: '/users/{id}/image',
             controller: PostImageUserController::class,
@@ -62,6 +66,12 @@ use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
         ),
         new Get(uriTemplate: '/player/{id}/schedules', normalizationContext: ['groups' => ['read-player-schedule']], controller: GetPlayerController::class, security: 'is_granted("ROLE_ADMIN") or (object == user) or (object.getTeam().manager == user)', securityMessage: 'You can only see your own schedules.'),
         new GetCollection(uriTemplate: '/players', controller: GetPlayersListController::class, normalizationContext: ['groups' => ['read-player', 'Timestampable']]),
+        new GetCollection(
+            uriTemplate: '/stats',
+            controller: GetAllStatsController::class,
+            security: 'is_granted("ROLE_ADMIN")',
+            securityMessage: 'Only admins can see stats.'
+        ),
     ],
     normalizationContext: ['groups' => ['read-user']],
 )]
@@ -83,7 +93,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['read-user', 'update-user', 'read-team', 'read-player', 'read-client'])]
+    #[Groups(['read-user', 'read-team', 'read-player', 'read-client'])]
     private ?int $id = null;
 
     #[Assert\Email()]
@@ -119,7 +129,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $plainPassword = null;
 
     #[ORM\Column(type: 'boolean', options: ['default' => false], nullable: true)]
-    #[Groups(['update-user', 'read-user'])]
+    #[Groups(['read-user'])]
     private ?bool $isVerified = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -132,7 +142,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 25, nullable: true)]
     private ?string $phone = null;
 
-    #[Groups(['create-user', 'read-user', 'update-user', 'read-player', 'read-client'])]
+    #[Groups(['create-user', 'read-user', 'read-player', 'read-client'])]
     #[ORM\Column(nullable: true)]
     private ?string $type = null;
 
@@ -140,12 +150,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['read-user', 'read-client'])]
     private ?int $coins = null;
 
-    #[Groups(['read-user', 'create-user', 'update-user', 'read-team', 'read-player'])]
+    #[Groups(['read-user', 'create-user', 'update-user', 'read-team', 'read-player', 'update-player'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $discord = null;
 
     #[ORM\ManyToOne(inversedBy: 'users')]
-    #[Groups(['read-user', 'read-player', 'update-user', 'create-player', 'update-player', 'read-team'])]
+    #[Groups(['read-player', 'create-player', 'update-player', 'read-team'])]
     private ?Game $assignedGame = null;
 
     #[ORM\OneToOne(mappedBy: 'manager', cascade: ['persist', 'remove'])]
@@ -163,19 +173,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $fileUrl = null;
 
     #[Vich\UploadableField(mapping: 'user_image', fileNameProperty: 'filePath')]
+    #[Assert\File(
+        maxSize: '1024k',
+        extensions: ['png', 'jpg', 'jpeg', 'gif'],
+        extensionsMessage: 'Please upload a valid image file.',
+    )]
     #[Groups(['user-img', 'create-user'])]
     private ?File $file = null;
 
-    #[Groups(['create-user', 'read-user', 'update-user', 'read-player', 'read-team', 'read-user'])]
+    #[Groups(['create-user', 'read-user', 'update-player', 'read-player', 'read-team', 'read-user'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $address = null;
 
-    #[Groups(['create-user', 'read-user', 'update-user', 'read-player', 'read-team'])]
+    #[Groups(['create-user', 'read-user', 'read-player', 'read-team', 'update-player'])]
     #[ORM\Column(nullable: true)]
     private ?int $taux_horaire = null;
 
     #[ORM\Column]
-    #[Groups(['create-user', 'read-user', 'update-user', 'read-player', 'read-team'])]
+    #[Groups(['read-player', 'read-team'])]
     private ?int $coin_generated = 0;
 
     // les réservations du client
