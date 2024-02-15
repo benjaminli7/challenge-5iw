@@ -7,6 +7,7 @@ import AdminDashboardView from "@/pages/admin/AdminDashboardView";
 import AdminGamesView from "@/pages/admin/games/AdminGamesView";
 import AdminTeamsView from "@/pages/admin/teams/AdminTeamsView";
 import AdminUsersView from "@/pages/admin/users/AdminUsersView";
+import AdminReservationsView from "@/pages/admin/reservations/AdminReservationsView";
 import ChangePassword from "@/pages/auth/ChangePassword";
 import EmailForgetPassword from "@/pages/auth/EmailForgetPassword";
 import Login from "@/pages/auth/Login";
@@ -165,6 +166,10 @@ const router = createBrowserRouter([
       {
         path: "teams",
         element: <AdminTeamsView />,
+      },
+      {
+        path: "reservations",
+        element: <AdminReservationsView />,
       },
     ],
   },

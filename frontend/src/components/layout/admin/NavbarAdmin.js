@@ -2,6 +2,7 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 import GroupIcon from "@mui/icons-material/Group";
 import GroupsIcon from "@mui/icons-material/Groups";
 import LogoutIcon from "@mui/icons-material/Logout";
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import MenuIcon from "@mui/icons-material/Menu";
 import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
 import AppBar from "@mui/material/AppBar";
@@ -39,6 +40,11 @@ const navbarItems = [
     label: "Teams",
     icon: <GroupsIcon />,
     path: "/admin/teams",
+  },
+  {
+    label: "Reservations",
+    icon: <CalendarMonthIcon />,
+    path: "/admin/reservations",
   },
 ];
 

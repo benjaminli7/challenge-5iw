@@ -36,17 +36,17 @@ class Booking
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['read-client', 'cancel-booking'])]
+    #[Groups(['read-client', 'cancel-booking', 'read-booking'])]
     private ?int $id = null;
 
-    #[Groups(['read-client', 'cancel-booking'])]
+    #[Groups(['read-client', 'cancel-booking', 'read-booking'])]
     #[ORM\Column(length: 50)]
     private ?string $status = null;
 
     #[ORM\ManyToOne(inversedBy: 'bookings')]
     private ?User $client = null;
 
-    #[Groups(['read-client'])]
+    #[Groups(['read-client', 'read-booking'])]
     #[ORM\OneToOne(inversedBy: 'booking')]
     private ?Schedule $schedule = null;
 
