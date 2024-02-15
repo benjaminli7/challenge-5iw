@@ -43,8 +43,8 @@ class ResetPasswordController
         $user->setResetToken($token);
         $entityManager->persist($user);
         $entityManager->flush();
-
-        $emailContent = "Bonjour,\n\nPour réinitialiser votre mot de passe, veuillez cliquer sur le lien suivant : http://localhost:3000/changePassword?token=$token";
+        $link = $_ENV['LINK'];
+        $emailContent = "Bonjour,\n\nPour réinitialiser votre mot de passe, veuillez cliquer sur le lien suivant : $link/changePassword?token=$token";
         $email = (new Email())
         ->from('game.elevate@gmail.com')
         ->to($user->getEmail())
