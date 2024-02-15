@@ -13,15 +13,16 @@ import Typography from "@mui/material/Typography";
 import { useForm } from "react-hook-form";
 import { Link as RouterLink } from "react-router-dom";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 export default function Signup() {
   const { registerMutation } = useUsers();
+  const navigate = useNavigate();
 
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-    reset,
     getValues,
     control,
   } = useForm();
@@ -29,8 +30,8 @@ export default function Signup() {
   const onSubmit = async (data) => {
     try {
       await registerMutation.mutateAsync(data);
-      toast.success("Signed up successfully");
-      reset();
+      toast.success("An e-mail has been sent to you to validate your account.");
+      navigate("/login");
     } catch (error) {
       console.log(error);
       toast.error("Error signing up");

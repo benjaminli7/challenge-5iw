@@ -29,12 +29,12 @@ class PostUserController
         // }
         $token = bin2hex(random_bytes(32));
         $user->setResetToken($token);
-        $link = $_GET['LINK'];
+        $link = $_ENV['LINK'];
         $emailContent = "Bonjour,\n\nPour valider votre compte, veuillez cliquer sur le lien suivant : $link/validation?token=$token";
         $email = (new Email())
         ->from('game.elevate@gmail.com')
         ->to($user->getEmail())
-        ->subject('Renouvellement de mot de passe')
+        ->subject('Validation de votre compte GameElevate')
         ->text($emailContent);
 
 
