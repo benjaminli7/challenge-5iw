@@ -22,12 +22,19 @@ export function useTeams(teamId) {
     ENDPOINTS.teams.approveTeam(teamId),
     "post",
     ["teams"]
-  )
+  );
+
+  const withdrawCoinsMutation = useCustomMutation(
+    ENDPOINTS.teams.withdrawCoins(teamId),
+    "patch",
+    ["team"]
+  );
 
   return {
     addTeamMutation,
     updateTeamMutation,
     addPlayerMutation,
     approveTeamMutation,
+    withdrawCoinsMutation,
   };
 }

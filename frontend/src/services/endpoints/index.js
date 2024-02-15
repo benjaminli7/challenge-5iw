@@ -29,6 +29,7 @@ const ENDPOINTS = {
     addPlayer: (teamId) => `api/teams/${teamId}/players`,
     teamImg: (teamId) => `api/teams/${teamId}/image`,
     approveTeam: (teamId) => `api/teams/${teamId}/approve`,
+    withdrawCoins: (teamId) => `api/teams/${teamId}/withdraw`,
   },
   schedules: {
     root: "api/schedules",
