@@ -6,6 +6,7 @@ use App\Repository\ReviewRepository;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
 use App\Entity\Traits\TimestampableTrait;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ReviewRepository::class)]
 #[ApiResource]
@@ -19,6 +20,7 @@ class Review
     private ?int $id = null;
 
     #[ORM\Column]
+    #[Assert\Range(min: 1, max: 5)]
     private ?int $rating = null;
 
     #[ORM\Column(length: 255)]
@@ -53,6 +55,4 @@ class Review
 
         return $this;
     }
-
 }
-
