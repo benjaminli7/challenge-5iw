@@ -628,7 +628,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $schedules = $this->getSchedules();
         $notes = [];
+
         foreach ($schedules as $schedule) {
+            if ($schedule->getReview() == null) {
+                continue;
+            }
             $notes[] = $schedule->getReview()->getRating();
         }
         if (count($notes) == 0) {
