@@ -62,6 +62,12 @@ use Symfony\Component\Validator\Constraints as Assert;
             securityPostDenormalize: 'is_granted("ROLE_ADMIN")',
             securityPostDenormalizeMessage: 'Only admins can approve teams',
             denormalizationContext: ['groups' => ['approve-team']]
+        ),
+        new Patch(
+            uriTemplate: '/teams/{id}/withdraw',
+            security: 'object.getManager() == user',
+            securityMessage: 'You can only withdraw from your own team.',
+            denormalizationContext: ['groups' => ['withdraw-team']]
         )
     ],
     normalizationContext: ['groups' => ['read-team']],
@@ -127,6 +133,12 @@ class Team
     #[ORM\OneToMany(mappedBy: 'team', targetEntity: User::class, cascade: ['persist', 'remove'])]
     #[Groups(['read-team'])]
     private Collection $boosters;
+
+
+    #[ORM\Column(type: 'integer', nullable: true)]
+    #[Groups(['withdraw-team'])]
+    private ?int $withDrawnedCoins;
+
 
     public function __construct()
     {
@@ -275,6 +287,17 @@ class Team
 
         $this->fileUrl = $fileUrl;
 
+        return $this;
+    }
+    public function getWithDrawnedCoins(): ?int
+    {
+        return $this->withDrawnedCoins;
+    }
+
+    public function setWithDrawnedCoins(?int $withDrawnedCoins): static
+    {
+        $this->coins -= $withDrawnedCoins;
+        $this->withDrawnedCoins += $withDrawnedCoins;
         return $this;
     }
 }

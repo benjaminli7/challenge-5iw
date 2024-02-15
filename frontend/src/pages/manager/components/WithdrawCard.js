@@ -3,7 +3,7 @@ import { Button, Card, Tooltip, Typography } from "@mui/material";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 
-function WithdrawCard({ data, teamCoins }) {
+function WithdrawCard({ data, teamCoins, handleOpenDialog, setWithdrawCoins }) {
   return (
     <Card
       variant="outlined"
@@ -38,6 +38,10 @@ function WithdrawCard({ data, teamCoins }) {
               disabled={data.coins > teamCoins ? true : false}
               variant="contained"
               sx={{ width: "100%", fontWeight: "bold" }}
+              onClick={() => {
+                setWithdrawCoins(data.coins);
+                handleOpenDialog()
+              }}
             >
               {data.euro} €
             </Button>
