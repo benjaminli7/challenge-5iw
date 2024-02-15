@@ -22,6 +22,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use App\Controller\GetManagerTeamController;
 use App\Controller\GetPlayerController;
 use App\Controller\PostImageUserController;
+use App\Controller\PostUserController;
+use App\Controller\ValidationEmailController;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Symfony\Component\HttpFoundation\File\File;
 use App\Controller\GetPlayerScheduleController;
@@ -40,13 +42,15 @@ use App\Controller\ProfileController;
         new GetCollection(normalizationContext: ['groups' => ['read-user', 'Timestampable']], security: 'is_granted("ROLE_ADMIN")', securityMessage: 'Only admins can see all users.'),
         new Get(normalizationContext: ['groups' => ['read-user']], security: 'is_granted("ROLE_ADMIN") or object == user', securityMessage: 'You can only see your own user.'),
         //  new Get(uriTemplate: '/users/{id}/infos', normalizationContext: ['groups' => ['read-user', 'read-user-as-admin']], security: 'is_granted("ROLE_ADMIN")'),
+        new Post(
+            uriTemplate: '/users',
+            controller: PostUserController::class,
+            denormalizationContext: ['groups' => ['create-user']],
+        ),
         new Get(uriTemplate: '/players/{id}', security: "object.getType() == 'player'", securityMessage: "it's not a player!", normalizationContext: ['groups' => ['read-player']]),
         new Get(controller: GetClientController::class, uriTemplate: '/clients/{id}', security: "object == user or is_granted('ROLE_ADMIN')", securityMessage: "You can only see your own user.", normalizationContext: ['groups' => ['read-client']]),
-        new Post(denormalizationContext: ['groups' => ['create-user']]),
         new Patch(denormalizationContext: ['groups' => ['update-user']], securityPostDenormalize: 'is_granted("ROLE_ADMIN") or object == user', securityPostDenormalizeMessage: 'You can only edit your own user.'),
-
         new Patch(uriTemplate: '/players/{id}', denormalizationContext: ['groups' => ['update-player']], securityPostDenormalize: 'is_granted("ROLE_ADMIN") or object.getTeam().getManager() == user', securityPostDenormalizeMessage: 'You can only edit your own user.'),
-
         new Get(
             uriTemplate: '/users/{id}/team',
             controller: GetManagerTeamController::class,
@@ -93,7 +97,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['read-user', 'read-team', 'read-player', 'read-client'])]
+    #[Groups(['read-user', 'read-team', 'read-player', 'read-client', 'valide-user'])]
     private ?int $id = null;
 
     #[Assert\Email()]
@@ -129,7 +133,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $plainPassword = null;
 
     #[ORM\Column(type: 'boolean', options: ['default' => false], nullable: true)]
-    #[Groups(['read-user'])]
+    #[Groups(['read-user', 'valide-user'])]
     private ?bool $isVerified = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -216,6 +220,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->coins = 0;
         $this->bookings = new ArrayCollection();
         $this->schedules = new ArrayCollection();
+        $this->isVerified = false;
     }
 
     public function getId(): ?int

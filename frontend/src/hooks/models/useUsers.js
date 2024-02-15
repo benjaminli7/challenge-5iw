@@ -34,6 +34,13 @@ export function useUsers(userId, token) {
     ["token"]
   );
 
+
+  const emailValidationMutation = useCustomMutation(
+    ENDPOINTS.users.validation(token),
+    "post",
+    ["token"]
+  );
+
   const updatePlayerMutation = useCustomMutation(
     ENDPOINTS.users.player(userId),
     "patch",
@@ -47,6 +54,7 @@ export function useUsers(userId, token) {
     deleteUserMutation,
     resetPasswordMutation,
     changePasswordMutation,
+    emailValidationMutation
     updatePlayerMutation,
   };
 }
