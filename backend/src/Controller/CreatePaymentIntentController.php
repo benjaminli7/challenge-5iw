@@ -3,34 +3,91 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Doctrine\ORM\EntityManagerInterface;
+use App\Entity\User;
 use App\Entity\Offer;
+use App\Entity\Payment;
 use Stripe\Stripe;
-use Stripe\PaymentIntent;
+use Stripe\Checkout\Session as StripeSession;
 
 class CreatePaymentIntentController extends AbstractController
 {
-    /**
-     * @Route("/api/create-payment-intent", name="create_payment_intent", methods={"POST"})
-     */
-    public function createPaymentIntent(Request $request): Response
+    public function __construct(private EntityManagerInterface $entityManager) {}
+
+    public function __invoke(Request $request): JsonResponse
     {
-        $content = json_decode($request->getContent(), true);
-        $offerId = $content['offerId'];
-        $offer = $this->getDoctrine()->getRepository(Offer::class)->find($offerId);
+        $data = json_decode($request->getContent(), true);
+
+        $userId = $this->getIdFromIri($data['user']);
+        $offerId = $this->getIdFromIri($data['offer']);
+
+        $user = $this->entityManager->getRepository(User::class)->find($userId);
+        $offer = $this->entityManager->getRepository(Offer::class)->find($offerId);
+
+        if (!$user || !$offer) {
+            return new JsonResponse(['error' => 'User or Offer not found.'], 400);
+        }
+
+        $payment = new Payment();
+        $payment->setUser($user);
+        $payment->setOffer($offer);
+        $payment->setAmount($data['amount']);
+        $payment->setStatus('pending');
+        $payment->setPaymentDate(new \DateTime());
+
+        $this->entityManager->persist($payment);
+        $this->entityManager->flush();
 
         Stripe::setApiKey('sk_test_51NWhaQBS812DNqMjzJcmdr4REaBckFWW2xit9ix1mMAU2dsWdghjPs68kfEYneKhtpKOKes2vyH8l2Pg6uE54os500NVaIboU9');
 
-        $paymentIntent = PaymentIntent::create([
-            'amount' => $offer->getPrice() * 100, // Amount in cents
-            'currency' => 'usd',
-        ]);
+        try {
+            $checkoutSession = StripeSession::create([
+                'payment_method_types' => ['card'],
+                'line_items' => [[
+                    'price_data' => [
+                        'currency' => 'usd',
+                        'product_data' => [
+                            'name' => $offer->getName(),
+                        ],
+                        'unit_amount' => $offer->getPrice() * 100,
+                    ],
+                    'quantity' => 1,
+                ]],
+                'mode' => 'payment',
+                'success_url' => 'http://localhost:3000/purchase/success?session_id={CHECKOUT_SESSION_ID}',
+                'cancel_url' => 'http://localhost:3000/purchase/cancel',
+                'metadata' => ['payment_id' => $payment->getId()],
+            ]);
+            if ($checkoutSession->id) {
+                error_log('Stripe session created successfully: ' . $checkoutSession->id);
+            } else {
+                error_log('Error creating Stripe session: ' . $checkoutSession->error->message);
+                return new JsonResponse(['error' => 'Error creating Stripe session: ' . $checkoutSession->error->message], 500);
+            }
 
+            phpinfo();
 
-        return $this->json([
-            'clientSecret' => $paymentIntent->client_secret,
-        ]);
+            $payment->setStripeSessionId($checkoutSession->id);
+            $this->entityManager->flush();
+
+            return new JsonResponse([
+                'sessionId' => $checkoutSession->id,
+                'paymentId' => $payment->getId(),
+            ]);
+        } catch (\Exception $e) {
+            // Error handling
+            return new JsonResponse(['error' => 'Stripe Error: ' . $e->getMessage()], 500);
+        }
+    }
+    private function getIdFromIri(string $iri): ?int
+    {
+        if (preg_match('/^\/api\/[a-z]+\/(\d+)$/', $iri, $matches)) {
+            return (int) $matches[1];
+        }
+
+        return null;
     }
 }

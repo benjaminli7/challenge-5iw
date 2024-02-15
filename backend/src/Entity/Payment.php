@@ -2,13 +2,26 @@
 
 namespace App\Entity;
 
+use AllowDynamicProperties;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Post;
+use App\Controller\CreatePaymentIntentController;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Entity]
-#[ApiResource]
-class Payment
+#[AllowDynamicProperties] #[ORM\Entity]
+#[ApiResource(
+    operations: [
+        new Post(
+            uriTemplate: '/payments/create-session',
+            controller: CreatePaymentIntentController::class,
+            openapiContext: [
+                'summary' => 'Crée une session de paiement Stripe',
+                'description' => 'Crée une nouvelle session de paiement Stripe.',
+            ]
+        ),
+    ]
+)]class Payment
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -34,7 +47,8 @@ class Payment
     #[ORM\Column(type: 'datetime')]
     private \DateTimeInterface $paymentDate;
 
-    // Getters and Setters
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $stripeSessionId = null;
 
     public function getId(): ?int
     {
@@ -93,6 +107,16 @@ class Payment
     public function setPaymentDate(\DateTimeInterface $paymentDate): self
     {
         $this->paymentDate = $paymentDate;
+        return $this;
+    }
+    public function getStripeSessionId(): ?string
+    {
+        return $this->stripeSessionId;
+    }
+
+    public function setStripeSessionId(?string $stripeSessionId): self
+    {
+        $this->stripeSessionId = $stripeSessionId;
         return $this;
     }
 }

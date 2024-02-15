@@ -1,95 +1,70 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
-import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import { useAuthUser } from "react-auth-kit";
+import useFetch from "@/hooks/useFetch";
+import ENDPOINTS from "@/services/endpoints";
+import { Card, CardContent, Typography, Button } from '@mui/material';
+import { usePayment } from "@/hooks/models/usePayment";
 
-const stripePromise = loadStripe('YOUR_PUBLIC_STRIPE_KEY');
+const stripePromise = loadStripe('pk_test_51NWhaQBS812DNqMjMpIqeLQEP5wSNeht3MpufatBZCAX4aLD0RfSnteFshIEoBXzmhTTasJ9JVK2mERRkhRE0K0r00D1p0P7lP');
 
 const PurchaseCoins = () => {
-    const [offers, setOffers] = useState([]);
-    const [selectedOffer, setSelectedOffer] = useState(null);
-    const [clientSecret, setClientSecret] = useState("");
+    const auth = useAuthUser();
+    const { data: user, isLoading: isLoadingUser } = useFetch("user", ENDPOINTS.users.userId(auth().user.id));
+    const { data: existingOffers, isLoading: isLoadingOffers } = useFetch("offers", ENDPOINTS.offers.root);
+    const { processPayment, paymentResponse } = usePayment(); // Destructure paymentResponse from usePayment
 
     useEffect(() => {
-        // Fetch the offers from your API
-        const fetchOffers = async () => {
-            const response = await fetch('/api/offers');
-            const data = await response.json();
-            setOffers(data);
-        };
+    }, [paymentResponse]);
 
-        fetchOffers();
-    }, []);
+    const handleBuyNow = async (offer) => {
+        try {
+            const paymentResponse = await processPayment(offer, auth().user.id);
+            const stripe = await stripePromise;
 
-    const handleChangeOffer = (offerId) => {
-        setSelectedOffer(offerId);
-        // Create PaymentIntent on the server and get the clientSecret
-        const createPaymentIntent = async () => {
-            const response = await fetch('/api/create-payment-intent', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ offerId }),
-            });
-            const data = await response.json();
-            setClientSecret(data.clientSecret);
-        };
-
-        createPaymentIntent();
-    };
-
-    return (
-        <div>
-            <h2>Purchase Coins</h2>
-            <ul>
-                {offers.map((offer) => (
-                    <li key={offer.id}>
-                        <button onClick={() => handleChangeOffer(offer.id)}>
-                            Buy {offer.coins} coins for {offer.price}$
-                        </button>
-                    </li>
-                ))}
-            </ul>
-            {clientSecret && (
-                <Elements stripe={stripePromise}>
-                    <CheckoutForm clientSecret={clientSecret} />
-                </Elements>
-            )}
-        </div>
-    );
-};
-
-const CheckoutForm = ({ clientSecret }) => {
-    const stripe = useStripe();
-    const elements = useElements();
-
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-
-        const result = await stripe.confirmCardPayment(clientSecret, {
-            payment_method: {
-                card: elements.getElement(CardElement),
-                billing_details: {
-                    // Add billing details here
-                },
-            },
-        });
-
-        if (result.error) {
-            console.log(result.error.message);
-        } else {
-            if (result.paymentIntent.status === 'succeeded') {
-                console.log('Payment successful!');
-                // Update the user's coins balance by calling your API
+            if (paymentResponse.sessionId) {
+                const { error } = await stripe.redirectToCheckout({
+                    sessionId: paymentResponse.sessionId,
+                });
+                if (error) {
+                    console.error("Error redirecting to checkout:", error);
+                }
+            } else {
+                console.error("No session ID returned from the server.");
             }
+        } catch (error) {
+            console.error("Error processing payment:", error);
         }
     };
 
+    if (isLoadingUser || isLoadingOffers) {
+        return <div>Loading...</div>;
+    }
+
     return (
-        <form onSubmit={handleSubmit}>
-            <CardElement />
-            <button type="submit" disabled={!stripe || !elements}>
-                Pay
-            </button>
-        </form>
+        <div>
+            <Typography variant="h4" gutterBottom>
+                Purchase Coins
+            </Typography>
+            {existingOffers.map((offer, index) => (
+                <Card key={index} sx={{ maxWidth: 300, margin: '10px' }}>
+                    <CardContent>
+                        <Typography gutterBottom variant="h5" component="div">
+                            {offer.name}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                            {offer.coins} Coins
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                            Price: ${offer.price}
+                        </Typography>
+                        <Button variant="contained" color="primary" onClick={() => handleBuyNow(offer)}>
+                            Buy Now
+                        </Button>
+                    </CardContent>
+                </Card>
+            ))}
+        </div>
     );
 };
 

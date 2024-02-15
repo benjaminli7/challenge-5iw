@@ -63,6 +63,14 @@ const router = createBrowserRouter([
         ),
       },
       {
+        path: "purchase",
+        element: (
+            <ProtectedRoute>
+              <PurchaseCoins />
+            </ProtectedRoute>
+        ),
+      },
+      {
         path: "client",
         children: [
           {
