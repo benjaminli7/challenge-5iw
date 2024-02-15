@@ -6,7 +6,8 @@ const ENDPOINTS = {
     userImg: (userId) => `api/users/${userId}/image`,
     schedules: (userId) => `api/player/${userId}/schedules`,
     players: "api/players",
-    resetPassword:  `api/users/reset-password`,
+    client: (clientId) => `api/clients/${clientId}`,
+    resetPassword: `api/users/reset-password`,
     changePassword: (token) => `api/users/change-password/${token}`,
     validation: (token) => `api/users/validation/${token}`,
     player: (playerId) => `api/players/${playerId}`,
@@ -27,12 +28,21 @@ const ENDPOINTS = {
     manager: (managerId) => `api/users/${managerId}/team`,
     addPlayer: (teamId) => `api/teams/${teamId}/players`,
     teamImg: (teamId) => `api/teams/${teamId}/image`,
-    approveTeam: (teamId) => `api/teams/${teamId}/approve`
+    approveTeam: (teamId) => `api/teams/${teamId}/approve`,
   },
   schedules: {
     root: "api/schedules",
     scheduleId: (scheduleId) => `api/schedules/${scheduleId}`,
-  }
+  },
+  bookings: {
+    root: "api/bookings",
+    bookingId: (bookingId) => `api/bookings/${bookingId}`,
+    add: "api/bookings/new",
+    cancel: (bookingId) => `api/bookings/${bookingId}/cancel`,
+  },
+  stats: {
+    root: "api/stats",
+  },
 };
 
 export default ENDPOINTS;

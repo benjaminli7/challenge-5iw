@@ -8,6 +8,7 @@ import {
   MenuItem,
   TextField,
 } from "@mui/material";
+import { usePlacesWidget } from "react-google-autocomplete";
 import { useForm } from "react-hook-form";
 
 function ManagerPlayerForm({
@@ -17,6 +18,8 @@ function ManagerPlayerForm({
   onSubmit,
   actionType,
   games,
+  setLatLng,
+  latLng,
 }) {
   const defaultValues = {
     email: selectedUser?.email || "",
@@ -25,6 +28,8 @@ function ManagerPlayerForm({
     lastName: selectedUser?.lastName || "",
     assignedGame: selectedUser?.assignedGame.id || "",
     discord: selectedUser?.discord || "",
+    tauxHoraire: selectedUser?.taux_horaire || "",
+    address: selectedUser?.address || "",
   };
 
   const {
@@ -34,6 +39,16 @@ function ManagerPlayerForm({
     getValues,
     formState: { errors, isSubmitting },
   } = useForm({ defaultValues });
+
+  const { ref: materialRef } = usePlacesWidget({
+    apiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
+    onPlaceSelected: (place) => {
+      setLatLng({
+        lat: place.geometry.location.lat(),
+        lng: place.geometry.location.lng(),
+      });
+    },
+  });
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -118,55 +133,32 @@ function ManagerPlayerForm({
               helperText={errors.lastName && errors.lastName.message}
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              {...register("address", {
-                required: "Address is required",
-              })}
-              required
-              fullWidth
-              id="address"
-              label="Address"
-              name="address"
-              autoComplete="address"
-              placeholder="1234 Main St"
-              error={errors.address ? true : false}
-              helperText={errors.address && errors.address.message}
-            />
+
+          <Grid item xs={12}>
+            <div>
+              <span>Ville </span>
+              <TextField
+                fullWidth
+                variant="outlined"
+                inputRef={materialRef}
+                {...register("address")}
+              />
+            </div>
           </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              {...register("postal", {
-                required: "Postal is required",
-                pattern: {
-                  value: /^[0-9]{5}$/i,
-                  message: "Invalid postal code",
-                },
-              })}
-              required
-              fullWidth
-              id="postal"
-              label="Postal"
-              name="postal"
-              autoComplete="postal"
-              placeholder="12345"
-              error={errors.postal ? true : false}
-              helperText={errors.postal && errors.postal.message}
-            />
-          </Grid>
+
           <Grid item xs={12}>
             <TextField
               {...register("tauxHoraire", {
-                required: "Taux Horaire is required",
+                required: "Hourly rate is required",
                 pattern: {
                   value: /^[0-9]+(\.[0-9]{1,2})?$/i,
-                  message: "Invalid taux horaire",
+                  message: "Invalid hourly rate",
                 },
               })}
               required
               fullWidth
               id="tauxHoraire"
-              label="Taux Horaire"
+              label="Hourly rate"
               name="tauxHoraire"
               autoComplete="tauxHoraire"
               placeholder="0.00"

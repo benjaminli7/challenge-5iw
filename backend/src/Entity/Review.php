@@ -5,24 +5,27 @@ namespace App\Entity;
 use App\Repository\ReviewRepository;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
+use App\Entity\Traits\TimestampableTrait;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ReviewRepository::class)]
 #[ApiResource]
 class Review
 {
+    use TimestampableTrait;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
     #[ORM\Column]
+    #[Assert\Range(min: 1, max: 5)]
     private ?int $rating = null;
 
     #[ORM\Column(length: 255)]
     private ?string $comment = null;
 
-    #[ORM\Column(length: 20)]
-    private ?string $authorType = null;
 
     public function getId(): ?int
     {
@@ -52,18 +55,4 @@ class Review
 
         return $this;
     }
-
-    public function getAuthorType(): ?string
-    {
-        return $this->authorType;
-    }
-
-    public function setAuthorType(string $authorType): static
-    {
-        $this->authorType = $authorType;
-
-        return $this;
-    }
-
 }
-

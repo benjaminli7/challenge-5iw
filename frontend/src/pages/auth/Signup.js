@@ -28,7 +28,6 @@ export default function Signup() {
 
   const onSubmit = async (data) => {
     try {
-      console.log(data);
       await registerMutation.mutateAsync(data);
       toast.success("Signed up successfully");
       reset();
@@ -128,42 +127,6 @@ export default function Signup() {
                 placeholder="username#1234"
                 error={errors.discord ? true : false}
                 helperText={errors.discord && errors.discord.message}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                {...register("address", {
-                  required: "Address is required",
-                })}
-                required
-                fullWidth
-                id="address"
-                label="Address"
-                name="address"
-                autoComplete="address"
-                placeholder="1234 Main St"
-                error={errors.address ? true : false}
-                helperText={errors.address && errors.address.message}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                {...register("postal", {
-                  required: "Postal is required",
-                  pattern: {
-                    value: /^[0-9]{5}$/i,
-                    message: "Invalid postal code",
-                  },
-                })}
-                required
-                fullWidth
-                id="postal"
-                label="Zip / Postal code"
-                name="postal"
-                autoComplete="postal"
-                placeholder="12345"
-                error={errors.postal ? true : false}
-                helperText={errors.postal && errors.postal.message}
               />
             </Grid>
             <Grid item xs={12}>

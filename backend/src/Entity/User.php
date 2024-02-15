@@ -16,9 +16,11 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Delete;
+use App\Controller\GetClientController;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
 use App\Controller\GetManagerTeamController;
+use App\Controller\GetPlayerController;
 use App\Controller\PostImageUserController;
 use App\Controller\PostUserController;
 use App\Controller\ValidationEmailController;
@@ -26,23 +28,29 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Symfony\Component\HttpFoundation\File\File;
 use App\Controller\GetPlayerScheduleController;
 use App\Controller\GetPlayersListController;
+use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Doctrine\Orm\Filter\BooleanFilter;
+use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
+use App\Controller\GetAllStatsController;
+use App\Controller\ProfileController;
 
 #[Vich\Uploadable]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
 #[ApiResource(
     operations: [
-        new GetCollection(normalizationContext: ['groups' => ['read-user']], security: 'is_granted("ROLE_ADMIN")', securityMessage: 'Only admins can see all users.'),
+        new GetCollection(normalizationContext: ['groups' => ['read-user', 'Timestampable']], security: 'is_granted("ROLE_ADMIN")', securityMessage: 'Only admins can see all users.'),
         new Get(normalizationContext: ['groups' => ['read-user']], security: 'is_granted("ROLE_ADMIN") or object == user', securityMessage: 'You can only see your own user.'),
         //  new Get(uriTemplate: '/users/{id}/infos', normalizationContext: ['groups' => ['read-user', 'read-user-as-admin']], security: 'is_granted("ROLE_ADMIN")'),
-        new Get(uriTemplate: '/players/{id}', security: "object.getType() == 'player'", securityMessage: "it's not a player!",normalizationContext: ['groups' => ['read-player']]),
         new Post(
             uriTemplate: '/users',
             controller: PostUserController::class,
             denormalizationContext: ['groups' => ['create-user']],
         ),
+        new Get(uriTemplate: '/players/{id}', security: "object.getType() == 'player'", securityMessage: "it's not a player!", normalizationContext: ['groups' => ['read-player']]),
+        new Get(controller: GetClientController::class, uriTemplate: '/clients/{id}', security: "object == user or is_granted('ROLE_ADMIN')", securityMessage: "You can only see your own user.", normalizationContext: ['groups' => ['read-client']]),
         new Patch(denormalizationContext: ['groups' => ['update-user']], securityPostDenormalize: 'is_granted("ROLE_ADMIN") or object == user', securityPostDenormalizeMessage: 'You can only edit your own user.'),
-
+        new Patch(uriTemplate: '/players/{id}', denormalizationContext: ['groups' => ['update-player']], securityPostDenormalize: 'is_granted("ROLE_ADMIN") or object.getTeam().getManager() == user', securityPostDenormalizeMessage: 'You can only edit your own user.'),
         new Get(
             uriTemplate: '/users/{id}/team',
             controller: GetManagerTeamController::class,
@@ -50,7 +58,7 @@ use App\Controller\GetPlayersListController;
             security: 'is_granted("ROLE_ADMIN") or (object == user)',
             securityMessage: 'You can only see your own team.'
         ),
-        new Delete(security: 'is_granted("ROLE_ADMIN") or (object.getOwnedTeam().manager == user)', securityMessage: 'You can only delete your own user.'),
+        new Delete(security: 'is_granted("ROLE_ADMIN") or (object.getTeam().getManager() == user)', securityMessage: 'You can only delete your own user.'),
         new Post(
             uriTemplate: '/users/{id}/image',
             controller: PostImageUserController::class,
@@ -60,25 +68,40 @@ use App\Controller\GetPlayersListController;
             securityMessage: 'Only admins can create games images.',
             deserialize: false
         ),
-        new Get(uriTemplate: '/player/{id}/schedules', normalizationContext: ['groups' => ['read-player-schedule']], controller: GetPlayerScheduleController::class, security: 'is_granted("ROLE_ADMIN") or (object == user) or (object.getTeam().manager == user)', securityMessage: 'You can only see your own schedules.'),
-        new GetCollection(uriTemplate: '/players', controller: GetPlayersListController::class, normalizationContext: ['groups' => ['read-player']])
+        new Get(uriTemplate: '/player/{id}/schedules', normalizationContext: ['groups' => ['read-player-schedule']], controller: GetPlayerController::class, security: 'is_granted("ROLE_ADMIN") or (object == user) or (object.getTeam().manager == user)', securityMessage: 'You can only see your own schedules.'),
+        new GetCollection(uriTemplate: '/players', controller: GetPlayersListController::class, normalizationContext: ['groups' => ['read-player', 'Timestampable']]),
+        new GetCollection(
+            uriTemplate: '/stats',
+            controller: GetAllStatsController::class,
+            security: 'is_granted("ROLE_ADMIN")',
+            securityMessage: 'Only admins can see stats.'
+        ),
     ],
     normalizationContext: ['groups' => ['read-user']],
 )]
+#[ApiFilter(BooleanFilter::class, properties: ['isVerified'])]
+#[ApiFilter(DateFilter::class, properties: ['createdAt'])]
+
+
+
 #[UniqueEntity(['email'])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
 
     use TimestampableTrait;
 
+    // #[ORM\Column(type: 'timestamp')]
+    // #[Groups(["read-player"])]
+    // private $createdAt;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['read-user', 'update-user', 'read-team', 'valide-user'])]
+    #[Groups(['read-user', 'read-team', 'read-player', 'read-client', 'valide-user'])]
     private ?int $id = null;
 
     #[Assert\Email()]
-    #[Groups(['create-user', 'read-user', 'read-player', 'read-team'])]
+    #[Groups(['create-user', 'read-user', 'read-player', 'read-team', 'read-client'])]
     #[ORM\Column(length: 180, unique: true)]
     private ?string $email = null;
 
@@ -110,7 +133,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $plainPassword = null;
 
     #[ORM\Column(type: 'boolean', options: ['default' => false], nullable: true)]
-    #[Groups(['update-user', 'read-client', 'read-user', 'valide-user'])]
+    #[Groups(['read-user', 'valide-user'])]
     private ?bool $isVerified = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -119,24 +142,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $resetToken = null;
 
-    #[Groups(['read-user', 'read-client', 'read-player'])]
+    #[Groups(['read-user', 'read-player'])]
     #[ORM\Column(length: 25, nullable: true)]
     private ?string $phone = null;
 
-    #[Groups(['create-user', 'read-user', 'update-user', 'read-player'])]
+    #[Groups(['create-user', 'read-user', 'read-player', 'read-client'])]
     #[ORM\Column(nullable: true)]
     private ?string $type = null;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(['read-user'])]
+    #[Groups(['read-user', 'read-client'])]
     private ?int $coins = null;
 
-    #[Groups(['read-user', 'create-user', 'update-user', 'read-team', 'read-player'])]
+    #[Groups(['read-user', 'create-user', 'update-user', 'read-team', 'read-player', 'update-player'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $discord = null;
 
     #[ORM\ManyToOne(inversedBy: 'users')]
-    #[Groups(['read-user', 'read-player', 'update-user', 'create-player', 'update-player', 'read-team'])]
+    #[Groups(['read-player', 'create-player', 'update-player', 'read-team'])]
     private ?Game $assignedGame = null;
 
     #[ORM\OneToOne(mappedBy: 'manager', cascade: ['persist', 'remove'])]
@@ -154,34 +177,43 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $fileUrl = null;
 
     #[Vich\UploadableField(mapping: 'user_image', fileNameProperty: 'filePath')]
+    #[Assert\File(
+        maxSize: '1024k',
+        extensions: ['png', 'jpg', 'jpeg', 'gif'],
+        extensionsMessage: 'Please upload a valid image file.',
+    )]
     #[Groups(['user-img', 'create-user'])]
     private ?File $file = null;
 
-
-    #[Groups(['create-user', 'read-user', 'update-user', 'read-player', 'read-team'])]
-    #[ORM\Column(nullable: true)]
-    private ?string $postal = null;
-
-    #[Groups(['create-user', 'read-user', 'update-user', 'read-player', 'read-team'])]
+    #[Groups(['create-user', 'read-user', 'update-player', 'read-player', 'read-team', 'read-user'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $address = null;
 
-    #[Groups(['create-user', 'read-user', 'update-user', 'read-player', 'read-team'])]
+    #[Groups(['create-user', 'read-user', 'read-player', 'read-team', 'update-player'])]
     #[ORM\Column(nullable: true)]
     private ?int $taux_horaire = null;
 
     #[ORM\Column]
-    #[Groups(['create-user', 'read-user', 'update-user', 'read-player', 'read-team'])]
+    #[Groups(['read-player', 'read-team'])]
     private ?int $coin_generated = 0;
 
     // les réservations du client
+    #[Groups(['read-client'])]
     #[ORM\OneToMany(mappedBy: 'client', targetEntity: Booking::class)]
     private Collection $bookings;
 
     // les disponibilités du booster
-    #[Groups(['read-schedule', 'read-team'])]
+    #[Groups(['read-schedule', 'read-team', 'read-player'])]
     #[ORM\OneToMany(mappedBy: 'booster', targetEntity: Schedule::class)]
     private Collection $schedules;
+
+    #[Groups(['read-player', 'read-team', 'update-user'])]
+    #[ORM\Column(nullable: true)]
+    private ?float $lat = null;
+
+    #[Groups(['read-player', 'read-team', 'update-user'])]
+    #[ORM\Column(nullable: true)]
+    private ?float $lng = null;
 
     public function __construct()
     {
@@ -505,16 +537,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getPostal(): ?string
-    {
-        return $this->postal;
-    }
-
-    public function setPostal(string $postal): static
-    {
-        $this->postal = $postal;
-        return $this;
-    }
     /**
      * @return Collection<int, Schedule>
      */
@@ -563,7 +585,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function setCoinGenerated(int $coin_generated): static
     {
-        $this->coin_generated += $coin_generated;
+        $this->coin_generated = $coin_generated;
         return $this;
     }
 
@@ -575,6 +597,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $schedule->setBooster(null);
             }
         }
+        return $this;
+    }
+
+    public function getLat(): ?float
+    {
+        return $this->lat;
+    }
+
+    public function setLat(?float $lat): static
+    {
+        $this->lat = $lat;
+
+        return $this;
+    }
+
+    public function getLng(): ?float
+    {
+        return $this->lng;
+    }
+
+    public function setLng(?float $lng): static
+    {
+        $this->lng = $lng;
+
         return $this;
     }
 }

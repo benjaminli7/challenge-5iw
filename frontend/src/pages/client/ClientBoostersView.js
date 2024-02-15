@@ -1,4 +1,6 @@
+import Loader from "@/components/commons/Loader";
 import useFetch from "@/hooks/useFetch";
+import ClientBoosterItemList from "@/pages/client/ClientBoosterItemList";
 import MapWrapper from "@/pages/client/MapWrapper";
 import ENDPOINTS from "@/services/endpoints";
 import {
@@ -11,7 +13,6 @@ import {
   Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import ClientBoosterItemList from "@/pages/client/ClientBoosterItemList";
 
 function ClientBoostersView() {
   const [filters, setFilters] = useState({});
@@ -23,6 +24,7 @@ function ClientBoostersView() {
     isFetching: isFetchingPlayers,
     refetch,
   } = useFetch("players", `${ENDPOINTS.users.players}?${queryParams}`);
+
   const { data: teams, isLoading: isLoadingTeams } = useFetch(
     "teams",
     `${ENDPOINTS.teams.root}?isApproved=true`
@@ -45,8 +47,7 @@ function ClientBoostersView() {
     refetch();
   }, [queryParams]);
 
-  if (isLoadingPlayers || isLoadingTeams || isLoadingGames)
-    return <div>Loading...</div>;
+  if (isLoadingPlayers || isLoadingTeams || isLoadingGames) return <Loader />;
 
   return (
     <div>
@@ -107,7 +108,7 @@ function ClientBoostersView() {
           sx={{ height: "70vh", overflowY: "scroll" }}
         >
           {isFetchingPlayers ? (
-            <Typography>Loading...</Typography>
+            <Loader />
           ) : (
             <>
               {players.map((player, index) => (
@@ -117,7 +118,7 @@ function ClientBoostersView() {
           )}
         </Grid>
         <Grid item xs={12} sm={6}>
-          <MapWrapper />
+          <MapWrapper players={players} />
         </Grid>
       </Grid>
     </div>

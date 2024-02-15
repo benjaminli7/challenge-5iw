@@ -1,15 +1,13 @@
 import React from "react";
-import { Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
-import { usePlayerView } from "@/pages/player/hooks/usePlayerView";
+import { useCalendar } from "@/hooks/useCalendar";
 
-function ManagerPlayerCalandar({ selectedUser, open, handleClose }) {
-  const { setBackGroundColor, formatEvents } = usePlayerView();
-
-  //   if (isLoading) return <div>Loading...</div>;
+function ManagerPlayerCalandar({ selectedUser }) {
+  const { formatEvents } = useCalendar();
   return (
-    <div>
+    <Box sx={{p: 4}}>
       <Typography variant="h5">
         Vue du calendrier du joueur {selectedUser.firstName}{" "}
         {selectedUser.lastName}
@@ -36,8 +34,9 @@ function ManagerPlayerCalandar({ selectedUser, open, handleClose }) {
         }}
         eventStartEditable={false}
         selectOverlap={false}
+        weekends={false}
       />
-    </div>
+    </Box>
   );
 }
 

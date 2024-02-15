@@ -18,42 +18,46 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ORM\Entity(repositoryClass: ScheduleRepository::class)]
 #[ApiResource(
     operations: [
-        new GetCollection(),
-        new Post(denormalizationContext: ['groups' => ['write-schedule']]),
+        new GetCollection(normalizationContext: ['groups' => ['read-schedule']]),
+        new Post(denormalizationContext: ['groups' => ['write-schedule']], normalizationContext: ['groups' => ['read-schedule-created']]),
         new Delete(),
     ],
-    normalizationContext: ['groups' => ['read-schedule']],
 )]
 #[UniqueEntity(
     fields: ['startingDate', 'endingDate'],
     message: 'This schedule already exists.',
 )]
+#[ORM\HasLifecycleCallbacks]
 class Schedule
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['read-schedule', 'read-player-schedule', 'read-team'])]
+    #[Groups(['read-schedule', 'read-player-schedule', 'read-team','read-player', 'read-schedule-created', 'read-client'])]
     private ?int $id = null;
 
-    #[Groups(['read-schedule', 'write-schedule', 'read-player-schedule', 'read-team'])]
+    #[Groups(['read-schedule', 'write-schedule', 'read-player-schedule', 'read-team', 'read-player', 'read-schedule-created', 'read-client'])]
     #[ORM\Column(type: Types::DATETIME_MUTABLE, unique: true)]
     private ?\DateTimeInterface $startingDate = null;
 
-    #[Groups(['read-schedule', 'write-schedule', 'read-player-schedule', 'read-team'])]
+    #[Groups(['read-schedule', 'write-schedule', 'read-player-schedule', 'read-team', 'read-player', 'read-schedule-created', 'read-client'])]
     #[ORM\Column(type: Types::DATETIME_MUTABLE, unique: true)]
     private ?\DateTimeInterface $endingDate = null;
 
     #[ORM\OneToOne(mappedBy: 'schedule', cascade: ['persist', 'remove'])]
     private ?Booking $booking = null;
 
-    #[Groups(['read-schedule', 'write-schedule', 'read-player-schedule', 'read-team'])]
+    #[Groups(['read-schedule', 'write-schedule', 'read-player-schedule', 'read-schedule-created'])]
     #[ORM\ManyToOne(inversedBy: 'schedules')]
     private ?User $booster = null;
 
-    #[Groups(['read-schedule', 'write-schedule', 'read-player-schedule', 'read-team'])]
+    #[Groups(['read-schedule', 'write-schedule', 'read-player-schedule', 'read-team', 'read-player', 'read-schedule-created'])]
     #[ORM\Column(length: 50)]
     private ?string $status = null;
+
+    #[Groups(['read-schedule', 'read-player-schedule', 'read-team', 'read-schedule-created', 'read-client','read-player'])]
+    #[ORM\Column()]
+    private ?int $coinsNeeded = null;
 
     public function __construct()
     {
@@ -133,6 +137,36 @@ class Schedule
         $this->status = $status;
 
         return $this;
+    }
+
+    public function getCoinsNeeded(): ?int
+    {
+        return $this->coinsNeeded;
+    }
+
+    public function setCoinsNeeded(int $coinsNeeded): static
+    {
+        $this->coinsNeeded = $coinsNeeded;
+
+        return $this;
+    }
+
+    // Add a new method to calculate coinsNeeded automatically
+    public function calculateCoinsNeeded(): void
+    {
+        // Ensure that booster (User) is set
+        if ($this->booster !== null) {
+            $tauxHoraire = $this->booster->getTauxHoraire();
+
+            // Ensure that both startingDate and endingDate are set
+            if ($this->startingDate !== null && $this->endingDate !== null) {
+                $timeDiff = $this->endingDate->diff($this->startingDate);
+                $hoursWorked = $timeDiff->h + ($timeDiff->days * 24);
+
+                // Calculate coinsNeeded based on taux_horaire and hours worked
+                $this->coinsNeeded = $tauxHoraire * $hoursWorked;
+            }
+        }
     }
 
 }

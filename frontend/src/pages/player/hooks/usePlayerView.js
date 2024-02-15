@@ -1,4 +1,5 @@
 import useActionHandlers from "@/hooks/useActionHandlers";
+import { useCalendar } from "@/hooks/useCalendar";
 import useFetch from "@/hooks/useFetch";
 import ENDPOINTS from "@/services/endpoints";
 import { isAfter } from "date-fns";
@@ -9,9 +10,13 @@ import { useAuthUser } from "react-auth-kit";
 export function usePlayerView() {
   const auth = useAuthUser();
 
+  const {
+    formatEvents,
+  } = useCalendar();
+
   const user = auth().user;
-  const { data: events, isLoading } = useFetch(
-    "schedules",
+  const { data: player, isLoading } = useFetch(
+    "player",
     ENDPOINTS.users.schedules(user.id)
   );
   const [startingDate, setStartingDate] = useState(new Date());
@@ -36,23 +41,6 @@ export function usePlayerView() {
 
     handleActionType(ACTION_TYPES.CREATE_EVENT);
   };
-  const setBackGroundColor = (event) => {
-    if (isAfter(new Date(), event.end)) {
-      return "gray";
-    }
-    return event.status === "available" ? "green" : "red";
-  };
-  const formatEvents = (events) => {
-    return events?.map((event) => {
-      return {
-        id: event.id,
-        title: event.status === "available" ? "Available" : "Booked",
-        start: event.startingDate,
-        end: event.endingDate,
-        backgroundColor: setBackGroundColor(event),
-      };
-    });
-  };
 
   const handleEventClick = (arg) => {
     setSelectedEventId(arg.event.id);
@@ -66,12 +54,11 @@ export function usePlayerView() {
     ACTION_TYPES,
     startingDate,
     endingDate,
-    events,
     selectedEventId,
     actionType,
     openDialog,
     handleDialogClose,
-    user,
-    isLoading
+    isLoading,
+    player
   };
 }

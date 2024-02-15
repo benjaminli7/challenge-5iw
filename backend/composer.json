@@ -11,11 +11,8 @@
         "doctrine/doctrine-bundle": "^2.10",
         "doctrine/doctrine-migrations-bundle": "^3.2",
         "doctrine/orm": "^2.16",
-<<<<<<< HEAD
         "fakerphp/faker": "^1.23",
-=======
         "getbrevo/brevo-php": "1.x.x",
->>>>>>> feature/email2
         "hautelook/alice-bundle": "^2.12",
         "lexik/jwt-authentication-bundle": "^2.19",
         "nelmio/cors-bundle": "^2.4",

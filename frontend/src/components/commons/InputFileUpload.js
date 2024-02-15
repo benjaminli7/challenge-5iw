@@ -31,8 +31,6 @@ const InputFileUpload = ({
   type,
 }) => {
   const [file, setFile] = useState(null);
-
-  console.log(ressource);
   return (
     <Box
       sx={{
@@ -42,7 +40,7 @@ const InputFileUpload = ({
         p: 4,
       }}
     >
-      <DialogTitle>Ajouter une image</DialogTitle>
+      <DialogTitle>Upload an image</DialogTitle>
       <DialogContent>
         <Button
           component="label"
@@ -50,7 +48,7 @@ const InputFileUpload = ({
           startIcon={<CloudUploadIcon />}
           sx={{ width: "100%" }}
         >
-          Ajouter une image
+          Upload
           <VisuallyHiddenInput
             type="file"
             accept="image/*"
@@ -74,7 +72,7 @@ const InputFileUpload = ({
             );
           }}
         >
-          Confirmer
+          Submit
         </Button>
       </DialogActions>
     </Box>

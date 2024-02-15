@@ -39,15 +39,23 @@ export default function Login() {
   const onSubmit = async (data) => {
     try {
       const response = await loginMutation.mutateAsync(data);
-      toast.success("Logged in successfully!");
-      signIn({
-        token: response.token,
-        expiresIn: 60 * 60 * 24 * 7, // 7 days
-        tokenType: "Bearer",
-        authState: {
-          user: response.user,
-        },
-      });
+      console.log('isVerified',response.user.isVerified)
+      if(response.user.isVerified==false){
+        setErrorLogin("Your account is not verified");
+      }
+      else{
+        toast.success("Logged in successfully!");
+        signIn({
+          token: response.token,
+          expiresIn: 60 * 60 * 24 * 7, // 7 days
+          tokenType: "Bearer",
+          authState: {
+            user: response.user,
+          },
+        });
+      }
+
+      
     } catch (error) {
       console.log(error);
       setErrorLogin(error.response.data.message);

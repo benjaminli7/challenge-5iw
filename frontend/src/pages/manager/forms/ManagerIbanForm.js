@@ -20,10 +20,10 @@ function ManagerIbanForm() {
         helperText={errors.iban && errors.iban.message}
         {...register("iban", {
           required: "IBAN required",
-          // pattern: {
-          //   value: /^[A-Z]{2}[0-9]{2}[A-Z0-9]{1,30}$/,
-          //   message: "Invalid IBAN",
-          // },
+          pattern: {
+            value: /^[A-Z]{2}[0-9]{2}[A-Z0-9]{1,30}$/,
+            message: "Invalid IBAN",
+          },
         })}
       />
     </div>
