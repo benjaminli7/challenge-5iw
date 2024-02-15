@@ -22,13 +22,8 @@ class UserFixtures extends Fixture
         $admin->setEmail('admin@admin.fr');
         $admin->setUsername('admin_user');
         $admin->setRoles(['ROLE_ADMIN']);
-<<<<<<< HEAD
-        $admin->setPassword($this->hasher->hashPassword($admin, "admin"));
-        $admin->setFirstName('admin');
-=======
         $admin->setPassword($this->hasher->hashPassword($admin, "admin321"));
         $admin->setFirstName('Admin');
->>>>>>> dev
         $admin->setLastName('User');
         $admin->setIsVerified(true);
         $admin->setPhone('987654321');

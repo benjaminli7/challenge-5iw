@@ -43,7 +43,8 @@ use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
         new Get(uriTemplate: '/players/{id}', security: "object.getType() == 'player'", securityMessage: "it's not a player!", normalizationContext: ['groups' => ['read-player']]),
         new Get(controller: GetClientController::class, uriTemplate: '/clients/{id}', security: "object == user or is_granted('ROLE_ADMIN')", securityMessage: "You can only see your own user.", normalizationContext: ['groups' => ['read-client']]),
         new Post(denormalizationContext: ['groups' => ['create-user']]),
-        new Patch(denormalizationContext: ['groups' => ['update-user']], securityPostDenormalize: 'is_granted("ROLE_ADMIN") or object.getTeam().manager == user', securityPostDenormalizeMessage: 'You can only edit your own user.'),        new Get(
+        new Patch(denormalizationContext: ['groups' => ['update-user']], securityPostDenormalize: 'is_granted("ROLE_ADMIN") or object.getTeam().manager == user', securityPostDenormalizeMessage: 'You can only edit your own user.'),
+        new Get(
             uriTemplate: '/users/{id}/team',
             controller: GetManagerTeamController::class,
             normalizationContext: ['groups' => ['read-team']],
@@ -93,8 +94,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[Assert\Length(min: 3, max: 32)]
     #[ORM\Column(length: 50, unique: true)]
-    #[Groups(['create-user', 'read-user', 'read-player', 'read-team', 'read-schedule', 'read-player-schedule'])]
+    #[Groups(['create-user', 'read-user', 'read-player', 'read-team', 'read-schedule', 'read-player-schedule', 'update-user'])]
     private ?string $username = null;
+
     #[ORM\Column]
     #[Groups(['read-user'])]
     private array $roles = [];
@@ -134,7 +136,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[Groups(['create-user', 'read-user', 'update-user', 'read-player', 'read-client'])]
     #[ORM\Column(nullable: true)]
-    #[Groups(['create-user', 'read-user', 'read-player'])]
     #[Assert\Choice(choices: ['client', 'manager', 'player'], message: 'The type must be either client, manager, or player.')]
     private ?string $type = null;
 
