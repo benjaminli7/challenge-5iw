@@ -24,12 +24,12 @@ function AdminRankItem({
           {rank.name}
         </Typography>
 
-        <Avatar
+        {/* <Avatar
           src={rank.fileUrl && process.env.REACT_APP_API_URL + rank.fileUrl}
           title={rank.name}
-        ></Avatar>
+        ></Avatar> */}
 
-        <IconButton
+        {/* <IconButton
           color="primary"
           aria-label="edit rank"
           onClick={() => {
@@ -39,7 +39,7 @@ function AdminRankItem({
         >
           {" "}
           <ImageIcon />
-        </IconButton>
+        </IconButton> */}
         <IconButton
           color="primary"
           aria-label="edit rank"

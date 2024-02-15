@@ -6,8 +6,11 @@ import {
   Stack,
   Typography,
   CardMedia,
+  IconButton,
 } from "@mui/material";
 import AdminRankItem from "@/pages/admin/games/AdminRankItem";
+import EditIcon from "@mui/icons-material/Edit";
+
 
 export default function AdminGamesList({
   games,
@@ -21,7 +24,7 @@ export default function AdminGamesList({
       {games?.map((game) => (
         <Grid item key={game.id} xs={12} md={6} lg={4}>
           <Card variant="outlined" sx={{ p: 3, height: "100%" }}>
-            <CardMedia
+            {/* <CardMedia
               sx={{ height: 300 }}
               image={
                 (game.fileUrl &&
@@ -29,9 +32,21 @@ export default function AdminGamesList({
                 "/reptile.jpg"
               }
               title={game.title}
-            ></CardMedia>
+            ></CardMedia> */}
             <Stack spacing={2}>
-              <Typography variant="h6">{game.name}</Typography>
+              <Stack direction="row" spacing={2} alignItems="center">
+                <Typography variant="h6">{game.name}</Typography>
+                <IconButton
+                  color="primary"
+                  aria-label="edit game"
+                  onClick={() => {
+                    handleActionType(ACTION_TYPES.EDIT_GAME);
+                    setSelectedGame(game);
+                  }}
+                >
+                  <EditIcon />
+                </IconButton>
+              </Stack>
               {game.ranks.map((rank) => (
                 <AdminRankItem
                   key={rank.id}
@@ -46,23 +61,13 @@ export default function AdminGamesList({
                   variant="contained"
                   color="primary"
                   onClick={() => {
-                    handleActionType(ACTION_TYPES.EDIT_GAME);
-                    setSelectedGame(game);
-                  }}
-                >
-                  Edit game
-                </Button>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() => {
                     handleActionType(ACTION_TYPES.CREATE_RANK);
                     setSelectedGame(game);
                   }}
                 >
                   Add rank
                 </Button>
-                <Button
+                {/* <Button
                   variant="contained"
                   color="primary"
                   onClick={() => {
@@ -71,7 +76,7 @@ export default function AdminGamesList({
                   }}
                 >
                   Image
-                </Button>
+                </Button> */}
               </Box>
             </Stack>
           </Card>

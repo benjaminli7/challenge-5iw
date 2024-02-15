@@ -7,6 +7,7 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import { Dialog, Typography, Paper, Stack } from "@mui/material";
 import { isBefore } from "date-fns";
 import PlayerReservationItem from "./PlayerReservationItem";
+import Loader from "@/components/commons/Loader";
 
 function PlayerView() {
   const {
@@ -25,7 +26,7 @@ function PlayerView() {
     isLoading,
   } = usePlayerView();
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <Loader />
 
   const upcomingEvents = player.schedules.filter((event) => {
     if(event.status === "booked") {

@@ -7,15 +7,13 @@ function AdminDashboardChart({
   theme,
   lastMonthVerifiedPlayers,
 }) {
-  console.log(currentMonthVerifiedPlayers);
-  console.log(lastMonthVerifiedPlayers);
   const playerData = Object.values(currentMonthVerifiedPlayers);
   const playerMinusOneMonthData = Object.values(lastMonthVerifiedPlayers);
 
   const max = Math.max(...playerData, ...playerMinusOneMonthData);
   return (
     <div style={{ width: "100%", flexGrow: 1, overflow: "hidden" }}>
-      <Typography variant="h6" gutterBottom color="primary" bold>
+      <Typography variant="h6" gutterBottom color="primary">
         In {new Date().toLocaleString("en-us", { month: "long" })} we had{" "}
         {playerData.length} new players
       </Typography>

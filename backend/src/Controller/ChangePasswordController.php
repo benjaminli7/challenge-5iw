@@ -33,14 +33,17 @@ class ChangePasswordController
             throw new EntityNotFoundException('Token not found');
         }
 
-        $hashedPassword = $this->hasher->hashPassword($user, $dto->getPassword());
-        $user->setPassword($hashedPassword);
-        $user->setResetToken(NULL);
-        $entityManager->persist($user);
-        $entityManager->flush();
-
-
-        // Retourner une réponse de succès
-        return new Response('Password updated successfully');
+        try {
+            $hashedPassword = $this->hasher->hashPassword($user, $dto->getPassword());
+            $user->setPassword($hashedPassword);
+            $user->setResetToken(NULL);
+            $entityManager->persist($user);
+            $entityManager->flush();
+            return new Response('Password updated successfully');
+        } catch (\Throwable $th) {
+            return new Response('Error while changing password');
+        }
+        
+        
     }
 }

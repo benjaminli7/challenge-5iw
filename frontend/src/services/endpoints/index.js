@@ -9,6 +9,7 @@ const ENDPOINTS = {
     client: (clientId) => `api/clients/${clientId}`,
     resetPassword: `api/users/reset-password`,
     changePassword: (token) => `api/users/change-password/${token}`,
+    validation: (token) => `api/users/validation/${token}`,
     player: (playerId) => `api/players/${playerId}`,
   },
   games: {

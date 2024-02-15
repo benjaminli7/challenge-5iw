@@ -1,8 +1,9 @@
+import Loader from "@/components/commons/Loader";
 import useFetch from "@/hooks/useFetch";
 import ClientBoosterDetailCalendar from "@/pages/client/ClientBoosterDetailCalendar";
 import ClientBoosterDetailInfos from "@/pages/client/ClientBoosterDetailInfos";
 import ENDPOINTS from "@/services/endpoints";
-import { Box, Paper, Stack } from "@mui/material";
+import { Box, Paper, Alert, Stack } from "@mui/material";
 import { useParams } from "react-router-dom";
 import ClientBoosterDetailReviews from "@/pages/client/ClientBoosterDetailReviews";
 
@@ -13,8 +14,8 @@ function ClientBoosterDetail() {
     isLoading: isLoadingPlayer,
     isError,
   } = useFetch("player", ENDPOINTS.users.player(id));
-  if (isLoadingPlayer) return <div>Loading...</div>;
-  if (isError) return <div>This player doesn't exist!</div>;
+  if (isLoadingPlayer) return <Loader />
+  if (isError) return <Alert severity="error">This player doesn't exist!</Alert>
 
   return (
     <div>

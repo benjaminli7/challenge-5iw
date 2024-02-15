@@ -4,7 +4,9 @@ import { toast } from "sonner";
 import { useState } from "react";
 
 function ManagerPlayerUpdateForm({ selectedUser, handleDialogClose, games }) {
-  const { updateUserMutation, deleteUserMutation } = useUsers(selectedUser.id);
+  const { updatePlayerMutation, deleteUserMutation } = useUsers(
+    selectedUser.id
+  );
   const [latLng, setLatLng] = useState({ lat: 0, lng: 0 });
 
   const onSubmit = async (data) => {
@@ -15,11 +17,10 @@ function ManagerPlayerUpdateForm({ selectedUser, handleDialogClose, games }) {
         lng: latLng.lng,
         assignedGame: `/api/games/${data.assignedGame}`,
       };
-      await updateUserMutation.mutateAsync(dataToSend);
+      await updatePlayerMutation.mutateAsync(dataToSend);
       await handleDialogClose();
       toast.success("Player updated!");
     } catch (error) {
-      console.log(error);
       console.error("Error updating player:", error);
       toast.error("Error updating player");
     }

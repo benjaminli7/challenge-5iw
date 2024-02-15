@@ -1,14 +1,14 @@
-import { Button, Dialog, Typography } from "@mui/material";
-import CircularProgress from "@mui/material/CircularProgress";
+import InputFileUpload from "@/components/commons/InputFileUpload";
+import Loader from "@/components/commons/Loader";
 import AdminGamesList from "@/pages/admin/games/AdminGamesList";
 import AdminGameCreateForm from "@/pages/admin/games/forms/AdminGameCreateForm";
-import AdminRankCreateForm from "@/pages/admin/games/forms/AdminRankCreateForm";
 import AdminGameUpdateForm from "@/pages/admin/games/forms/AdminGameUpdateForm";
+import AdminRankCreateForm from "@/pages/admin/games/forms/AdminRankCreateForm";
 import AdminRankUpdateForm from "@/pages/admin/games/forms/AdminRankUpdateForm";
 import { useAdminGamesView } from "@/pages/admin/games/hooks/useAdminGamesView";
-import InputFileUpload from "@/components/commons/InputFileUpload";
 import { httpPostMultiPart } from "@/services/api";
 import ENDPOINTS from "@/services/endpoints";
+import { Button, Dialog, Typography } from "@mui/material";
 import { useQueryClient } from "react-query";
 
 function AdminGamesView() {
@@ -34,7 +34,7 @@ function AdminGamesView() {
     return <Typography>{error.message}</Typography>;
   }
 
-  if (isLoading) return <CircularProgress />;
+  if (isLoading) return <Loader />;
 
   const handleImageUpload = async (
     data,
