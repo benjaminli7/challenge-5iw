@@ -1,11 +1,11 @@
 import {
+  Avatar,
   Box,
   Button,
   Card,
   Grid,
   Stack,
   Typography,
-  Avatar,
 } from "@mui/material";
 
 function ManagerPlayerList({
@@ -16,7 +16,11 @@ function ManagerPlayerList({
 }) {
   return (
     <Grid container spacing={4}>
-      
+      {players?.length === 0 && (
+        <Grid item xs={12}>
+          <Typography variant="h5">No player found</Typography>
+        </Grid>
+      )}
       {players?.map((player) => (
         <Grid item key={player.id} xs={12} md={6} lg={4}>
           <Card variant="outlined" sx={{ p: 3, height: "100%" }}>
@@ -42,9 +46,9 @@ function ManagerPlayerList({
               </Box>
               <Typography>{player.assignedGame.name}</Typography>
               <Typography>{player.discord}</Typography>
-              <Typography>{player.address}</Typography>
-              <Typography>{player.taux_horaire}coins/h</Typography>
-              <Typography>{player.coin_generated} coins</Typography>
+              {player.address && <Typography>{player.address}</Typography>}
+              <Typography>{player.taux_horaire} coins per hour</Typography>
+              <Typography>{player.coin_generated} coins generated</Typography>
               <Box sx={{ display: "flex", gap: 2 }}>
                 <Button
                   variant="contained"

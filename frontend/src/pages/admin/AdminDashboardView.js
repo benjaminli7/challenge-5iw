@@ -6,6 +6,7 @@ import AdminDashboardCard from "./dashboard/AdminDashboardCard";
 import useFetch from "@/hooks/useFetch";
 import ENDPOINTS from "@/services/endpoints";
 import { Grid } from "@mui/material";
+import Loader from "@/components/commons/Loader";
 
 function AdminDashboardView() {
   const theme = useTheme();
@@ -26,7 +27,7 @@ function AdminDashboardView() {
     details: "Total players in the system",
   };
   if (isLoadingStats) {
-    return <Typography>Loading stats...</Typography>;
+    return <Loader />
   }
   return (
     <>

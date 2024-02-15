@@ -1,5 +1,6 @@
 import AdminRankForm from "@/pages/admin/games/forms/AdminRankForm";
 import { useRanks } from "@/hooks/models/useRanks";
+import { toast } from "sonner";
 
 function AdminRankCreateForm({ handleDialogClose, selectedGame }) {
   const { addRankMutation } = useRanks();
@@ -12,8 +13,10 @@ function AdminRankCreateForm({ handleDialogClose, selectedGame }) {
       };
       await addRankMutation.mutateAsync(dataToSend);
       await handleDialogClose();
+      toast.success("Rank created successfully");
     } catch (error) {
       console.error("Error creating rank:", error);
+      toast.error("Error creating rank");
     }
   };
   return <AdminRankForm onSubmit={onSubmit} actionType="create" />;

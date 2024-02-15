@@ -13,7 +13,7 @@ export function useUsers(userId, token) {
   const updateUserMutation = useCustomMutation(
     ENDPOINTS.users.userId(userId),
     "patch",
-    ["users", "team"]
+    ["users", "team", "user"]
   );
 
   const deleteUserMutation = useCustomMutation(
@@ -34,6 +34,12 @@ export function useUsers(userId, token) {
     ["token"]
   );
 
+  const updatePlayerMutation = useCustomMutation(
+    ENDPOINTS.users.player(userId),
+    "patch",
+    ["users", "team"]
+  );
+
   return {
     loginMutation,
     registerMutation,
@@ -41,5 +47,6 @@ export function useUsers(userId, token) {
     deleteUserMutation,
     resetPasswordMutation,
     changePasswordMutation,
+    updatePlayerMutation,
   };
 }

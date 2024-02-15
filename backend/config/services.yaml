@@ -68,6 +68,7 @@ services:
 
   App\Controller\CancelBookingController:
     tags: ["controller.service_arguments"]
+
   App\Controller\GetAllStatsController:
     tags: ["controller.service_arguments"]
 

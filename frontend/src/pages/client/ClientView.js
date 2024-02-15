@@ -1,3 +1,4 @@
+import Loader from "@/components/commons/Loader";
 import useActionHandlers from "@/hooks/useActionHandlers";
 import useFetch from "@/hooks/useFetch";
 import ClientReservationItem from "@/pages/client/ClientReservationItem";
@@ -21,7 +22,7 @@ function ClientView() {
     CANCEL_BOOKING: "CANCEL_BOOKING",
   };
 
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading) return <Loader />
   const past_bookings = client.bookings.filter(
     (booking) => new Date(booking.schedule.endingDate) < new Date()
   );
