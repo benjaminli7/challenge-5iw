@@ -2,23 +2,20 @@ import React from "react";
 import { LineChart, axisClasses } from "@mui/x-charts";
 import { Typography } from "@material-ui/core";
 
-function AdminDashboardChart({ playerData, theme, playerMinusOneMonthData }) {
-  const mappedPlayerData = playerData.map((player) => {
-    return player.amount;
-  });
+function AdminDashboardChart({
+  currentMonthVerifiedPlayers,
+  theme,
+  lastMonthVerifiedPlayers,
+}) {
+  const playerData = Object.values(currentMonthVerifiedPlayers);
+  const playerMinusOneMonthData = Object.values(lastMonthVerifiedPlayers);
 
-  const mappedPlayerMinusOneMonthData = playerMinusOneMonthData.map(
-    (player) => {
-      return player.amount;
-    }
-  );
-
-  const max = Math.max(...mappedPlayerData, ...mappedPlayerMinusOneMonthData);
+  const max = Math.max(...playerData, ...playerMinusOneMonthData);
   return (
     <div style={{ width: "100%", flexGrow: 1, overflow: "hidden" }}>
-      <Typography variant="h6" gutterBottom color="primary" bold>
+      <Typography variant="h6" gutterBottom color="primary">
         In {new Date().toLocaleString("en-us", { month: "long" })} we had{" "}
-        {playerData.reduce((acc, data) => acc + data.amount, 0)} players created
+        {playerData.length} new players
       </Typography>
       <LineChart
         height={400}
@@ -62,7 +59,7 @@ function AdminDashboardChart({ playerData, theme, playerMinusOneMonthData }) {
             label: "Current Month",
             // dataKey: "amount",
             stroke: theme.palette.primary.main,
-            data: mappedPlayerData,
+            data: playerData,
             showMark: false,
             color: theme.palette.primary.light,
           },
@@ -71,7 +68,7 @@ function AdminDashboardChart({ playerData, theme, playerMinusOneMonthData }) {
             // dataKey: "amount",
             label: "Last Month",
             stroke: theme.palette.secondary.main,
-            data: mappedPlayerMinusOneMonthData,
+            data: playerMinusOneMonthData,
             showMark: false,
             // Color red
             color: theme.palette.secondary.light,

@@ -1,3 +1,4 @@
+import Loader from "@/components/commons/Loader";
 import useFetch from "@/hooks/useFetch";
 import AdminTeamsList from "@/pages/admin/teams/AdminTeamsList";
 import ENDPOINTS from "@/services/endpoints";
@@ -8,7 +9,7 @@ function AdminTeamsView() {
   const { data: teams, isLoading } = useFetch("teams", ENDPOINTS.teams.root);
   const [teamId, setTeamId] = useState();
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <Loader />
   let approvedTeams = teams.filter((team) => team.isApproved === true);
   let notApprovedTeams = teams.filter((team) => team.isApproved === false);
 

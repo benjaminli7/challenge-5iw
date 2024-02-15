@@ -1,9 +1,14 @@
-import React from 'react'
-import { Paper, Stack, Avatar, Typography } from '@mui/material';
+import React from "react";
+import { Paper, Stack, Avatar, Typography } from "@mui/material";
+import StarRateIcon from "@mui/icons-material/StarRate";
 
 function ClientBoosterDetailInfos({ player }) {
+  console.log(player);
   return (
-    <Paper elevation={2} sx={{ minWidth: "250px", height: {xs: "100%", sm: "80vh"}, p: 3 }}>
+    <Paper
+      elevation={2}
+      sx={{ minWidth: "250px", height: { xs: "100%", sm: "80vh" }, p: 3 }}
+    >
       <Stack direction="column" spacing={3} alignItems="center">
         <Avatar sx={{ width: 150, height: 150 }} />
         <Typography variant="subtitle2" sx={{ fontWeight: "bold" }}>
@@ -19,9 +24,10 @@ function ClientBoosterDetailInfos({ player }) {
         <Typography variant="subtitle">
           {player.taux_horaire} coins/h
         </Typography>
+ 
       </Stack>
     </Paper>
   );
 }
 
-export default ClientBoosterDetailInfos
+export default ClientBoosterDetailInfos;

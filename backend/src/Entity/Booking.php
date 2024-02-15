@@ -25,7 +25,7 @@ use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
         new Post(uriTemplate: "/bookings/new", controller: AddBookingController::class, denormalizationContext: ['groups' => ['create-booking']], securityPostDenormalize: 'is_granted("ROLE_ADMIN") or user.getType() == "client"', securityPostDenormalizeMessage: 'You can only create bookings for yourself.'),
         new Patch(denormalizationContext: ['groups' => ['update-booking']], security: 'is_granted("ROLE_ADMIN")'),
         new Delete(controller: CancelBookingController::class, denormalizationContext: ['groups' => ['cancel-booking']], uriTemplate: "/bookings/{id}/cancel", security: 'is_granted("ROLE_ADMIN") or object.getClient() == user')
-        ]
+    ]
 )]
 #[ApiFilter(DateFilter::class, properties: ['createdAt'])]
 
@@ -50,8 +50,6 @@ class Booking
     #[ORM\OneToOne(inversedBy: 'booking')]
     private ?Schedule $schedule = null;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    private ?Review $review = null;
 
     public function getId(): ?int
     {
@@ -90,18 +88,6 @@ class Booking
     public function setSchedule(?Schedule $schedule): static
     {
         $this->schedule = $schedule;
-
-        return $this;
-    }
-
-    public function getReview(): ?Review
-    {
-        return $this->review;
-    }
-
-    public function setReview(?Review $review): static
-    {
-        $this->review = $review;
 
         return $this;
     }

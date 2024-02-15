@@ -7,11 +7,9 @@ import {
   Grid,
   MenuItem,
   TextField,
-  Input,
 } from "@mui/material";
-import { useState } from "react";
+import { usePlacesWidget } from "react-google-autocomplete";
 import { useForm } from "react-hook-form";
-import Autocomplete, { usePlacesWidget } from "react-google-autocomplete";
 
 function ManagerPlayerForm({
   deleteUserMutation,
@@ -151,16 +149,16 @@ function ManagerPlayerForm({
           <Grid item xs={12}>
             <TextField
               {...register("tauxHoraire", {
-                required: "Taux Horaire is required",
+                required: "Hourly rate is required",
                 pattern: {
                   value: /^[0-9]+(\.[0-9]{1,2})?$/i,
-                  message: "Invalid taux horaire",
+                  message: "Invalid hourly rate",
                 },
               })}
               required
               fullWidth
               id="tauxHoraire"
-              label="Taux Horaire"
+              label="Hourly rate"
               name="tauxHoraire"
               autoComplete="tauxHoraire"
               placeholder="0.00"
