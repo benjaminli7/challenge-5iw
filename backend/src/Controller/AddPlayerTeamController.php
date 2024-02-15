@@ -45,6 +45,7 @@ class AddPlayerTeamController
         $player->setaddress($values["address"]);
         $player->setLng($values["lng"]);
         $player->setLat($values["lat"]);
+        $player->setIsVerified(true);
 
         $entityManager->persist($player);
         $entityManager->flush();
@@ -52,7 +53,7 @@ class AddPlayerTeamController
         $teamName = $data->getName();
         $playerEmail = $player->getEmail();
 
-        $emailContent = "Bonjour,\n\n Votre compte a été crée pour l'équipe $teamName\n\n Voici vos identifiants:\n\n Email: $playerEmail \n\n Mot de passe: plainPassword";
+        $emailContent = "Bonjour,\n\n Votre compte a été crée pour l'équipe $teamName\n\n Voici vos identifiants:\n\n Email: $playerEmail \n\n Mot de passe: $plainPassword";
         $email = (new Email())
         ->from('game.elevate@gmail.com')
         ->to($playerEmail)

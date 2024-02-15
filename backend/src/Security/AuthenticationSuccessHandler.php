@@ -24,6 +24,7 @@ class AuthenticationSuccessHandler
             'type' => $user->getType(),
             'roles' => $user->getRoles(),
             'username' => $user->getUsername(),
+            'isVerified' => $user->isIsVerified()
         ];
 
         $event->setData($data);
