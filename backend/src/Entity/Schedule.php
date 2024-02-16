@@ -109,6 +109,7 @@ class Schedule
 
     public function setBooking(?Booking $booking): static
     {
+
         // unset the owning side of the relation if necessary
         if ($booking === null && $this->booking !== null) {
             $this->booking->setSchedule(null);
@@ -118,6 +119,7 @@ class Schedule
         if ($booking !== null && $booking->getSchedule() !== $this) {
             $booking->setSchedule($this);
         }
+
 
         $this->booking = $booking;
 
@@ -160,19 +162,14 @@ class Schedule
         return $this;
     }
 
-    // Add a new method to calculate coinsNeeded automatically
     public function calculateCoinsNeeded(): void
     {
-        // Ensure that booster (User) is set
         if ($this->booster !== null) {
             $tauxHoraire = $this->booster->getTauxHoraire();
 
-            // Ensure that both startingDate and endingDate are set
             if ($this->startingDate !== null && $this->endingDate !== null) {
                 $timeDiff = $this->endingDate->diff($this->startingDate);
                 $hoursWorked = $timeDiff->h + ($timeDiff->days * 24);
-
-                // Calculate coinsNeeded based on taux_horaire and hours worked
                 $this->coinsNeeded = $tauxHoraire * $hoursWorked;
             }
         }
@@ -185,7 +182,6 @@ class Schedule
 
     public function setReview(?Review $review): static
     {
-        // unset the owning side of the relation if necessary
         if ($review === null && $this->review !== null) {
             $this->review->setSchedule(null);
         }
@@ -197,8 +193,7 @@ class Schedule
     #[Groups(['read-player'])]
     public function getClient(): ?User
     {
-        if($this->booking !== null)
-        {
+        if ($this->booking !== null) {
             return $this->booking->getClient();
         }
     }
