@@ -23,7 +23,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ApiResource(
     operations: [
         new GetCollection(normalizationContext: ['groups' => ['read-schedule']]),
-        new Post(denormalizationContext: ['groups' => ['write-schedule']], normalizationContext: ['groups' => ['read-schedule-created']], security: 'is_granted("ROLE_ADMIN") or object.getBooster() == user', securityMessage: 'You can only create schedules for yourself.'),
+        new Post(denormalizationContext: ['groups' => ['write-schedule']], normalizationContext: ['groups' => ['read-schedule-created']]),
         new Delete(security: 'is_granted("ROLE_ADMIN") or object.getBooster() == user', securityMessage: 'You can only delete your own schedules.'),
     ],
 )]
