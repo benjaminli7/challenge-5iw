@@ -7,6 +7,7 @@ on:
   pull_request:
     branches:
       - main
+      - fix/tests
 
 jobs:
   test:
@@ -26,8 +27,7 @@ jobs:
           sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
           sudo apt-get update
           sudo apt-get install docker-ce
- 
- 
+
       # Install Make
       - name: Install Make
         run: sudo apt-get -y install make
