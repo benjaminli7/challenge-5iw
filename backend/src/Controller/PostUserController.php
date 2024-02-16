@@ -22,11 +22,6 @@ class PostUserController
     }
     public function __invoke(Request $request,  User $user): User
     {
-        //$user = $request->attributes->get('email');
-        // dd($user);
-        // if (!$user instanceof User) {
-        //     throw new RuntimeException('user not found');
-        // }
         $token = bin2hex(random_bytes(32));
         $user->setResetToken($token);
         $link = $this->getParameter('LINK');
