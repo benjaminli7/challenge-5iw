@@ -1,4 +1,4 @@
-import { CircularProgress, Grid } from "@mui/material";
+import Loader from "@/components/commons/Loader";
 import { DataGrid } from "@mui/x-data-grid";
 
 const columns = [
@@ -31,13 +31,16 @@ const columns = [
 
 function AdminUsersTable({ error, users }) {
   if (error) return <div>{error}</div>;
-  if (!users)
-    return (
-      <Grid container justifyContent={"center"}>
-        <CircularProgress />
-      </Grid>
-    );
-  return <DataGrid columns={columns} rows={users} checkboxSelection />;
+  if (!users) return <Loader />;
+  return (
+    <DataGrid
+      columns={columns}
+      rows={users}
+      initialState={{
+        pagination: { paginationModel: { pageSize: 25 } },
+      }}
+    />
+  );
 }
 
 export default AdminUsersTable;

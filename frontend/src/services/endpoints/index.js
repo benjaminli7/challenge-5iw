@@ -9,6 +9,7 @@ const ENDPOINTS = {
     client: (clientId) => `api/clients/${clientId}`,
     resetPassword: `api/users/reset-password`,
     changePassword: (token) => `api/users/change-password/${token}`,
+    validation: (token) => `api/users/validation/${token}`,
     player: (playerId) => `api/players/${playerId}`,
   },
   games: {
@@ -28,6 +29,7 @@ const ENDPOINTS = {
     addPlayer: (teamId) => `api/teams/${teamId}/players`,
     teamImg: (teamId) => `api/teams/${teamId}/image`,
     approveTeam: (teamId) => `api/teams/${teamId}/approve`,
+    withdrawCoins: (teamId) => `api/teams/${teamId}/withdraw`,
   },
   schedules: {
     root: "api/schedules",
@@ -51,7 +53,10 @@ const ENDPOINTS = {
   },
   confirm_payment: {
     root: "api/payments/handle-payment-success",
-  }
+  },
+  reviews: {
+    root: "api/reviews",
+  },
 };
 
 export default ENDPOINTS;

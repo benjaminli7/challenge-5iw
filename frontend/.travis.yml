@@ -1,0 +1,20 @@
+branches:
+  only:
+    - main
+
+jobs:
+  include:
+    - stage: deploy production
+      if: branch = production
+      language: node_js
+      node_js:
+        - "16"
+      before_script:
+        - openssl aes-256-cbc -K $encrypted_96378c979a51_key -iv $encrypted_96378c979a51_iv -in .ssh/new_prod_key.enc -out .ssh/new_prod_key -d
+
+      script:
+        - bash deploy/deploy_prod.sh
+
+notifications:
+  slack: enokistudio:WYRe9MMv9GkNJOiyc4RN5osc#travis #notifications sur le canal cecys
+  email: theophile@enoki-studio.com

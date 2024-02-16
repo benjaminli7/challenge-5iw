@@ -34,6 +34,7 @@ use Symfony\Component\Validator\Constraints as Assert;
             // securityPostDenormalizeMessage: 'Only managers or admins can create teams.',
             normalizationContext: ['groups' => ['read-team']],
             denormalizationContext: ['groups' => ['create-team']],
+            security: 'is_granted("ROLE_ADMIN") or (object.getManager() == user)',
         ),
         new Get(normalizationContext: ['groups' => ['read-team']], security: 'is_granted("ROLE_ADMIN") or (object.getManager() == user)', securityMessage: 'You can only see your own team.'),
         new GetCollection(normalizationContext: ['groups' => ['read-team']]),
@@ -62,6 +63,12 @@ use Symfony\Component\Validator\Constraints as Assert;
             securityPostDenormalize: 'is_granted("ROLE_ADMIN")',
             securityPostDenormalizeMessage: 'Only admins can approve teams',
             denormalizationContext: ['groups' => ['approve-team']]
+        ),
+        new Patch(
+            uriTemplate: '/teams/{id}/withdraw',
+            security: 'object.getManager() == user',
+            securityMessage: 'You can only withdraw from your own team.',
+            denormalizationContext: ['groups' => ['withdraw-team']]
         )
     ],
     normalizationContext: ['groups' => ['read-team']],
@@ -127,6 +134,13 @@ class Team
     #[ORM\OneToMany(mappedBy: 'team', targetEntity: User::class, cascade: ['persist', 'remove'])]
     #[Groups(['read-team'])]
     private Collection $boosters;
+
+
+    #[ORM\Column(type: 'integer', nullable: true)]
+    #[Assert\PositiveOrZero]
+    #[Groups(['withdraw-team'])]
+    private ?int $withDrawnedCoins;
+
 
     public function __construct()
     {
@@ -275,6 +289,17 @@ class Team
 
         $this->fileUrl = $fileUrl;
 
+        return $this;
+    }
+    public function getWithDrawnedCoins(): ?int
+    {
+        return $this->withDrawnedCoins;
+    }
+
+    public function setWithDrawnedCoins(?int $withDrawnedCoins): static
+    {
+        $this->coins -= $withDrawnedCoins;
+        $this->withDrawnedCoins += $withDrawnedCoins;
         return $this;
     }
 }

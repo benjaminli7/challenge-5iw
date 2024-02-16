@@ -75,6 +75,27 @@ class GetAllStatsController
             'amount' => $mostRentable[0]['coins'],
             'details' => "Most rentable team this month",
         );
+        $stats['cards']['allTimeEarnings'] = array(
+            'title' => "All Time Earnings",
+            'amount' => $this->getAllTimeEarningsCount(),
+            'details' => "Total earnings from all teams",
+        );
+        $stats['cards']['allTimeWithdrawn'] = array(
+            'title' => "All Time Withdrawn",
+            'amount' => $this->getAllTimeWithdrawnCount(),
+            'details' => "Total withdrawn from all teams",
+        );
+        $stats['cards']['allTimeReviews'] = array(
+            'title' => "All Time Reviews",
+            'amount' => $this->getAllTimeReviewsCount(),
+            'details' => "Total reviews from all teams",
+        );
+        $stats['cards']['mostCommonGame'] = array(
+            'title' => "Most Common Game",
+            'amount' => $this->getMostCommonGame(),
+            'details' => "Most common game played by users",
+        );
+
 
         return $stats;
     }
@@ -109,5 +130,48 @@ class GetAllStatsController
         }
 
         return $countsByDay;
+    }
+    public function getAllTimeEarningsCount(): int
+    {
+        $allTimeEarnings = 0;
+        $teams = $this->teamRepository->findAll();
+        foreach ($teams as $team) {
+            $allTimeEarnings += $team->getCoins();
+        }
+        return $allTimeEarnings;
+    }
+    public function getAllTimeWithdrawnCount(): int
+    {
+        $allTimeWithdrawn = 0;
+        $teams = $this->teamRepository->findAll();
+        foreach ($teams as $team) {
+            $allTimeWithdrawn += $team->getWithDrawnedCoins();
+        }
+        return $allTimeWithdrawn;
+    }
+    public function getAllTimeReviewsCount(): int
+    {
+        $allTimeReviews = 0;
+        $reviews = $this->reviewRepository->findAll();
+        foreach ($reviews as $review) {
+            $allTimeReviews += $review->getRating();
+        }
+        return $allTimeReviews;
+    }
+
+    public function getMostCommonGame(): string
+    {
+        $players = $this->userRepository->findAllPlayersInApprovedTeam();
+        $games = array();
+        foreach ($players as $player) {
+            $game = $player->getAssignedGame()->getName();
+            if (array_key_exists($game, $games)) {
+                $games[$game]++;
+            } else {
+                $games[$game] = 1;
+            }
+        }
+        arsort($games);
+        return array_key_first($games);
     }
 }

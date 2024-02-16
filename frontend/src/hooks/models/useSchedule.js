@@ -15,6 +15,7 @@ export function useSchedule(scheduleId) {
     ["player"]
   );
 
+
   return {
     addScheduleUserMutation,
     deleteScheduleMutation,
