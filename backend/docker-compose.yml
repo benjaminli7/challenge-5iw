@@ -35,7 +35,7 @@ services:
     environment:
       POSTGRES_DB: symfony
       POSTGRES_PASSWORD: esgi5iw132
-      POSTGRES_USER: root
+      POSTGRES_USER: first_user
     volumes:
       - database_data:/var/lib/postgresql/data:rw
     ports:

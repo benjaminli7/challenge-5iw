@@ -15,9 +15,11 @@ function Footer() {
         <div className="flex flex-col items-center">
           <Link to="/" className="inline-block max-w-full mb-8">
             <img
-              src="https://assets.website-files.com/63904f663019b0d8edf8d57c/6399728d302d2471f18b229f_Group%2047874%20(2).svg"
+              src="./logo.png"
               alt=""
-              className="inline-block max-h-10"
+              className="inline-block"
+              width="150"
+              height="150"
             />
           </Link>
           {/* <div className="text-center font-semibold max-[991px]:ml-0 max-[991px]:mr-0 max-[991px]:py-1">
@@ -96,7 +98,7 @@ function Footer() {
             </Link>
           </div>
           <p className="max-[479px]:text-sm">
-            © Copyright 2023. All rights reserved.
+            © Copyright 2024. All rights reserved.
           </p>
         </div>
       </div>
