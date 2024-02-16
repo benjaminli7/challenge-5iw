@@ -197,6 +197,9 @@ class Schedule
     #[Groups(['read-player'])]
     public function getClient(): ?User
     {
-        return $this->booking->getClient();
+        if($this->booking !== null)
+        {
+            return $this->booking->getClient();
+        }
     }
 }
