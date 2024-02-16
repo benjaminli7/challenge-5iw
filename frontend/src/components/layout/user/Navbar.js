@@ -51,8 +51,8 @@ export default function Navbar({ window }) {
     <>
       <Box onClick={handleDrawerToggle} sx={{ textAlign: "center" }}>
         <>
-          <Typography variant="h6" sx={{ my: 2 }}>
-            Logo
+          <Typography variant="h6" sx={{ my: 2, justifyContent: "center", display: { xs: "flex", sm: "block"} }}>
+            <img src="./logo.png" alt="logo" width={"75"} />
           </Typography>
           <Divider />
           <List>
@@ -143,10 +143,13 @@ export default function Navbar({ window }) {
           <Typography
             variant="h6"
             component="div"
-            sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}
+            sx={{
+              justifyContent: "center",
+              flexGrow: 1,
+              display: { xs: "none", sm: "block" },
+            }}
           >
-            {/* <img src="./GameElevate.png" alt="logo" /> */}
-            Logo
+            <img src="./logo.png" alt="logo" width={"75"} />
           </Typography>
           <Box
             sx={{
@@ -227,10 +230,12 @@ export default function Navbar({ window }) {
                     </MenuItem>
                   ))}
                   <Divider />
-                  <MenuItem onClick={() => {
-                    queryClient.removeQueries();
-                    signOut()
-                  }}>
+                  <MenuItem
+                    onClick={() => {
+                      queryClient.removeQueries();
+                      signOut();
+                    }}
+                  >
                     <ListItemIcon>
                       <Logout fontSize="small" />
                     </ListItemIcon>
