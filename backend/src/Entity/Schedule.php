@@ -14,6 +14,8 @@ use ApiPlatform\Metadata\Delete;
 use App\Controller\GetPlayerScheduleController;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use App\Controller\AddReviewScheduleController;
+//import the Assert choice class
+use Symfony\Component\Validator\Constraints as Assert;
 
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -21,8 +23,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ApiResource(
     operations: [
         new GetCollection(normalizationContext: ['groups' => ['read-schedule']]),
-        new Post(denormalizationContext: ['groups' => ['write-schedule']], normalizationContext: ['groups' => ['read-schedule-created']]),
-        new Delete(),
+        new Post(denormalizationContext: ['groups' => ['write-schedule']], normalizationContext: ['groups' => ['read-schedule-created']], security: 'is_granted("ROLE_ADMIN") or object.getBooster() == user', securityMessage: 'You can only create schedules for yourself.'),
+        new Delete(security: 'is_granted("ROLE_ADMIN") or object.getBooster() == user', securityMessage: 'You can only delete your own schedules.'),
     ],
 )]
 #[UniqueEntity(
@@ -55,6 +57,7 @@ class Schedule
     private ?User $booster = null;
 
     #[Groups(['read-schedule', 'write-schedule', 'read-player-schedule', 'read-team', 'read-player', 'read-schedule-created'])]
+    #[Assert\Choice(choices: ['pending', 'available', 'booked'])]
     #[ORM\Column(length: 50)]
     private ?string $status = null;
 
@@ -197,8 +200,7 @@ class Schedule
     #[Groups(['read-player'])]
     public function getClient()
     {
-        if($this->booking !== null)
-        {
+        if ($this->booking !== null) {
             return $this->booking->getClient();
         }
     }

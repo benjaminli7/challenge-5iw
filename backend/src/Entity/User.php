@@ -41,7 +41,6 @@ use App\Controller\ProfileController;
     operations: [
         new GetCollection(normalizationContext: ['groups' => ['read-user', 'Timestampable']], security: 'is_granted("ROLE_ADMIN")', securityMessage: 'Only admins can see all users.'),
         new Get(normalizationContext: ['groups' => ['read-user']], security: 'is_granted("ROLE_ADMIN") or object == user', securityMessage: 'You can only see your own user.'),
-        //  new Get(uriTemplate: '/users/{id}/infos', normalizationContext: ['groups' => ['read-user', 'read-user-as-admin']], security: 'is_granted("ROLE_ADMIN")'),
         new Post(
             uriTemplate: '/users',
             controller: PostUserController::class,
@@ -64,11 +63,11 @@ use App\Controller\ProfileController;
             controller: PostImageUserController::class,
             denormalizationContext: ['groups' => ['user-img']],
             normalizationContext: ['groups' => ['read-user']],
-            security: 'is_granted("ROLE_ADMIN") or (object.getTeam().manager == user)',
-            securityMessage: 'Only admins can create games images.',
+            security: 'is_granted("ROLE_ADMIN") or (object.getTeam().getManager() == user)',
+            securityMessage: 'Only admins or the manager can create users images.',
             deserialize: false
         ),
-        new Get(uriTemplate: '/player/{id}/schedules', normalizationContext: ['groups' => ['read-player-schedule']], controller: GetPlayerController::class, security: 'is_granted("ROLE_ADMIN") or (object == user) or (object.getTeam().manager == user)', securityMessage: 'You can only see your own schedules.'),
+        new Get(uriTemplate: '/player/{id}/schedules', normalizationContext: ['groups' => ['read-player-schedule']], controller: GetPlayerController::class, security: 'is_granted("ROLE_ADMIN") or (object == user) or (object.getTeam().getManager() == user)', securityMessage: 'Only admins or the manager can see the schedules of the player.'),
         new GetCollection(uriTemplate: '/players', controller: GetPlayersListController::class, normalizationContext: ['groups' => ['read-player', 'Timestampable']]),
         new GetCollection(
             uriTemplate: '/stats',
@@ -147,10 +146,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $phone = null;
 
     #[Groups(['create-user', 'read-user', 'read-player', 'read-client'])]
+    #[Assert\Choice(choices: ['client', 'manager', 'player'])]
     #[ORM\Column(nullable: true)]
     private ?string $type = null;
 
     #[ORM\Column(nullable: true)]
+    #[Assert\PositiveOrZero]
     #[Groups(['read-user', 'read-client'])]
     private ?int $coins = null;
 
@@ -179,7 +180,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Vich\UploadableField(mapping: 'user_image', fileNameProperty: 'filePath')]
     #[Assert\File(
         maxSize: '1024k',
-        extensions: ['png', 'jpg', 'jpeg', 'gif'],
+        extensions: ['png', 'jpg', 'jpeg'],
         extensionsMessage: 'Please upload a valid image file.',
     )]
     #[Groups(['user-img', 'create-user'])]
@@ -190,6 +191,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $address = null;
 
     #[Groups(['create-user', 'read-user', 'read-player', 'read-team', 'update-player'])]
+    #[Assert\PositiveOrZero]
     #[ORM\Column(nullable: true)]
     private ?int $taux_horaire = null;
 
