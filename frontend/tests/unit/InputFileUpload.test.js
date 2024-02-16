@@ -1,32 +1,41 @@
 import React from "react";
-import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
-import InputFileUpload from "@/components/commons/InputFileUpload"; // Adjust the import path as per your project structure
-import "@testing-library/jest-dom/extend-expect";
+import { render, fireEvent, screen } from "@testing-library/react";
+import InputFileUpload from "@/components/commons/InputFileUpload";
+import "@testing-library/jest-dom";
 
-describe("InputFileUpload", () => {
-  test("renders the upload button correctly", () => {
-    render(<InputFileUpload />);
-    const uploadButton = screen.getByRole("button", {
-      name: /Ajouter une image/i,
-    });
-    expect(uploadButton).toBeInTheDocument();
+describe("InputFileUpload Component", () => {
+  const mockHandleImageUpload = jest.fn();
+  const mockHandleDialogClose = jest.fn();
+
+  beforeEach(() => {
+    render(
+      <InputFileUpload
+        ressource="testResource"
+        handleImageUpload={mockHandleImageUpload}
+        handleDialogClose={mockHandleDialogClose}
+        type="testType"
+      />
+    );
   });
 
-  test("triggers file selection when file input changes", () => {
-    render(<InputFileUpload />);
-    const uploadButton = screen.getByRole("button", {
-      name: /Ajouter une image/i,
+  test("calls handleImageUpload on submit with the selected file", () => {
+    // Assuming you have a way to select files for upload in your component,
+    // you would simulate that here, and then click the submit button.
+    const file = new File(["dummy content"], "example.png", {
+      type: "image/png",
     });
-    const fileInput = screen.getByLabelText("Ajouter une image");
+    const input = screen.getByLabelText(/upload/i);
+    fireEvent.change(input, { target: { files: [file] } });
 
-    const file = new File(["(⌐□_□)"], "chucknorris.png", { type: "image/png" });
-    Object.defineProperty(fileInput, "files", {
-      value: [file],
-    });
+    const submitButton = screen.getByText(/submit/i);
+    fireEvent.click(submitButton);
 
-    userEvent.click(uploadButton); // Simulate a click to trigger the file selection
-
-    expect(fileInput.files[0]).toStrictEqual(file);
+    expect(mockHandleImageUpload).toHaveBeenCalledWith(
+      file,
+      expect.any(Function), // setFile is a function, so we check for any function here.
+      "testResource",
+      mockHandleDialogClose,
+      "testType"
+    );
   });
 });
