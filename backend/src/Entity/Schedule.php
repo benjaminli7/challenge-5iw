@@ -195,7 +195,7 @@ class Schedule
         return $this;
     }
     #[Groups(['read-player'])]
-    public function getClient(): ?User
+    public function getClient()
     {
         if($this->booking !== null)
         {
