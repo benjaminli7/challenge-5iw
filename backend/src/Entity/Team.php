@@ -34,7 +34,6 @@ use Symfony\Component\Validator\Constraints as Assert;
             // securityPostDenormalizeMessage: 'Only managers or admins can create teams.',
             normalizationContext: ['groups' => ['read-team']],
             denormalizationContext: ['groups' => ['create-team']],
-            security: 'is_granted("ROLE_ADMIN")',
         ),
         new Get(normalizationContext: ['groups' => ['read-team']], security: 'is_granted("ROLE_ADMIN") or (object.getManager() == user)', securityMessage: 'You can only see your own team.'),
         new GetCollection(normalizationContext: ['groups' => ['read-team']]),
