@@ -18,18 +18,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
         new Post(
             controller: AddReviewScheduleController::class,
             denormalizationContext: ['groups' => ['write-review']],
-            // normalizationContext: ['groups' => ['read-review']]
         ),
-
-        // new Post(
-        //     uriTemplate: '/schedules/{id}/review',
-        //     normalizationContext: ['groups' => ['read-schedule-created']],
-        //     denormalizationContext: ['groups' => ['write-schedule']],
-        //     controller: AddReviewScheduleController::class,
-        //     //check if the user is the owner of the schedule"
-        //     security: "is_granted('ROLE_USER') and object.getBooster() == user"
-        // ),
-
     ],
 )]
 

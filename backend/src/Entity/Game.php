@@ -28,11 +28,6 @@ use ApiPlatform\Metadata\Delete;
 #[ORM\Entity(repositoryClass: GameRepository::class)]
 #[ApiResource(
     operations: [
-        // 'image' => [
-        //     'method' => 'POST',
-        //     'path' => '/games/{id}/image',
-        //     'controller' => PostImageController::class,
-        // ],
         new Post(
             uriTemplate: '/games/{id}/image',
             controller: PostImageGameController::class,
@@ -60,7 +55,7 @@ class Game
     #[Groups(['read-game', 'update-rank', 'read-team'])]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255 , unique: true)]
+    #[ORM\Column(length: 255, unique: true)]
     #[Groups(['read-game', 'create-game', 'update-game', 'read-team', 'read-player'])]
     private ?string $name = null;
 
@@ -220,6 +215,4 @@ class Game
 
         return $this;
     }
-
-    
 }
