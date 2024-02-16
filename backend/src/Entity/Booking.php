@@ -41,9 +41,8 @@ class Booking
     private ?int $id = null;
 
     #[Groups(['read-client', 'cancel-booking'])]
-
     #[ORM\Column(length: 50)]
-    #[Assert\Choice(choices: ['canceled', 'available'])]
+    #[Assert\Choice(choices: ['canceled', 'available', 'pending'])]
     private ?string $status = null;
 
     #[ORM\ManyToOne(inversedBy: 'bookings')]
