@@ -1,5 +1,5 @@
 #<<<<<<<<<<Start: PHP-FPM Image Target>>>>>>>>>>#
-FROM php:8-fpm-alpine as php
+FROM php:8.2-fpm-alpine as php
 
 RUN apk update
 RUN apk add curl
