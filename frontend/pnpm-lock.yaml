@@ -71,6 +71,12 @@ dependencies:
   '@react-google-maps/marker-clusterer':
     specifier: ^2.19.2
     version: 2.19.2
+  '@stripe/react-stripe-js':
+    specifier: ^2.5.0
+    version: 2.5.0(@stripe/stripe-js@3.0.3)(react-dom@18.2.0)(react@18.2.0)
+  '@stripe/stripe-js':
+    specifier: ^3.0.2
+    version: 3.0.3
   '@testing-library/jest-dom':
     specifier: ^5.17.0
     version: 5.17.0
@@ -137,6 +143,9 @@ dependencies:
   sonner:
     specifier: ^1.4.0
     version: 1.4.0(react-dom@18.2.0)(react@18.2.0)
+  stripe:
+    specifier: ^14.16.0
+    version: 14.17.0
   tailwind-merge:
     specifier: ^1.14.0
     version: 1.14.0
@@ -3446,6 +3455,24 @@ packages:
     resolution: {integrity: sha512-OAPJUAtgeINhh/TAlUID4QTs53Njm7xzddaVlEs/SXwgtiD1tW22zAB/W1wdqfrpmikgaWQ9Fw6Ws+hsiRm5Vg==}
     dependencies:
       '@sinonjs/commons': 1.8.6
+
+  /@stripe/react-stripe-js@2.5.0(@stripe/stripe-js@3.0.3)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-ys5bnrufNoBlUPRblWkiN7dUCX3s2noBZS0Lf5GkHYO9x3SXJMZccif53IdP4X6tZyNLn7aSMgZBUZqsdzrvhg==}
+    peerDependencies:
+      '@stripe/stripe-js': ^1.44.1 || ^2.0.0 || ^3.0.0
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      '@stripe/stripe-js': 3.0.3
+      prop-types: 15.8.1
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+    dev: false
+
+  /@stripe/stripe-js@3.0.3:
+    resolution: {integrity: sha512-UrHQ0hvDCZzpJEaOLbTRme1jREFzCuBe6eeHzowLtsS65Ah9pM+8bivXAyQUGHaAE2nPLu4lDvuDHPStPlrZUQ==}
+    engines: {node: '>=12.16'}
+    dev: false
 
   /@surma/rollup-plugin-off-main-thread@2.2.3:
     resolution: {integrity: sha512-lR8q/9W7hZpMWweNiAKU7NQerBnzQQLvi8qnTDU/fxItPhtZVMbPV3lbCwjhIlNBe9Bbr5V+KHshvWmVSG9cxQ==}
@@ -11216,6 +11243,14 @@ packages:
   /strip-json-comments@3.1.1:
     resolution: {integrity: sha512-6fPc+R4ihwqP6N/aIv2f1gMH8lOVtWQHoqC4yK6oSDVVocumAsfCqjkXnqiYMhmMwS/mEHLp7Vehlt3ql6lEig==}
     engines: {node: '>=8'}
+
+  /stripe@14.17.0:
+    resolution: {integrity: sha512-iwV5SKoXuRIQFne4twGwiiczOkVW73eE2CKn6ltUKCacDy4SGHBX6kj1/xCV2bzzzQjcVtsh5F1aAbJTmf3tLw==}
+    engines: {node: '>=12.*'}
+    dependencies:
+      '@types/node': 20.11.17
+      qs: 6.11.0
+    dev: false
 
   /style-loader@3.3.4(webpack@5.90.1):
     resolution: {integrity: sha512-0WqXzrsMTyb8yjZJHDqwmnwRJvhALK9LfRtRc6B4UTWe8AijYLZYZ9thuJTZc2VfQWINADW/j+LiJnfy2RoC1w==}
