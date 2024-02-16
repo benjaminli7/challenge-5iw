@@ -42,6 +42,16 @@ const ENDPOINTS = {
   stats: {
     root: "api/stats",
   },
+  offers: {
+    root: "api/offers",
+    offerId: (offerId) => `api/offers/${offerId}`,
+  },
+  payments: {
+    root: "api/payments/create-session",
+  },
+  confirm_payment: {
+    root: "api/payments/handle-payment-success",
+  }
 };
 
 export default ENDPOINTS;
