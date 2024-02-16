@@ -42,7 +42,7 @@ class CreatePaymentIntentController extends AbstractController
         $this->entityManager->persist($payment);
         $this->entityManager->flush();
 
-        Stripe::setApiKey('sk_test_51NWhaQBS812DNqMjzJcmdr4REaBckFWW2xit9ix1mMAU2dsWdghjPs68kfEYneKhtpKOKes2vyH8l2Pg6uE54os500NVaIboU9');
+        Stripe::setApiKey($_ENV['STRIPE_SECRET_KEY']);
 
         try {
             $checkoutSession = StripeSession::create([
@@ -58,8 +58,8 @@ class CreatePaymentIntentController extends AbstractController
                     'quantity' => 1,
                 ]],
                 'mode' => 'payment',
-                'success_url' => 'https://game-elevate.ovh/client/purchase?session_id={CHECKOUT_SESSION_ID}&paymentResult=success',
-                'cancel_url' => 'https://game-elevate.ovh/client/purchase?paymentResult=cancel',
+                'success_url' => $_ENV['LINK'].'/client/purchase?session_id={CHECKOUT_SESSION_ID}&paymentResult=success',
+                'cancel_url' => $_ENV['LINK'].'/client/purchase?paymentResult=cancel',
                 'metadata' => ['payment_id' => $payment->getId()],
             ]);
             if ($checkoutSession->id) {

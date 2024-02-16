@@ -24,7 +24,7 @@ class PostUserController
     {
         $token = bin2hex(random_bytes(32));
         $user->setResetToken($token);
-        $link = $this->getParameter('LINK');
+        $link = $_ENV['LINK'];
         $emailContent = "Bonjour,\n\nPour valider votre compte, veuillez cliquer sur le lien suivant : $link/validation?token=$token";
         $email = (new Email())
         ->from('game.elevate@gmail.com')
