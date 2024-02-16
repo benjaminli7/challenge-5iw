@@ -21,6 +21,6 @@ jobs:
     - name: install pnpm
       run: curl -L https://unpkg.com/@pnpm/self-installer | node
     - name: connect and pull
-      run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.WORK_DIR }} && git checkout ${{ secrets.MAIN_BRANCH }} && git pull && pnpm build && exit"
+      run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.WORK_DIR }} && git checkout ${{ secrets.MAIN_BRANCH }} && git pull && cd frontend && pnpm build && exit"
     - name: cleanup
       run: rm -rf ~/.ssh
