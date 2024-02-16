@@ -58,8 +58,8 @@ class CreatePaymentIntentController extends AbstractController
                     'quantity' => 1,
                 ]],
                 'mode' => 'payment',
-                'success_url' => 'http://localhost:3000/purchase?session_id={CHECKOUT_SESSION_ID}&paymentResult=success',
-                'cancel_url' => 'http://localhost:3000/purchase?paymentResult=cancel',
+                'success_url' => 'http://localhost:3000/client/purchase?session_id={CHECKOUT_SESSION_ID}&paymentResult=success',
+                'cancel_url' => 'http://localhost:3000/client/purchase?paymentResult=cancel',
                 'metadata' => ['payment_id' => $payment->getId()],
             ]);
             if ($checkoutSession->id) {
