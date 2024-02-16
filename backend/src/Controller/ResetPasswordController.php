@@ -19,8 +19,8 @@ use Doctrine\ORM\EntityManagerInterface;
 
 
 #[AsController]
-class ResetPasswordController
-{       
+class ResetPasswordController extends AbstractController
+{
 
     public function __construct(
         protected MailerInterface $mailer,
@@ -34,6 +34,7 @@ class ResetPasswordController
 
     public function __invoke(ResetPassword $dto, EntityManagerInterface $entityManager)
     {
+        $url = $this->getParameter('FRONT_URL');
         $user = $this->userRepository->findOneBy(['email' => $dto->getEmail()]);
 
         if (null === $user) {
@@ -44,8 +45,7 @@ class ResetPasswordController
         $user->setResetToken($token);
         $entityManager->persist($user);
         $entityManager->flush();
-        $link = $_ENV['LINK'];
-        $emailContent = "Bonjour,\n\nPour réinitialiser votre mot de passe, veuillez cliquer sur le lien suivant : $link/changePassword?token=$token";
+        $emailContent = "Bonjour,\n\nPour réinitialiser votre mot de passe, veuillez cliquer sur le lien suivant : $url/changePassword?token=$token";
         $email = (new Email())
         ->from('game.elevate@gmail.com')
         ->to($user->getEmail())
@@ -63,5 +63,5 @@ class ResetPasswordController
         // Implémentez ici la logique pour générer un token sécurisé
         return bin2hex(random_bytes(32));
     }
-   
+
 }
