@@ -52,7 +52,7 @@ export default function Navbar({ window }) {
       <Box onClick={handleDrawerToggle} sx={{ textAlign: "center" }}>
         <>
           <Typography variant="h6" sx={{ my: 2 }}>
-            Logo
+            GAME ELEVATE
           </Typography>
           <Divider />
           <List>
@@ -146,7 +146,7 @@ export default function Navbar({ window }) {
             sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}
           >
             {/* <img src="./GameElevate.png" alt="logo" /> */}
-            Logo
+            GAME ELEVATE
           </Typography>
           <Box
             sx={{

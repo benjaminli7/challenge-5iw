@@ -14,11 +14,7 @@ function Footer() {
       <div className="w-full px-5 py-16 mx-auto max-w-7xl md:px-10 md:py-24 lg:py-32">
         <div className="flex flex-col items-center">
           <Link to="/" className="inline-block max-w-full mb-8">
-            <img
-              src="https://assets.website-files.com/63904f663019b0d8edf8d57c/6399728d302d2471f18b229f_Group%2047874%20(2).svg"
-              alt=""
-              className="inline-block max-h-10"
-            />
+            GAME ELEVATE
           </Link>
           {/* <div className="text-center font-semibold max-[991px]:ml-0 max-[991px]:mr-0 max-[991px]:py-1">
             <Link

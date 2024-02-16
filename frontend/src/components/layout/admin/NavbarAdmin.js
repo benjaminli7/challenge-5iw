@@ -61,7 +61,7 @@ export default function NavbarAdmin({ window, drawerWidth, children }) {
         <Toolbar>
           <Typography>
             {/* <img src="./GameElevate.png" alt="logo" /> */}
-            LOGO
+            GAME ELEVATE
           </Typography>
         </Toolbar>
         <List>
