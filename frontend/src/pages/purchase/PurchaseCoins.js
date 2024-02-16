@@ -4,7 +4,7 @@ import { loadStripe } from '@stripe/stripe-js';
 import { useAuthUser } from "react-auth-kit";
 import useFetch from "@/hooks/useFetch";
 import ENDPOINTS from "@/services/endpoints";
-import { Card, CardContent, Typography, Button, Snackbar, Container } from '@mui/material';
+import { Card, CardContent, Typography, Button, Snackbar, Container, Grid} from '@mui/material';
 import { usePayment } from "@/hooks/models/usePayment";
 import { useCustomMutation } from "@/hooks/useCustomMutation";
 
@@ -68,21 +68,26 @@ const PurchaseCoins = () => {
             <Typography variant="h4" align="center" gutterBottom sx={{ my: 4 }}>
                 Purchase Coins
             </Typography>
-            {existingOffers.map((offer, index) => (
-                <Card key={index} sx={{ mb: 4, width: '50%', margin: '0 auto' }}>
-                    <CardContent>
-                        <Typography variant="h5" component="div" align="center">{offer.name}</Typography>
-                        <Typography color="text.secondary" align="center">{offer.coins} Coins</Typography>
-                        <Typography color="text.secondary" align="center">Price: ${offer.price}</Typography>
-                        <Button variant="contained" color="primary" onClick={() => handleBuyNow(offer)} sx={{ mt: 2, display: 'block', margin: '0 auto' }}>
-                            Buy Now
-                        </Button>
-                    </CardContent>
-                </Card>
-            ))}
+            <Grid container spacing={3}>
+                {existingOffers.map((offer, index) => (
+                    <Grid item xs={12} sm={6} md={4} key={index}>
+                        <Card sx={{ height: '100%' }}>
+                            <CardContent>
+                                <Typography variant="h5" component="div" align="center">{offer.name}</Typography>
+                                <Typography color="text.secondary" align="center">{offer.coins} Coins</Typography>
+                                <Typography color="text.secondary" align="center">Price: ${offer.price}</Typography>
+                                <Button variant="contained" color="primary" onClick={() => handleBuyNow(offer)} sx={{ mt: 2, display: 'block', margin: '0 auto' }}>
+                                    Buy Now
+                                </Button>
+                            </CardContent>
+                        </Card>
+                    </Grid>
+                ))}
+            </Grid>
             <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={() => setSnackbarOpen(false)} message={snackbarMessage} />
         </Container>
     );
+
 };
 
 export default PurchaseCoins;
