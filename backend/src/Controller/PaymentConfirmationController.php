@@ -41,7 +41,7 @@ class PaymentConfirmationController extends AbstractController
             $user->setCoins($user->getCoins() + $payment->getOffer()->getCoins());
             $this->entityManager->flush();
 
-            return new RedirectResponse('http://localhost:3000/purchase');
+            return new RedirectResponse('https://game-elevate.ovh/client/purchase');
         } catch (\Exception $e) {
             return new Response($e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
