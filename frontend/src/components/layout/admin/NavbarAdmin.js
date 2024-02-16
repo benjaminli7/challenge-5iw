@@ -18,6 +18,7 @@ import Typography from "@mui/material/Typography";
 import { useState } from "react";
 import { useSignOut } from "react-auth-kit";
 import { Link, useLocation } from "react-router-dom";
+import Image from "@mui/icons-material/Image";
 
 const navbarItems = [
   {
