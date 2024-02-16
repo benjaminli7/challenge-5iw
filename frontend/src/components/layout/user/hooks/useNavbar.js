@@ -6,6 +6,7 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
 import { Avatar } from "@mui/material";
 import DashboardIcon from "@mui/icons-material/Dashboard";
+import SellIcon from "@mui/icons-material/Sell";
 export default function useNavbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const auth = useAuthUser();
@@ -45,6 +46,11 @@ export default function useNavbar() {
       label: "Liste de joueurs",
       path: "/client/players",
       icon: <FormatListBulletedIcon />,
+    },
+    {
+      label: "listes offres",
+        path: "/client/purchase",
+        icon: <SellIcon />,
     }
   ]
   const playerNavItems = [
