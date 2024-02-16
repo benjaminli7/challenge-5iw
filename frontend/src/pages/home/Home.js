@@ -33,7 +33,7 @@ function Home() {
             variant="h1"
             className={`${classes.title} text-3xl md:text-4xl lg:text-5xl`}
           >
-            Welcome to Game Elevate, the boosting reservation website.
+            Welcome to Game Elevate, the boosting reservation website. hihi
           </Typography>
         </Grid>
         <Grid item xs={12} sm={6}>
