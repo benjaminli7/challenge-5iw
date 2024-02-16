@@ -22,6 +22,8 @@ import PlayerView from "@/pages/player/PlayerView";
 import ProfileView from "@/pages/profile/ProfileView";
 import theme from "@/theme/theme";
 import { ThemeProvider } from "@emotion/react";
+import PurchaseCoins from "@/pages/purchase/PurchaseCoins";
+import CreateOfferForm from "@/pages/admin/offers/CreateOfferForm";
 import { Box } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFnsV3";
@@ -108,6 +110,14 @@ const router = createBrowserRouter([
               </ProtectedUserTypeRoute>
             ),
           },
+          {
+            path: "purchase",
+            element: (
+                <ProtectedUserTypeRoute type="client">
+                  <PurchaseCoins />
+                </ProtectedUserTypeRoute>
+            ),
+          },
         ],
       },
       {
@@ -170,6 +180,10 @@ const router = createBrowserRouter([
       {
         path: "teams",
         element: <AdminTeamsView />,
+      },
+      {
+        path: "offers",
+        element: <CreateOfferForm />,
       },
     ],
   },
