@@ -100,7 +100,7 @@ function ClientView() {
       </Stack>
       <Dialog open={openDialog} onClose={handleDialogClose}>
         {actionType === ACTION_TYPES.CANCEL_BOOKING && (
-          <CancelReservationForm selectedBookingId={selectedBookingId} />
+          <CancelReservationForm selectedBookingId={selectedBookingId} handleDialogClose={handleDialogClose} />
         )}
       </Dialog>
 
