@@ -1,6 +1,7 @@
 import React from "react";
 import AdminGameForm from "@/pages/admin/games/forms/AdminGameForm";
 import { useGames } from "@/hooks/models/useGames";
+import { toast } from "sonner";
 
 function AdminGameUpdateForm({ selectedGame, handleDialogClose }) {
   const { updateGameMutation, deleteGameMutation } = useGames(selectedGame);
@@ -9,8 +10,10 @@ function AdminGameUpdateForm({ selectedGame, handleDialogClose }) {
     try {
       await updateGameMutation.mutateAsync(data);
       await handleDialogClose();
+      toast.success("Game updated successfully");
     } catch (error) {
       console.error("Error updating game:", error);
+      toast.error("Error updating game");
     }
   };
 
@@ -18,8 +21,10 @@ function AdminGameUpdateForm({ selectedGame, handleDialogClose }) {
     try {
       await deleteGameMutation.mutateAsync();
       await handleDialogClose();
+      toast.success("Game deleted successfully");
     } catch (error) {
       console.error("Error deleting game:", error);
+      toast.error("Error deleting game");
     }
   };
 

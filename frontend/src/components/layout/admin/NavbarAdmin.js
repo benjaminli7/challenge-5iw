@@ -19,6 +19,7 @@ import Typography from "@mui/material/Typography";
 import { useState } from "react";
 import { useSignOut } from "react-auth-kit";
 import { Link, useLocation } from "react-router-dom";
+import Image from "@mui/icons-material/Image";
 
 const navbarItems = [
   {
@@ -66,8 +67,7 @@ export default function NavbarAdmin({ window, drawerWidth, children }) {
       <div>
         <Toolbar>
           <Typography>
-            {/* <img src="./GameElevate.png" alt="logo" /> */}
-            LOGO
+            GameElevate
           </Typography>
         </Toolbar>
         <List>

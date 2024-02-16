@@ -1,17 +1,14 @@
-import React from "react";
+import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
+import { Button, Card, Tooltip, Typography } from "@mui/material";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
-import CardMedia from "@mui/material/CardMedia";
-import { Button, Card, Typography } from "@mui/material";
-import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 
-function WithdrawCard({ data }) {
+function WithdrawCard({ data, teamCoins, handleOpenDialog, setWithdrawCoins }) {
   return (
     <Card
       variant="outlined"
       sx={{
         height: "100%",
-        width: 250,
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
@@ -19,22 +16,37 @@ function WithdrawCard({ data }) {
       }}
     >
       <CardContent sx={{ padding: 2 }}>
-        <Typography gutterBottom variant="h4" component="div" fontWeight="bold">
-          {data.title}
-        </Typography>
         <Typography
           variant="body1"
-          color="text.primary"
-          sx={{ display: "flex", alignItems: "center", fontWeight: "bold" }}
+          sx={{
+            display: "flex",
+            justifyCenter: "center",
+            alignItems: "center",
+            fontWeight: "bold",
+          }}
         >
           <MonetizationOnIcon sx={{ color: "gold", marginRight: 1 }} />
-          {data.coins} coins
+          {data.coins}
         </Typography>
       </CardContent>
       <CardActions>
-        <Button variant="contained" sx={{ width: "100%", fontWeight: "bold" }}>
-          {data.euro} €
-        </Button>
+        <Tooltip
+          title={data.coins > teamCoins && "Your team don't have enough coins!"}
+        >
+          <span style={{ width: "100%" }}>
+            <Button
+              disabled={data.coins > teamCoins ? true : false}
+              variant="contained"
+              sx={{ width: "100%", fontWeight: "bold" }}
+              onClick={() => {
+                setWithdrawCoins(data.coins);
+                handleOpenDialog()
+              }}
+            >
+              {data.euro} €
+            </Button>
+          </span>
+        </Tooltip>
       </CardActions>
     </Card>
   );

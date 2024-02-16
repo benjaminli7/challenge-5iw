@@ -34,7 +34,6 @@ class UserNormalizer implements ContextAwareNormalizerInterface, NormalizerAware
     {
         $object->setFileUrl($this->storage->resolveUri($object, 'file'));
         $context[self::ALREADY_CALLED_NORMALIZER] = true;
-        // dd($object);
         return $this->normalizer->normalize($object, $format, $context);
     }
 }

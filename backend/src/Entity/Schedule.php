@@ -13,27 +13,32 @@ use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Delete;
 use App\Controller\GetPlayerScheduleController;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use App\Controller\AddReviewScheduleController;
+//import the Assert choice class
+use Symfony\Component\Validator\Constraints as Assert;
+
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ScheduleRepository::class)]
 #[ApiResource(
     operations: [
         new GetCollection(normalizationContext: ['groups' => ['read-schedule']]),
-        new Post(denormalizationContext: ['groups' => ['write-schedule']], normalizationContext: ['groups' => ['read-schedule-created']]),
-        new Delete(),
+        new Post(denormalizationContext: ['groups' => ['write-schedule']], normalizationContext: ['groups' => ['read-schedule-created']], security: 'is_granted("ROLE_ADMIN") or object.getBooster() == user', securityMessage: 'You can only create schedules for yourself.'),
+        new Delete(security: 'is_granted("ROLE_ADMIN") or object.getBooster() == user', securityMessage: 'You can only delete your own schedules.'),
     ],
 )]
 #[UniqueEntity(
     fields: ['startingDate', 'endingDate'],
     message: 'This schedule already exists.',
 )]
+
 #[ORM\HasLifecycleCallbacks]
 class Schedule
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['read-schedule', 'read-player-schedule', 'read-team','read-player', 'read-schedule-created', 'read-client'])]
+    #[Groups(['read-schedule', 'read-player-schedule', 'read-team', 'read-player', 'read-schedule-created', 'read-client'])]
     private ?int $id = null;
 
     #[Groups(['read-schedule', 'write-schedule', 'read-player-schedule', 'read-team', 'read-player', 'read-schedule-created', 'read-client'])]
@@ -52,12 +57,19 @@ class Schedule
     private ?User $booster = null;
 
     #[Groups(['read-schedule', 'write-schedule', 'read-player-schedule', 'read-team', 'read-player', 'read-schedule-created'])]
+    #[Assert\Choice(choices: ['pending', 'available', 'booked'])]
     #[ORM\Column(length: 50)]
     private ?string $status = null;
 
-    #[Groups(['read-schedule', 'read-player-schedule', 'read-team', 'read-schedule-created', 'read-client','read-player'])]
+    #[Groups(['read-schedule', 'read-player-schedule', 'read-team', 'read-schedule-created', 'read-client', 'read-player'])]
     #[ORM\Column()]
     private ?int $coinsNeeded = null;
+
+    #[ORM\OneToOne(targetEntity: Review::class, mappedBy: 'schedule', cascade: ['persist', 'remove'])]
+    #[Groups(['read-player'])]
+    private ?Review $review = null;
+
+
 
     public function __construct()
     {
@@ -169,5 +181,27 @@ class Schedule
         }
     }
 
-}
+    public function getReview(): ?Review
+    {
+        return $this->review;
+    }
 
+    public function setReview(?Review $review): static
+    {
+        // unset the owning side of the relation if necessary
+        if ($review === null && $this->review !== null) {
+            $this->review->setSchedule(null);
+        }
+
+        $this->review = $review;
+
+        return $this;
+    }
+    #[Groups(['read-player'])]
+    public function getClient()
+    {
+        if ($this->booking !== null) {
+            return $this->booking->getClient();
+        }
+    }
+}

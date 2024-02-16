@@ -34,7 +34,6 @@ use Symfony\Component\Validator\Constraints as Assert;
             securityMessage: 'Only admins can create ranks.',
             deserialize: false
         ),
-        // new GetCollection(normalizationContext: ['groups' => ['read-rank']], security: 'is_granted("ROLE_ADMIN")', securityMessage: 'Only admins can see all users.')
     ],
     normalizationContext: ['groups' => ['read-rank']],
 )]

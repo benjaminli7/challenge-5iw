@@ -7,9 +7,21 @@ use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
 use App\Entity\Traits\TimestampableTrait;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Controller\AddReviewScheduleController;
+use ApiPlatform\Metadata\Post;
+use Symfony\Component\Serializer\Annotation\Groups;
+
 
 #[ORM\Entity(repositoryClass: ReviewRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    operations: [
+        new Post(
+            controller: AddReviewScheduleController::class,
+            denormalizationContext: ['groups' => ['write-review']],
+        ),
+    ],
+)]
+
 class Review
 {
     use TimestampableTrait;
@@ -21,11 +33,18 @@ class Review
 
     #[ORM\Column]
     #[Assert\Range(min: 1, max: 5)]
+    #[Groups(['write-review', 'read-player'])]
     private ?int $rating = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['write-review', 'read-player'])]
     private ?string $comment = null;
 
+
+    #[ORM\OneToOne(targetEntity: Schedule::class, inversedBy: 'review')]
+    #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['write-review'])]
+    private ?Schedule $schedule = null;
 
     public function getId(): ?int
     {
@@ -53,6 +72,16 @@ class Review
     {
         $this->comment = $comment;
 
+        return $this;
+    }
+    public function getSchedule(): ?Schedule
+    {
+        return $this->schedule;
+    }
+
+    public function setSchedule(?Schedule $schedule): self
+    {
+        $this->schedule = $schedule;
         return $this;
     }
 }

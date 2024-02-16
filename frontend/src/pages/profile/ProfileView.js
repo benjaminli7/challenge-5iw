@@ -1,17 +1,34 @@
-import { Stack, Typography } from "@mui/material";
+import Loader from "@/components/commons/Loader";
+import useFetch from "@/hooks/useFetch";
+import UpdatePasswordForm from "@/pages/profile/forms/UpdatePasswordForm";
+import UpdateProfileForm from "@/pages/profile/forms/UpdateProfileForm";
+import ENDPOINTS from "@/services/endpoints";
+import { Divider, Grid, Paper, Typography } from "@mui/material";
 import { useAuthUser } from "react-auth-kit";
 
 function ProfileView() {
   const auth = useAuthUser();
-  const { email, firstName, lastName, phone } = auth().user;
+  const id = auth().user.id;
+  const { data: user, isLoading } = useFetch(
+    "user",
+    ENDPOINTS.users.userId(id)
+  );
+  if (isLoading) return <Loader />
+
   return (
-    <Stack>
-        <Typography variant="h4">Profile</Typography>
-        <Typography variant="h6">Email: {email}</Typography>
-        <Typography variant="h6">First Name: {firstName}</Typography>
-        <Typography variant="h6">Last Name: {lastName}</Typography>
-        <Typography variant="h6">Phone: {phone ?? "Non défini" }</Typography>
-    </Stack>
+    <Paper elevation={2} sx={{ p: { xs: 3, md: 12 } }}>
+      <Grid container spacing={3}>
+        <Grid item xs={12} md={5}>
+          <UpdateProfileForm user={user} />
+        </Grid>
+        <Grid item xs={12} md={2} container justifyContent={"center"}>
+          <Divider orientation="vertical" />
+        </Grid>
+        <Grid item xs={12} md={5}>
+          <UpdatePasswordForm user={user} />
+        </Grid>
+      </Grid>
+    </Paper>
   );
 }
 

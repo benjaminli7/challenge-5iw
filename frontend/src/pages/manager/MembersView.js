@@ -68,11 +68,8 @@ function MembersView({ team, games }) {
   return (
     <div>
       <Stack direction="row" spacing={2} sx={{ mb: 3 }}>
-        <Typography variant="h4">
-          {team.coins} coins
-        </Typography>
         <Typography variant="h4" className="titleBorder">
-          Liste des membres
+          Members of the team
         </Typography>
         <Button
           variant="contained"
@@ -89,7 +86,7 @@ function MembersView({ team, games }) {
         ACTION_TYPES={ACTION_TYPES}
         handleActionType={handleActionType}
       />
-      <CustomDialog open={openDialog} onClose={handleDialogClose}>
+      <CustomDialog maxWidth="xl" open={openDialog} onClose={handleDialogClose}>
         {actionType === ACTION_TYPES.CREATE_PLAYER && (
           <ManagerPlayerCreateForm
             team={team}

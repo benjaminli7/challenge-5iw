@@ -16,16 +16,17 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Traits\TimestampableTrait;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
+use Symfony\Component\Validator\Constraints as Assert;
 
 
 #[ORM\Entity(repositoryClass: BookingRepository::class)]
 #[ApiResource(
     operations: [
         new GetCollection(normalizationContext: ['groups' => ['read-booking']], security: 'is_granted("ROLE_ADMIN")'),
-        new Post(uriTemplate: "/bookings/new", controller: AddBookingController::class, denormalizationContext: ['groups' => ['create-booking']], securityPostDenormalize: 'is_granted("ROLE_ADMIN") or user.getType() == "client"', securityPostDenormalizeMessage: 'You can only create bookings for yourself.'),
+        new Post(uriTemplate: "/bookings/new", controller: AddBookingController::class, denormalizationContext: ['groups' => ['create-booking']], securityPostDenormalize: 'is_granted("ROLE_ADMIN") or user.getType() == "client"', securityPostDenormalizeMessage: 'Only clients can create bookings.'),
         new Patch(denormalizationContext: ['groups' => ['update-booking']], security: 'is_granted("ROLE_ADMIN")'),
         new Delete(controller: CancelBookingController::class, denormalizationContext: ['groups' => ['cancel-booking']], uriTemplate: "/bookings/{id}/cancel", security: 'is_granted("ROLE_ADMIN") or object.getClient() == user')
-        ]
+    ]
 )]
 #[ApiFilter(DateFilter::class, properties: ['createdAt'])]
 
@@ -40,7 +41,9 @@ class Booking
     private ?int $id = null;
 
     #[Groups(['read-client', 'cancel-booking'])]
+
     #[ORM\Column(length: 50)]
+    #[Assert\Choice(choices: ['canceled', 'available'])]
     private ?string $status = null;
 
     #[ORM\ManyToOne(inversedBy: 'bookings')]
@@ -50,8 +53,6 @@ class Booking
     #[ORM\OneToOne(inversedBy: 'booking')]
     private ?Schedule $schedule = null;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    private ?Review $review = null;
 
     public function getId(): ?int
     {
@@ -90,18 +91,6 @@ class Booking
     public function setSchedule(?Schedule $schedule): static
     {
         $this->schedule = $schedule;
-
-        return $this;
-    }
-
-    public function getReview(): ?Review
-    {
-        return $this->review;
-    }
-
-    public function setReview(?Review $review): static
-    {
-        $this->review = $review;
 
         return $this;
     }
