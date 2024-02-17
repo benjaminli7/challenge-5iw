@@ -44,6 +44,8 @@ class CreatePaymentIntentController extends AbstractController
 
         Stripe::setApiKey('sk_test_51NWhaQBS812DNqMjzJcmdr4REaBckFWW2xit9ix1mMAU2dsWdghjPs68kfEYneKhtpKOKes2vyH8l2Pg6uE54os500NVaIboU9');
 
+        $frontUrl = $this->getParameter('FRONT_URL');
+
         try {
             $checkoutSession = StripeSession::create([
                 'payment_method_types' => ['card'],
@@ -58,8 +60,8 @@ class CreatePaymentIntentController extends AbstractController
                     'quantity' => 1,
                 ]],
                 'mode' => 'payment',
-                'success_url' => 'https://game-elevate.ovh/client/purchase?session_id={CHECKOUT_SESSION_ID}&paymentResult=success',
-                'cancel_url' => 'https://game-elevate.ovh/client/purchase?paymentResult=cancel',
+                'success_url' => $frontUrl.'/client/purchase?session_id={CHECKOUT_SESSION_ID}&paymentResult=success',
+                'cancel_url' => $frontUrl.'/client/purchase?paymentResult=cancel',
                 'metadata' => ['payment_id' => $payment->getId()],
             ]);
             if ($checkoutSession->id) {
