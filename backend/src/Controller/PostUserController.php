@@ -16,8 +16,7 @@ class PostUserController extends AbstractController
 {
     public function __construct(
         protected MailerInterface $mailer,
-    )
-    {
+    ) {
         $this->mailer = $mailer;
     }
     public function __invoke(Request $request,  User $user): User
@@ -33,10 +32,10 @@ class PostUserController extends AbstractController
         $user->setResetToken($token);
         $emailContent = "Bonjour,\n\nPour valider votre compte, veuillez cliquer sur le lien suivant : $url/validation?token=$token";
         $email = (new Email())
-        ->from('game.elevate@gmail.com')
-        ->to($user->getEmail())
-        ->subject('Validation de votre compte GameElevate')
-        ->text($emailContent);
+            ->from('game.elevate@gmail.com')
+            ->to($user->getEmail())
+            ->subject('Validation de votre compte GameElevate')
+            ->text($emailContent);
 
 
         // // Envoyer l'e-mail via le service Symfony Mailer
